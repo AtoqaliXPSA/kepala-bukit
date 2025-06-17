@@ -39,7 +39,8 @@ module.exports = {
         .setStyle(ButtonStyle.Secondary)
     );
 
-    const message = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
+    await interaction.reply({ embeds: [embed], components: [row] });
+    const message = await interaction.fetchReply();
 
     const filter = (i) => i.user.id === userId;
     const collector = message.createMessageComponentCollector({ filter, time: 60000 });
