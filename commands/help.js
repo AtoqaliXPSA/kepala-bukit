@@ -20,6 +20,6 @@ module.exports = {
       });
     });
 
-    await interaction.reply({ embeds: [embed], ephemeral: true }); // hanya pengguna lihat
+    await interaction.reply({ embeds: [embed], flag : 64 }); // hanya pengguna lihat
   }
 };
