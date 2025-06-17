@@ -3,6 +3,7 @@ const User = require('../../models/User');
 
 module.exports = {
   name: 'cash',
+  alias: ['bal'],
   description: 'Lihat baki duit anda atau orang lain',
   cooldown: 5, // dalam saat
 
