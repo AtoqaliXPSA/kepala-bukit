@@ -64,7 +64,7 @@ client.once(Events.ClientReady, async () => {
   client.user.setPresence({
     activities: [
       {
-        name: 'server anda', // ganti dengan apa saja
+        name: 'over your server 👀', // ganti dengan apa saja
         type: 3 // 0 = Playing, 1 = Streaming, 2 = Listening, 3 = Watching, 5 = Competing
       }
     ],
