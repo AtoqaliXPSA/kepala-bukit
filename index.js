@@ -59,7 +59,24 @@ for (const file of msgCmdFiles) {
 // ✅ Bot Ready
 client.once(Events.ClientReady, async () => {
   console.log(`🤖 Logged in as ${client.user.tag}`);
-  await connectToDatabase(); // Sambung MongoDB
+  await connectToDatabase(); // Sambung ke MongoDB
+
+  const statuses = [
+    { name: 'over your server 👀', type: 3 },
+    { name: 'commands 💻', type: 0 },
+    { name: 'DM me for help 💬', type: 2 },
+    { name: `${client.guilds.cache.size} servers!`, type: 3 }
+  ];
+
+  let i = 0;
+  setInterval(() => {
+    const status = statuses[i % statuses.length];
+    client.user.setPresence({
+      activities: [status],
+      status: 'online'
+    });
+    i++;
+  }, 30000); // Tukar setiap 30 saat
 });
 
 // ✅ Slash Command Handler
