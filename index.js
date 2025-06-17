@@ -59,24 +59,17 @@ for (const file of msgCmdFiles) {
 // ✅ Bot Ready
 client.once(Events.ClientReady, async () => {
   console.log(`🤖 Logged in as ${client.user.tag}`);
-  await connectToDatabase(); // Sambung ke MongoDB
+  await connectToDatabase(); // Sambung MongoDB
 
-  const statuses = [
-    { name: 'over your server 👀', type: 3 },
-    { name: 'commands 💻', type: 0 },
-    { name: 'DM me for help 💬', type: 2 },
-    { name: `${client.guilds.cache.size} servers!`, type: 3 }
-  ];
-
-  let i = 0;
-  setInterval(() => {
-    const status = statuses[i % statuses.length];
-    client.user.setPresence({
-      activities: [status],
-      status: 'online'
-    });
-    i++;
-  }, 30000); // Tukar setiap 30 saat
+  client.user.setPresence({
+    activities: [
+      {
+        name: 'server anda', // ganti dengan apa saja
+        type: 3 // 0 = Playing, 1 = Streaming, 2 = Listening, 3 = Watching, 5 = Competing
+      }
+    ],
+    status: 'online' // online | idle | dnd | invisible
+  });
 });
 
 // ✅ Slash Command Handler
