@@ -8,7 +8,6 @@ module.exports = {
     .addStringOption(option =>
       option.setName('pilihan')
         .setDescription('Pilih antara heads atau tails')
-        .setMinValue(1)
         .setRequired(true)
         .addChoices(
           { name: 'Heads', value: 'head' },

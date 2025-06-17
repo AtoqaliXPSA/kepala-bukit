@@ -15,6 +15,18 @@ const client = new Client({
   ],
 });
 
+const { exec } = require("child_process");
+
+exec("sh push.sh", (err, stdout, stderr) => {
+  if (err) {
+    console.error("❌ Push gagal:", err);
+    return;
+  }
+  console.log("✅ Git pushed!");
+  console.log(stdout || stderr);
+});
+
+
 const keepAlive = require('./keepAlive');
 keepAlive(client); // Hidupkan bot
 
