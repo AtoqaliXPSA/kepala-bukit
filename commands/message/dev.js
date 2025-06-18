@@ -20,8 +20,8 @@ module.exports = {
       .setTitle('🛠️ Dev Panel')
       .setDescription('Panel kawalan admin untuk bot')
       .addFields(
-        { name: '📊 Status Bot', value: 'Klik untuk dapat status di DM', inline: true },
-        { name: '🚀 Auto Deploy', value: 'Klik untuk reset melalui `reset.js`', inline: true }
+        { name: '***📊 Status Bot***', value: 'Klik untuk dapat status di DM', inline: true },
+        { name: '***🚀 Auto Deploy***', value: 'Klik untuk reset melalui `reset.js`', inline: true }
       )
       .setColor('Blurple')
       .setFooter({ text: 'Khas untuk ADMIN sahaja' })
@@ -30,11 +30,11 @@ module.exports = {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('status')
-        .setLabel('📊 Status Bot (DM)')
+        .setLabel('📊 Status Bot ')
         .setStyle(ButtonStyle.Primary),
       new ButtonBuilder()
         .setCustomId('deploy')
-        .setLabel('🚀 Auto Deploy (Reset)')
+        .setLabel('🚀 Auto Deploy')
         .setStyle(ButtonStyle.Danger)
     );
 
