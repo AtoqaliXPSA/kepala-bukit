@@ -38,6 +38,13 @@ function keepAlive(client) {
     message: '🚫 Terlalu banyak percubaan login. Cuba semula selepas 10 minit.'
   });
 
+  // Rate limiter untuk register
+  const registerLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 5,
+    message: '⚠️ Terlalu banyak cubaan register. Cuba lagi selepas 10 minit.',
+  });
+
   app.post('/login', loginLimiter, (req, res) => {
     const { username, password } = req.body;
     const users = JSON.parse(fs.readFileSync('data/userDB.json'));
