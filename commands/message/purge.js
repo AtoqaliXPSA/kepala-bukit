@@ -11,7 +11,7 @@ module.exports = {
     const amount = parseInt(args[0]);
 
     if (isNaN(amount) || amount < 1 || amount > 100) {
-      return message.reply('❌ Masukkan jumlah mesej antara 1 hingga 100.');
+      return message.reply('`Masukkan jumlah mesej untuk dibuang.`');
     }
 
     try {
