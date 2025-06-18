@@ -20,6 +20,7 @@
       border: 2px solid #0f0;
       padding: 2rem;
       border-radius: 10px;
+      width: 300px;
     }
 
     input {
@@ -38,19 +39,28 @@
       color: #111;
       border: none;
       cursor: pointer;
+      width: 100%;
     }
 
     button:hover {
       background: #0c0;
     }
+
+    #msg {
+      margin-top: 1rem;
+      color: red;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
-<body>
+<body onload="document.getElementById('username').focus()">
   <div class="login-box">
     <h2>Login</h2>
-    <input type="text" id="username" placeholder="Username" />
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="login()">Login</button>
+    <form onsubmit="event.preventDefault(); login();">
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button type="submit">Login</button>
+    </form>
     <p id="msg"></p>
   </div>
 
