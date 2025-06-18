@@ -2,6 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
   name: 'avatar',
+  alias: ['av'],
   description: 'Paparkan avatar pengguna',
   cooldown: 3, // opsyenal
 
@@ -10,7 +11,7 @@ module.exports = {
     const avatarUrl = user.displayAvatarURL({ dynamic: true, size: 1024 });
 
     const embed = new EmbedBuilder()
-      .setTitle(`Avatar ${user.tag}`)
+      .setTitle(`Avatar`)
       .setImage(avatarUrl)
       .setURL(avatarUrl)
       .setColor(0x00AEFF)
