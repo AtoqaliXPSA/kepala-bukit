@@ -5,8 +5,8 @@ const {
   ButtonStyle
 } = require('discord.js');
 
-const blackjackHelper = require('../utils/blackjackHelper.js');
-const economy = require('../utils/economy');
+const blackjackHelper = require('../../utils/blackjackHelper.js');
+const economy = require('../../utils/economy');
 
 const MIN_BET = 1;
 
