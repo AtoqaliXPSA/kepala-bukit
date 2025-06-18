@@ -59,7 +59,7 @@ module.exports = {
             { name: 'Platform', value: os.platform(), inline: true },
             { name: 'CPU', value: os.cpus()[0].model, inline: false }
           )
-          .setColor('Green')
+          .setColor('Blue')
           .setFooter({ text: 'Bot Info' })
           .setTimestamp();
 
