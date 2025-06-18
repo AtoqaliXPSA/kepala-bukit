@@ -42,10 +42,10 @@ function keepAlive(client) {
   app.get('/', (req, res) => {
     const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
     const htmlPath = path.join(__dirname, 'website', 'index.html');
+
     fs.readFile(htmlPath, 'utf8', (err, html) => {
       if (err) return res.status(500).send('⚠️ HTML Error');
 
-      // Replace placeholders
       html = html
         .replace('{{uptime}}', formatDuration(uptimeSec))
         .replace('{{ping}}', `${client.ws.ping}ms`)
