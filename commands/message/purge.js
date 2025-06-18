@@ -16,7 +16,7 @@ module.exports = {
 
     try {
       await message.channel.bulkDelete(amount + 1, true); // +1 termasuk command
-      const reply = await message.channel.send('`✅ ${amount} mesej telah dipadam.`');
+      const reply = await message.channel.send('✅ ${amount} mesej telah dipadam.');
       setTimeout(() => reply.delete().catch(() => {}), 3000); // auto delete notifikasi
     } catch (err) {
       console.error(err);
