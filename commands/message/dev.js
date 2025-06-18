@@ -28,11 +28,11 @@ module.exports = {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('status')
-        .setLabel('📊 Status Bot ')
+        .setLabel('Status Bot')
         .setStyle(ButtonStyle.Primary),
       new ButtonBuilder()
         .setCustomId('deploy')
-        .setLabel('🚀 Auto Deploy')
+        .setLabel('Auto Deploy')
         .setStyle(ButtonStyle.Danger)
     );
 
