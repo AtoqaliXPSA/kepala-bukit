@@ -1,12 +1,4 @@
-// Tiada perubahan besar
-// devcoins.js hanya guna reply dengan button ➕ ➖
-
-const {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  EmbedBuilder
-} = require('discord.js');
+const {ActionRowBuilder, ButtonBuilder, ButtonStyle,EmbedBuilder} = require('discord.js');
 const User = require('../../models/User');
 const adminId = process.env.ADMIN_ID;
 
