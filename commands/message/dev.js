@@ -6,7 +6,7 @@ const {
 } = require('discord.js');
 const os = require('os');
 const moment = require('moment');
-const User = require(../models/User);
+const User = require('../../models/User');
 const ms = require('ms');
 const { exec } = require('child_process');
 
