@@ -6,6 +6,8 @@ const {
 } = require('discord.js');
 const os = require('os');
 const moment = require('moment');
+const User = require(../../models/User);
+const ms = require('ms');
 const { exec } = require('child_process');
 
 module.exports = {
@@ -63,11 +65,48 @@ module.exports = {
 
         try {
           await i.user.send({ embeds: [statusEmbed] });
-          await sent.react('🔄');
+          await sent.react('✅');
         } catch {
           await sent.react('❌');
         }
       }
+
+      // ✅ Command: add / remove
+      const action = subCommand.toLowerCase();
+      const mention = message.mentions.users.first();
+      const amount = parseInt(args[2]);
+
+      if (!['add', 'remove'].includes(action)) {
+        return message.reply('❌ Arahan tidak sah. Guna `add` atau `remove`.\nContoh: `!dev add @user 1000`');
+      }
+
+      if (!mention || isNaN(amount)) {
+        return message.reply('❌ Sila mention pengguna dan masukkan jumlah.\nContoh: `!dev add @user 1000`');
+      }
+
+      let userData = await User.findOne({ userId: mention.id });
+      if (!userData) {
+        userData = await User.create({ userId: mention.id });
+      }
+
+      if (action === 'add') {
+        userData.balance += amount;
+      } else if (action === 'remove') {
+        userData.balance = Math.max(0, userData.balance - amount);
+      }
+
+      await userData.save();
+
+      const embed = new EmbedBuilder()
+        .setTitle('✅ Operasi Berjaya')
+        .setColor(action === 'add' ? 'Green' : 'Red')
+        .setDescription(`**${action === 'add' ? 'Tambah' : 'Tolak'}** RM${amount} untuk ${mention.tag}`)
+        .addFields({ name: '💰 Baki Baru', value: `${userData.balance}`, inline: true })
+        .setFooter({ text: `Diminta oleh ${message.author.tag}` });
+
+      await message.reply({ embeds: [embed] });
+      }
+      };
 
       if (i.customId === 'deploy') {
         exec('node reset.js', (err, stdout, stderr) => {
