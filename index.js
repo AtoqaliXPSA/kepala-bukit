@@ -121,6 +121,19 @@ client.on(Events.MessageCreate, async message => {
     return message.reply({ embeds: [cooldownEmbed] });
   }
 
+  // Auto-load event handlers (dalam folder events/)
+  const eventsPath = path.join(__dirname, 'events');
+  const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+
+  for (const file of eventFiles) {
+    const event = require(`./events/${file}`);
+    if (event.once) {
+      client.once(event.name, (...args) => event.execute(...args, client));
+    } else {
+      client.on(event.name, (...args) => event.execute(...args, client));
+    }
+  }
+
   // ✅ Anti-spam check
   const isSpamming = await handleSpam(message);
   if (isSpamming) return;

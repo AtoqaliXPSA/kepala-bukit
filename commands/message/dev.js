@@ -72,39 +72,26 @@ module.exports = {
       }
 
       // ✅ Command: add / remove
-      const action = subCommand.toLowerCase();
-      const mention = message.mentions.users.first();
-      const amount = parseInt(args[2]);
+      const target = message.mentions.users.first();
+      if (!target) return message.reply('❌ Sila tag user.');
 
-      if (!['add', 'remove'].includes(action)) {
-        return message.reply('❌ Arahan tidak sah. Guna `add` atau `remove`.\nContoh: `!dev add @user 1000`');
-      }
-
-      if (!mention || isNaN(amount)) {
-        return message.reply('❌ Sila mention pengguna dan masukkan jumlah.\nContoh: `!dev add @user 1000`');
-      }
-
-      let userData = await User.findOne({ userId: mention.id });
-      if (!userData) {
-        userData = await User.create({ userId: mention.id });
-      }
-
-      if (action === 'add') {
-        userData.balance += amount;
-      } else if (action === 'remove') {
-        userData.balance = Math.max(0, userData.balance - amount);
-      }
-
-      await userData.save();
+      const userData = await User.findOneAndUpdate(
+        { userId: target.id },
+        { $setOnInsert: { userId: target.id, balance: 0 } },
+        { upsert: true, new: true }
+      );
 
       const embed = new EmbedBuilder()
-        .setTitle('✅ Operasi Berjaya')
-        .setColor(action === 'add' ? 'Green' : 'Red')
-        .setDescription(`**${action === 'add' ? 'Tambah' : 'Tolak'}** RM${amount} untuk ${mention.tag}`)
-        .addFields({ name: '💰 Baki Baru', value: `${userData.balance}`, inline: true })
-        .setFooter({ text: `Diminta oleh ${message.author.tag}` });
+        .setTitle(`DEV PANEL: ${target.username}`)
+        .setDescription(`Coins semasa: **${userData.balance}**`)
+        .setColor('Gold');
 
-      await message.reply({ embeds: [embed] });
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder().setCustomId(`add_${target.id}`).setLabel('➕ Tambah').setStyle(ButtonStyle.Success),
+        new ButtonBuilder().setCustomId(`remove_${target.id}`).setLabel('➖ Tolak').setStyle(ButtonStyle.Danger)
+      );
+
+      await message.reply({ embeds: [embed], components: [row] });
 
       if (i.customId === 'deploy') {
         exec('node reset.js', (err, stdout, stderr) => {
@@ -122,5 +109,5 @@ module.exports = {
     collector.on('end', () => {
       sent.edit({ components: [] }).catch(() => {});
     });
-  }
+  }:
 };
