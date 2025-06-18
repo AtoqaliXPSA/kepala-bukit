@@ -105,8 +105,6 @@ module.exports = {
         .setFooter({ text: `Diminta oleh ${message.author.tag}` });
 
       await message.reply({ embeds: [embed] });
-      }
-      };
 
       if (i.customId === 'deploy') {
         exec('node reset.js', (err, stdout, stderr) => {
