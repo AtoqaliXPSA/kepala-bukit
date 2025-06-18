@@ -1,4 +1,5 @@
 // keepAlive.js
+// === keepAlive.js ===
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -34,20 +35,19 @@ function keepAlive(client) {
   const loginLimiter = rateLimit({
     windowMs: 10 * 60 * 1000,
     max: 5,
-    message: '🚫 Terlalu banyak percubaan login. Cuba semula selepas 10 minit.',
+    message: '🚫 Terlalu banyak percubaan login. Cuba semula selepas 10 minit.'
   });
 
-  // 🔐 Login endpoint
   app.post('/login', loginLimiter, (req, res) => {
     const { username, password } = req.body;
     const users = JSON.parse(fs.readFileSync('data/userDB.json'));
-
     const user = users.find(u => u.username === username);
-    if (!user) return res.status(401).json({ success: false, message: '❌ Username tidak wujud' });
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: '❌ Username tidak wujud' });
+    }
 
     bcrypt.compare(password, user.password, (err, result) => {
-      if (err) return res.status(500).json({ success: false, message: '❌ Server error' });
-
       if (result) {
         return res.json({ success: true, message: '✅ Login berjaya' });
       } else {
@@ -56,7 +56,28 @@ function keepAlive(client) {
     });
   });
 
-  // Basic protection
+  app.post('/register', registerLimiter, async (req, res) => {
+    const { username, password } = req.body;
+    const dbPath = path.join(__dirname, 'data', 'userDB.json');
+
+    if (!username || !password) {
+      return res.status(400).json({ success: false, message: '❌ Username dan password diperlukan.' });
+    }
+
+    const users = fs.existsSync(dbPath) ? JSON.parse(fs.readFileSync(dbPath)) : [];
+    const exists = users.find(u => u.username === username);
+
+    if (exists) {
+      return res.status(409).json({ success: false, message: '⚠️ Username sudah wujud.' });
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+    users.push({ username, password: hash });
+
+    fs.writeFileSync(dbPath, JSON.stringify(users, null, 2));
+    return res.json({ success: true, message: '✅ Akaun berjaya didaftarkan!' });
+  });
+
   app.use((req, res, next) => {
     const ua = req.get('User-Agent') || '';
     if (/curl|wget|python|bot|scan/i.test(ua)) {
@@ -65,7 +86,6 @@ function keepAlive(client) {
     next();
   });
 
-  // Homepage
   app.get('/', (req, res) => {
     const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
     const htmlPath = path.join(__dirname, 'website', 'index.html');
@@ -86,10 +106,8 @@ function keepAlive(client) {
     });
   });
 
-  // Static file
   app.use(express.static(path.join(__dirname, 'website')));
 
-  // Status JSON
   app.get('/status.json', (req, res) => {
     const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
     res.json({

@@ -1,3 +1,4 @@
+// === website/index.html === (Login Page)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,32 +24,29 @@
       width: 300px;
     }
 
-    input {
+    input, button {
       display: block;
-      margin: 1rem 0;
       width: 100%;
+      margin-top: 1rem;
       padding: 0.5rem;
-      border: none;
+    }
+
+    input {
       background: #222;
       color: #0f0;
+      border: none;
     }
 
     button {
-      padding: 0.5rem 1rem;
       background: #0f0;
       color: #111;
       border: none;
       cursor: pointer;
-      width: 100%;
-    }
-
-    button:hover {
-      background: #0c0;
     }
 
     #msg {
-      margin-top: 1rem;
       color: red;
+      margin-top: 1rem;
       font-size: 0.9rem;
     }
   </style>
@@ -63,7 +61,6 @@
     </form>
     <p id="msg"></p>
   </div>
-
   <script src="login.js"></script>
 </body>
 </html>
