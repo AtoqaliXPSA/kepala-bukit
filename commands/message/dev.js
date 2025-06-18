@@ -64,9 +64,8 @@ module.exports = {
         try {
           await i.user.send({ embeds: [statusEmbed] });
           await sent.react('🔄');
-          await message.channel.send('✅ Status telah dihantar ke DM anda.');
         } catch {
-          await message.channel.send('❌ Gagal hantar DM. Sila buka DM anda.');
+          await sent.react('❌');
         }
       }
 
