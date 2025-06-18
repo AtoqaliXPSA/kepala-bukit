@@ -8,9 +8,8 @@ module.exports = {
   async execute(interaction) {
     const embed = new EmbedBuilder()
       .setTitle('📘 Slash Command Tersedia')
-      .setColor('Blurple')
-      .setDescription('Berikut adalah command yang boleh digunakan:')
-      .setFooter({ text: `Diminta oleh ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
+      .setColor('Blue')
+      .setDescription('Berikut adalah command yang boleh digunakan:');
 
     interaction.client.commands.forEach(cmd => {
       embed.addFields({

@@ -10,8 +10,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setTitle('📖 Senarai Command')
       .setDescription('Berikut adalah command yang boleh digunakan:')
-      .setColor('Blue')
-      .setFooter({ text: `Diminta oleh ${message.author.tag}`, iconURL: message.author.displayAvatarURL() });
+      .setColor('Blue');
 
     client.messageCommands.forEach(cmd => {
       embed.addFields({
