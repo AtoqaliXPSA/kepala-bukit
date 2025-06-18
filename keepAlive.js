@@ -130,6 +130,7 @@ function keepAlive(client) {
           <div class="card">
             <h1> Bot is Alive</h1>
             <p>🕒 Uptime: ${formatDuration(uptimeSec)}</p>
+            <p>📶 Ping: ${client.ws.ping}ms</p>
             <p>🌍 Server: ${client.guilds.cache.size}</p>
             <p>👥 Users: ${client.users.cache.size}</p>
             <p>💾 RAM Usage: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB</p>
