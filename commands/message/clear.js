@@ -1,6 +1,6 @@
 module.exports = {
-  name: 'purge',
-  alias: ['clear'],
+  name: 'clear',
+  alias: ['purge'],
   description: 'Padam mesej dalam channel',
   async execute(message, args) {
     // Semak jika user ada permission
