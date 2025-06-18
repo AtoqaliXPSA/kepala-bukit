@@ -19,7 +19,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setTitle('🛠️ Dev Panel')
       .addFields(
-        { name: '***📊 Status Bot***', value: 'Klik untuk dapat status di DM', inline: true },
+        { name: '***📊 Status Bot***', value: 'Klik untuk dapat status', inline: true },
         { name: '***🚀 Auto Deploy***', value: 'Klik untuk deploy semua commands', inline: true }
       )
       .setColor('Blue')
