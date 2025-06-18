@@ -1,43 +1,82 @@
-const { EmbedBuilder } = require('discord.js');
+const {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder
+} = require('discord.js');
 const os = require('os');
+const moment = require('moment');
+const { exec } = require('child_process');
 
 module.exports = {
   name: 'dev',
-  async execute(message, args, client) {
-    const adminId = process.env.ADMIN_ID;
-
-    if (message.author.id !== adminId) {
-      return message.reply('❌ Anda tiada kebenaran untuk guna command ini.');
+  description: 'Dev panel untuk admin sahaja',
+  async execute(message, args) {
+    if (message.author.id !== process.env.ADMIN_ID) {
+      return message.reply('❌ Anda tidak dibenarkan guna command ini.');
     }
 
-    const uptime = Math.floor(process.uptime());
-    const totalMem = (os.totalmem() / 1024 / 1024).toFixed(2);
-    const usedMem = ((os.totalmem() - os.freemem()) / 1024 / 1024).toFixed(2);
-    const cpuLoad = os.loadavg()[0].toFixed(2);
-    const latency = Date.now() - message.createdTimestamp;
-    const nodeVersion = process.version;
-    const djsVersion = require('discord.js').version;
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId('status')
+        .setLabel('📊 Status Bot (DM)')
+        .setStyle(ButtonStyle.Primary),
+      new ButtonBuilder()
+        .setCustomId('deploy')
+        .setLabel('🚀 Auto Deploy (Reset)')
+        .setStyle(ButtonStyle.Danger)
+    );
 
-    const embed = new EmbedBuilder()
-      .setTitle('📊 Bot Status')
-      .setColor('Blue')
-      .addFields(
-        { name: '🟢 Uptime', value: `<t:${Math.floor((Date.now() - uptime * 1000) / 1000)}:R>`, inline: true },
-        { name: '🌍 Guilds', value: `${client.guilds.cache.size}`, inline: true },
-        { name: '👥 Users', value: `${client.users.cache.size}`, inline: true },
-        { name: '📶 Ping', value: `${latency}ms`, inline: true },
-        { name: '🧠 RAM', value: `${usedMem}MB / ${totalMem}MB`, inline: true },
-        { name: '⚙️ CPU Load', value: `${cpuLoad}`, inline: true },
-      )
-      .setTimestamp()
-      .setFooter({ text: `Diminta oleh ${message.author.tag}`, iconURL: message.author.displayAvatarURL() });
+    const sent = await message.channel.send({
+      content: '🔧 **Dev Panel**: Hanya untuk ADMIN.',
+      components: [row]
+    });
 
-    try {
-      await message.author.send({ embeds: [embed] });
-      await message.react('🔄'); // optional: indicate success
-    } catch (err) {
-      console.error(err);
-      return message.reply('❌ Saya tak dapat hantar DM kepada anda. Sila buka DM.');
-    }
+    const filter = i => i.user.id === message.author.id;
+    const collector = sent.createMessageComponentCollector({ filter, time: 30000 });
+
+    collector.on('collect', async i => {
+      await i.deferUpdate();
+
+      if (i.customId === 'status') {
+        const uptime = moment.duration(process.uptime(), 'seconds').humanize();
+        const memoryUsage = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
+
+        const embed = new EmbedBuilder()
+          .setTitle('📊 Status Bot')
+          .addFields(
+            { name: 'Uptime', value: uptime, inline: true },
+            { name: 'Ping', value: `${Math.round(i.client.ws.ping)}ms`, inline: true },
+            { name: 'RAM', value: `${memoryUsage} MB`, inline: true },
+            { name: 'Platform', value: os.platform(), inline: true },
+            { name: 'CPU', value: os.cpus()[0].model, inline: false }
+          )
+          .setColor('Green')
+          .setFooter({ text: 'Bot Status' })
+          .setTimestamp();
+
+        try {
+          await i.user.send({ embeds: [embed] });
+          await message.channel.send('✅ Status telah dihantar ke DM anda.');
+        } catch {
+          await message.channel.send('❌ Gagal hantar DM. Sila buka DM anda.');
+        }
+      }
+
+      if (i.customId === 'deploy') {
+        exec('node reset.js', (err, stdout, stderr) => {
+          if (err) {
+            console.error(stderr);
+            return message.channel.send('❌ Ralat semasa deploy.');
+          }
+          console.log(stdout);
+          message.channel.send('✅ Reset telah dijalankan melalui `reset.js`.');
+        });
+      }
+    });
+
+    collector.on('end', () => {
+      sent.edit({ components: [] });
+    });
   }
 };

@@ -1,5 +1,4 @@
 const {
-  SlashCommandBuilder,
   EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
@@ -12,38 +11,26 @@ const economy = require('../utils/economy');
 const MIN_BET = 1;
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('blackjack')
-    .setDescription('Main blackjack dengan pertaruhan!')
-    .addIntegerOption(option =>
-      option
-        .setName('bet')
-        .setDescription('Jumlah pertaruhan (min 1)')
-        .setRequired(true)
-        .setMinValue(MIN_BET)
-    ),
+  name: 'blackjack',
+  description: 'Main Blackjack dengan pertaruhan!',
+  async execute(message, args) {
+    const bet = parseInt(args[0]);
 
-  async execute(interaction) {
-    await interaction.deferReply();
-
-    // ✅ Ambil nilai pertaruhan dari user
-    const bet = interaction.options.getInteger('bet');
-
-    // ✅ Semak baki dan tolak duit
-    const userData = await economy.getUser(interaction.user.id);
-    if (!userData || userData.balance < bet) {
-      return await interaction.editReply({
-        content: '❌ Anda tidak cukup coins untuk bertaruh.',
-        ephemeral: true
-      });
+    if (isNaN(bet) || bet < MIN_BET) {
+      return message.reply(`❌ Masukkan jumlah pertaruhan yang sah. Contoh: \`!blackjack 50\``);
     }
 
-    // ✅ Tolak duit dari akaun user
-    await economy.addBalance(interaction.user.id, -bet);
+    const userData = await economy.getUser(message.author.id);
+    if (!userData || userData.balance < bet) {
+      return message.reply('❌ Anda tidak cukup coins untuk bertaruh.');
+    }
 
-    // ✅ Mulakan game
+    // tolak duit
+    await economy.addBalance(message.author.id, -bet);
+
+    // mula game
     const game = blackjackHelper.createGame();
-    const embed = blackjackHelper.createEmbed(game, interaction.user);
+    const embed = blackjackHelper.createEmbed(game, message.author);
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
@@ -60,19 +47,19 @@ module.exports = {
         .setStyle(ButtonStyle.Danger)
     );
 
-    const message = await interaction.editReply({
-      content: `Anda telah bertaruh **${bet} coins**.`,
+    const sentMsg = await message.channel.send({
+      content: `💰 Anda telah bertaruh **${bet} coins**.`,
       embeds: [embed],
       components: [row]
     });
 
-    const filter = i => i.user.id === interaction.user.id;
-    const collector = message.createMessageComponentCollector({ filter, time: 60000 });
+    const filter = i => i.user.id === message.author.id;
+    const collector = sentMsg.createMessageComponentCollector({ filter, time: 60000 });
 
     collector.on('collect', async i => {
       if (i.customId === 'hit') {
         blackjackHelper.playerHit(game);
-        const updatedEmbed = blackjackHelper.createEmbed(game, interaction.user, true);
+        const updatedEmbed = blackjackHelper.createEmbed(game, message.author, true);
         await i.update({ embeds: [updatedEmbed], components: [row] });
 
         if (game.player.total > 21) {
@@ -81,7 +68,7 @@ module.exports = {
 
       } else if (i.customId === 'stand') {
         blackjackHelper.dealerPlay(game);
-        const resultEmbed = blackjackHelper.finalResultEmbed(game, interaction.user);
+        const resultEmbed = blackjackHelper.finalResultEmbed(game, message.author);
         await i.update({ embeds: [resultEmbed], components: [] });
         collector.stop();
 
@@ -93,18 +80,18 @@ module.exports = {
 
     collector.on('end', async (_, reason) => {
       if (reason === 'time') {
-        await interaction.editReply({
+        await sentMsg.edit({
           content: '⏰ Masa tamat. Permainan dibatalkan.',
           embeds: [],
           components: []
         });
       } else if (reason === 'bust') {
-        await interaction.editReply({
+        await sentMsg.edit({
           content: '💥 Anda terkeluar (Bust)!',
           embeds: [],
           components: []
         });
       }
     });
-  },
+  }
 };
