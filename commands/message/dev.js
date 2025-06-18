@@ -18,7 +18,6 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setTitle('🛠️ Dev Panel')
-      .setDescription('Panel kawalan admin untuk bot')
       .addFields(
         { name: '***📊 Status Bot***', value: 'Klik untuk dapat status di DM', inline: true },
         { name: '***🚀 Auto Deploy***', value: 'Klik untuk reset melalui `reset.js`', inline: true }
