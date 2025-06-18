@@ -16,7 +16,6 @@ addBalance: async (userId, amount) => {
       { new: true, upsert: true }
     );
     return user;
-  }
-};
+  };
 
 module.exports = { getUser };
