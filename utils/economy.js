@@ -9,4 +9,14 @@ async function getUser(userId) {
   return user;
 }
 
+addBalance: async (userId, amount) => {
+    const user = await User.findOneAndUpdate(
+      { userId },
+      { $inc: { balance: amount } },
+      { new: true, upsert: true }
+    );
+    return user;
+  }
+};
+
 module.exports = { getUser };
