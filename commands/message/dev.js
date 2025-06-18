@@ -73,7 +73,6 @@ module.exports = {
           }
           console.log(stdout);
           sent.react('🚀');
-          message.channel.send('✅ Reset telah dijalankan melalui `reset.js`.');
         });
       }
     });
