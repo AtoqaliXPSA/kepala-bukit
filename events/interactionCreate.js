@@ -28,7 +28,14 @@ module.exports = {
       const row = new ActionRowBuilder().addComponents(input);
       modal.addComponents(row);
 
-      await interaction.showModal(modal);
+      try {
+        await interaction.showModal(modal);
+      } catch (error) {
+        console.error('Gagal papar modal:', error);
+        if (!interaction.replied && !interaction.deferred) {
+          return interaction.reply({ content: '❌ Gagal papar modal. Sila cuba semula.', ephemeral: true });
+        }
+      }
     }
 
     // ✅ Proses input modal

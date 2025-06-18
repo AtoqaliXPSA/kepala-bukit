@@ -26,8 +26,8 @@ module.exports = {
       .setColor('Gold');
 
     const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId(`add_${target.id}`).setLabel('➕ Tambah').setStyle(ButtonStyle.Success),
-      new ButtonBuilder().setCustomId(`remove_${target.id}`).setLabel('➖ Tolak').setStyle(ButtonStyle.Danger)
+      new ButtonBuilder().setCustomId(`add_${target.id}`).setLabel('Tambah').setStyle(ButtonStyle.Success),
+      new ButtonBuilder().setCustomId(`remove_${target.id}`).setLabel('Tolak').setStyle(ButtonStyle.Danger)
     );
 
     await message.reply({ embeds: [embed], components: [row] });
