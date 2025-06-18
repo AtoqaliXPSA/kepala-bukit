@@ -15,7 +15,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setTitle('🏓 Pong!')
-      .setDescription(`**Bot Ping:** ${ping}ms`)
+      .setDescription(`**Bot Ping:** ${api}ms`)
       .setColor(0x00AEFF)
       .setTimestamp();
 
