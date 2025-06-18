@@ -1,23 +1,25 @@
-const root = document.documentElement;
-const toggleButton = document.querySelector('.toggle');
+// website/themeToggle.js
 
-function setTheme(mode) {
-  if (mode === 'light') {
-    root.classList.add('light');
-    toggleButton.textContent = '☀️ Light Mode';
-  } else {
-    root.classList.remove('light');
-    toggleButton.textContent = '🌙 Dark Mode';
+(function () {
+  const THEME_KEY = 'site-theme';
+
+  // Tukar tema dan simpan dalam localStorage
+  function toggleMode() {
+    const isLight = document.body.classList.toggle('light');
+    localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
   }
-  localStorage.setItem('theme', mode);
-}
 
-function toggleMode() {
-  const isLight = root.classList.toggle('light');
-  setTheme(isLight ? 'light' : 'dark');
-}
+  // Bila halaman dimuat, guna tema yang disimpan
+  function applySavedTheme() {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if (savedTheme === 'light') {
+      document.body.classList.add('light');
+    }
+  }
 
-window.onload = () => {
-  const saved = localStorage.getItem('theme') || 'dark';
-  setTheme(saved);
-};
+  // Jalankan fungsi bila skrip dimuat
+  applySavedTheme();
+
+  // Eksport fungsi supaya boleh dipanggil dari HTML
+  window.toggleMode = toggleMode;
+})();
