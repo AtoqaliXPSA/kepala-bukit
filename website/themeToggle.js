@@ -12,7 +12,6 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ✅ Loader hilang bila semua dah load
 window.addEventListener('load', () => {
   const loader = document.getElementById('loader');
   if (loader) {
