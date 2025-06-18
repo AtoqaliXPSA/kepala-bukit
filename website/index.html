@@ -6,19 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       :root {
-        --bg-color: #2c1e3d;
-        --text-color: #ffb347;
-        --card-bg: #3b2c4d;
-        --card-border: #f08080;
-        --shadow: rgba(255, 183, 107, 0.2);
+        /* Default: Dark Mode */
+        --bg-color: #111;
+        --text-color: #0f0;
+        --card-bg: #1a1a1a;
+        --card-border: #0f0;
+        --shadow: #0f04;
       }
 
       body.light {
-        --bg-color: #0a0a0a;
-        --text-color: #00ffcc;
-        --card-bg: #141414;
-        --card-border: #00ffcc;
-        --shadow: rgba(0, 255, 204, 0.1);
+        /* Override untuk Light Mode */
+        --bg-color: #f5f5f5;
+        --text-color: #111;
+        --card-bg: #fff;
+        --card-border: #333;
+        --shadow: rgba(0, 0, 0, 0.1);
       }
 
       body {
