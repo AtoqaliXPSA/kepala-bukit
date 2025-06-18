@@ -46,6 +46,8 @@ function keepAlive(client) {
     if (!user) return res.status(401).json({ success: false, message: '❌ Username tidak wujud' });
 
     bcrypt.compare(password, user.password, (err, result) => {
+      if (err) return res.status(500).json({ success: false, message: '❌ Server error' });
+
       if (result) {
         return res.json({ success: true, message: '✅ Login berjaya' });
       } else {
