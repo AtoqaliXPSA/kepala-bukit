@@ -59,6 +59,8 @@ function keepAlive(client) {
     });
   });
 
+  app.use(express.static('website'));
+  
   // API status
   app.get('/status.json', (req, res) => {
     const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
