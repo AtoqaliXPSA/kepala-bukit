@@ -109,4 +109,5 @@ module.exports = {
     collector.on('end', () => {
       sent.edit({ components: [] }).catch(() => {});
     });
+  }
 };
