@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const blackjackHelper = require('../utils/blackjackHelper');
 const MIN_BET = 1;
+const economy = require('../utils/economy')
 
 module.exports = {
   data: new SlashCommandBuilder()
