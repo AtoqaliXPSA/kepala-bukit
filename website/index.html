@@ -1,139 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Bot Status</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      :root {
-        /* Default: Dark Mode */
-        --bg-color: #111;
-        --text-color: #0f0;
-        --card-bg: #1a1a1a;
-        --card-border: #0f0;
-        --shadow: #0f04;
+<head>
+  <meta charset="UTF-8" />
+  <title>Bot Status</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-color: #111;
+      --text-color: #0f0;
+      --card-bg: #1a1a1a;
+      --card-border: #0f0;
+      --shadow: #0f04;
+    }
+
+    body.light {
+      --bg-color: #f5f5f5;
+      --text-color: #111;
+      --card-bg: #fff;
+      --card-border: #333;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem 3rem;
+      box-shadow: 0 0 30px var(--shadow);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s ease-out forwards;
+      transition: background 0.3s, border 0.3s, color 0.3s;
+      z-index: 1;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
+    }
 
-      body.light {
-        /* Override untuk Light Mode */
-        --bg-color: #f5f5f5;
-        --text-color: #111;
-        --card-bg: #fff;
-        --card-border: #333;
-        --shadow: rgba(0, 0, 0, 0.1);
-      }
+    h1, p, .footer {
+      text-shadow: 0 0 5px var(--text-color);
+    }
 
-      body {
-        margin: 0;
-        padding: 0;
-        background: var(--bg-color);
-        color: var(--text-color);
-        font-family: 'Segoe UI', sans-serif;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        transition: background 0.3s, color 0.3s;
-      }
+    .footer {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: inherit;
+    }
 
-      .card {
-        background: var(--card-bg);
-        border: 2px solid var(--card-border);
-        border-radius: 16px;
-        padding: 2rem 3rem;
-        box-shadow: 0 0 30px var(--shadow);
-        text-align: center;
-        max-width: 400px;
-        width: 100%;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeInUp 1s ease-out forwards;
-        transition: background 0.3s, border 0.3s, color 0.3s;
-        z-index: 1;
-      }
+    .toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+      background: none;
+      border: 2px solid var(--text-color);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      color: var(--text-color);
+      background-color: transparent;
+      transition: all 0.3s ease;
+      z-index: 2;
+    }
 
-      @keyframes fadeInUp {
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
+    .toggle:hover {
+      background-color: var(--card-border);
+      color: var(--bg-color);
+    }
 
-      h1, p, .footer {
-        text-shadow: 0 0 5px var(--text-color);
-      }
+    .loader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: var(--bg-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
 
-      .footer {
-        margin-top: 1rem;
-        font-size: 0.85rem;
-        color: inherit;
-      }
+    .loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
 
-      .toggle {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        cursor: pointer;
-        background: none;
-        border: 2px solid var(--text-color);
-        border-radius: 20px;
-        padding: 6px 12px;
-        font-size: 0.9rem;
-        color: var(--text-color);
-        background-color: transparent;
-        transition: all 0.3s ease;
-        z-index: 2;
-      }
+    .loader::before {
+      content: '';
+      width: 50px;
+      height: 50px;
+      border: 5px solid var(--text-color);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
 
-      .toggle:hover {
-        background-color: var(--card-border);
-        color: var(--bg-color);
-      }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader" id="loader"></div>
 
-      /* Loader styles */
-      .loader {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100vh;
-        background: var(--bg-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 99;
-        transition: opacity 0.5s ease;
-      }
+  <button class="toggle" onclick="toggleMode()">🌓 Toggle Theme</button>
 
-      .loader::before {
-        content: '';
-        width: 50px;
-        height: 50px;
-        border: 5px solid var(--text-color);
-        border-top-color: transparent;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
+  <div class="card">
+    <h1>Bot is Alive</h1>
+    <p>🕒 Uptime: {{uptime}}</p>
+    <p>📶 Ping: {{ping}}</p>
+    <p>🌍 Server: {{servers}}</p>
+    <p>👥 Users: {{users}}</p>
+    <p>💾 RAM Usage: {{ram}} MB</p>
+    <p>⚙️ Load Avg: {{loadavg}}</p>
+    <div class="footer">Owner Bot: {{owner}}</div>
+  </div>
 
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="loader" id="loader"></div>
-
-    <button class="toggle" onclick="toggleMode()"> Toggle Theme</button>
-
-    <div class="card">
-      <h1>Bot is Alive</h1>
-      <p>🕒 Uptime: {{uptime}}</p>
-      <p>📶 Ping: {{ping}}</p>
-      <p>🌍 Server: {{servers}}</p>
-      <p>👥 Users: {{users}}</p>
-      <p>💾 RAM Usage: {{ram}} MB</p>
-      <p>⚙️ Load Avg: {{loadavg}}</p>
-      <div class="footer">Owner Bot: {{owner}}</div>
-    </div>
-
-    <script src="website/themeToggle.js"></script>
-  </body>
+  <script src="/themeToggle.js"></script>
+  <script>
+    // Loader hide logic
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loader');
+      loader.classList.add('hidden');
+      setTimeout(() => loader.remove(), 600); // buang terus lepas animasi
+    });
+  </script>
+</body>
 </html>
