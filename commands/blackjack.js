@@ -1,151 +1,65 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const { getUser, subtractBalance, addBalance } = require('../utils/blackjackHelper');
-
-const HIT = 'blackjack_hit';
-const STAND = 'blackjack_stand';
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const blackjackHelper = require('../utils/blackjackHelper');
+const MIN_BET = 1
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('blackjack')
-    .setDescription('Mainkan Blackjack dan cuba menang!'),
+    .setDescription('Main blackjack dengan pertaruhan!')
+    .setMinValue(MIN_BET),
 
   async execute(interaction) {
-    const userId = interaction.user.id;
-    const betAmount = 300; // Tetap
+    await interaction.deferReply();
 
-    const user = await getUser(userId);
-    if (user.balance < betAmount) {
-      return interaction.reply({ content: `❌ Anda perlukan sekurang-kurangnya ${betAmount} untuk bermain.`, ephemeral: true });
+    const userData = await economy.getUser(interaction.user.id);
+    if (!userData || userData.balance < bet) {
+      return interaction.reply({
+        content: '❌ Anda tidak cukup coins untuk bertaruh.',
+        flags : 64
+      });
     }
 
-    await subtractBalance(userId, betAmount);
+    const game = blackjackHelper.createGame();
 
-    let playerCards = [drawCard(), drawCard()];
-    let dealerCards = [drawCard(), drawCard()];
+    const embed = blackjackHelper.createEmbed(game, interaction.user);
+    const row = new ActionRowBuilder()
+      .addComponents(
+        new ButtonBuilder().setCustomId('hit').setLabel('🃏 Hit').setStyle(ButtonStyle.Primary),
+        new ButtonBuilder().setCustomId('stand').setLabel('✋ Stand').setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder().setCustomId('cancel').setLabel('❌ Cancel').setStyle(ButtonStyle.Danger),
+      );
 
-    const embed = new EmbedBuilder()
-      .setTitle('🃏 Blackjack bet 300')
-      .setColor('DarkGreen')
-      .setDescription(`Kad anda: ${playerCards.join(', ')} (${handValue(playerCards)})\n\nKad dealer: ${dealerCards[0]},\n\n ❓Tekan butang di bawah untuk teruskan.`);
+    const message = await interaction.editReply({ embeds: [embed], components: [row] });
 
-    const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId(HIT)
-        .setLabel('Hit 🃏')
-        .setStyle(ButtonStyle.Primary),
-      new ButtonBuilder()
-        .setCustomId(STAND)
-        .setLabel('Stand ✋')
-        .setStyle(ButtonStyle.Secondary)
-    );
-
-    await interaction.reply({ embeds: [embed], components: [row] });
-    const message = await interaction.fetchReply();
-
-    const filter = (i) => i.user.id === userId;
+    const filter = i => i.user.id === interaction.user.id;
     const collector = message.createMessageComponentCollector({ filter, time: 60000 });
 
-    collector.on('collect', async (btn) => {
-      if (btn.customId === HIT) {
-        playerCards.push(drawCard());
-        const playerTotal = handValue(playerCards);
+    collector.on('collect', async i => {
+      if (i.customId === 'hit') {
+        blackjackHelper.playerHit(game);
+        const updatedEmbed = blackjackHelper.createEmbed(game, interaction.user, true);
+        await i.update({ embeds: [updatedEmbed], components: [row] });
 
-        if (playerTotal > 21) {
-          await btn.update({
-            embeds: [
-              new EmbedBuilder()
-                .setTitle('💥 Anda Kalah!')
-                .setColor('Red')
-                .setDescription(`Kad anda: ${playerCards.join(', ')} (${playerTotal})\n\nAnda terlebih 21.`)
-            ],
-            components: []
-          });
-          collector.stop();
-          return;
+        if (game.player.total > 21) {
+          collector.stop('bust');
         }
 
-        await btn.update({
-          embeds: [
-            new EmbedBuilder()
-              .setTitle('🃏 Blackjack bet 300')
-              .setColor('DarkGreen')
-              .setDescription(`Kad anda: ${playerCards.join(', ')} (${playerTotal})\n\nKad dealer: ${dealerCards[0]}, ❓`)
-          ],
-          components: [row]
-        });
-      }
+      } else if (i.customId === 'stand') {
+        blackjackHelper.dealerPlay(game);
+        const resultEmbed = blackjackHelper.finalResultEmbed(game, interaction.user);
+        await i.update({ embeds: [resultEmbed], components: [] });
+        collector.stop();
 
-      if (btn.customId === STAND) {
-        let dealerTotal = handValue(dealerCards);
-        while (dealerTotal < 17) {
-          dealerCards.push(drawCard());
-          dealerTotal = handValue(dealerCards);
-        }
-
-        const playerTotal = handValue(playerCards);
-        let result = '';
-        if (dealerTotal > 21 || playerTotal > dealerTotal) {
-          await addBalance(userId, betAmount * 2);
-          result = `🎉 Anda menang dan dapat ${betAmount * 2}!`;
-        } else if (playerTotal === dealerTotal) {
-          await addBalance(userId, betAmount); // Pulang balik
-          result = `⚖️ Seri. Pertaruhan anda dipulangkan.`;
-        } else {
-          result = `💥 Anda kalah!`;
-        }
-
-        await btn.update({
-          embeds: [
-            new EmbedBuilder()
-              .setTitle('🎲 Keputusan Blackjack')
-              .setColor('Blue')
-              .setDescription(`Kad anda: ${playerCards.join(', ')} (${playerTotal})\n\nKad dealer: ${dealerCards.join(', ')} (${dealerTotal})
-
-${result}`)
-          ],
-          components: []
-        });
-
+      } else if (i.customId === 'cancel') {
+        await i.update({ content: 'Permainan dibatalkan.', embeds: [], components: [] });
         collector.stop();
       }
     });
 
-    collector.on('end', (collected, reason) => {
+    collector.on('end', (_, reason) => {
       if (reason === 'time') {
-        interaction.editReply({
-          content: '⏱️ Masa tamat. Sesi dibatalkan.',
-          components: []
-        });
+        interaction.editReply({ content: '⏰ Masa tamat. Permainan dibatalkan.', embeds: [], components: [] });
       }
     });
-  }
+  },
 };
-
-// Helper functions
-function drawCard() {
-  const cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A'];
-  return cards[Math.floor(Math.random() * cards.length)];
-}
-
-function handValue(cards) {
-  let value = 0;
-  let aces = 0;
-
-  for (const card of cards) {
-    if (['J', 'Q', 'K'].includes(card)) {
-      value += 10;
-    } else if (card === 'A') {
-      value += 11;
-      aces++;
-    } else {
-      value += card;
-    }
-  }
-
-  while (value > 21 && aces > 0) {
-    value -= 10;
-    aces--;
-  }
-
-  return value;
-}
