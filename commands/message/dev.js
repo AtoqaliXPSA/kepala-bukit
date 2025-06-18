@@ -22,8 +22,7 @@ module.exports = {
         { name: '***📊 Status Bot***', value: 'Klik untuk dapat status di DM', inline: true },
         { name: '***🚀 Auto Deploy***', value: 'Klik untuk reset melalui `reset.js`', inline: true }
       )
-      .setColor('Blurple')
-      .setFooter({ text: 'Khas untuk ADMIN sahaja' })
+      .setColor('Blue')
       .setTimestamp();
 
     const row = new ActionRowBuilder().addComponents(
