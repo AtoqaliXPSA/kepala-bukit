@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body style="background:#111; color:#0f0; text-align:center; padding-top:5rem;">
+  <h1>Welcome, <span id="user"></span>!</h1>
+  <script>
+    const user = localStorage.getItem("user");
+    document.getElementById("user").textContent = user || 'Guest';
+  </script>
+</body>
+</html>
