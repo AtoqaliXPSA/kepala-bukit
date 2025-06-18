@@ -3,12 +3,6 @@ async function login() {
   const password = document.getElementById("password").value.trim();
   const msg = document.getElementById("msg");
 
-  if (!username || !password) {
-    msg.textContent = "⚠️ Sila isi semua ruangan.";
-    msg.style.color = "orange";
-    return;
-  }
-
   try {
     const res = await fetch('/login', {
       method: 'POST',
@@ -18,15 +12,14 @@ async function login() {
 
     const data = await res.json();
 
-    if (data.success) {
+    if (res.ok && data.success) {
       localStorage.setItem("user", username);
       window.location.href = '/dashboard.html';
     } else {
-      msg.textContent = data.message || '❌ Login gagal.';
-      msg.style.color = "red";
+      msg.textContent = data.message || data.error || '❌ Login gagal';
     }
   } catch (err) {
-    msg.textContent = "❌ Ralat sambungan ke server.";
-    msg.style.color = "red";
+    console.error('Login Error:', err);
+    msg.textContent = '❌ Ralat sambungan ke server';
   }
 }
