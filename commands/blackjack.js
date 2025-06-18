@@ -6,7 +6,12 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('blackjack')
     .setDescription('Main blackjack dengan pertaruhan!')
-    .setMinValue(MIN_BET),
+    .addIntegerOption(option => option
+    .setName('bet')
+    .setDescription('Jumlah pertaruhan')
+    .setRequired(true)
+    .setMinValue(MIN_BET)
+                      ),
 
   async execute(interaction) {
     await interaction.deferReply();
