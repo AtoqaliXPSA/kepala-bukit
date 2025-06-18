@@ -37,7 +37,7 @@
 
     app.post('/login', loginLimiter, (req, res) => {
       const { username, password } = req.body;
-      const users = JSON.parse(fs.readFileSync('./userDB.json'));
+      const users = JSON.parse(fs.readFileSync('data/userDB.json'));
 
       const user = users.find(u => u.username === username);
       if (!user) return res.status(401).json({ error: '❌ Username tidak wujud' });
