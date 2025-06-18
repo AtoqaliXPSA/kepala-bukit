@@ -11,12 +11,12 @@ module.exports = {
     const sentMessage = await message.reply('🏓 Mengira ping...');
 
     const ping = Date.now() - start;
-    const apiPing = client.ws.ping;
+    const apiPing = Math.round(message.client.ws.ping);
 
     const embed = new EmbedBuilder()
       .setTitle('🏓 Pong!')
-      .setDescription(`**Bot Ping:** ${api}ms`)
-      .setColor(0x00AEFF)
+      .setDescription(`**Bot Ping:** ${apiPing}ms`)
+      .setColor('Blue')
       .setTimestamp();
 
     await sentMessage.edit({ content: '', embeds: [embed] });
