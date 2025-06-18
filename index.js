@@ -27,8 +27,7 @@ exec("sh push.sh", (err, stdout, stderr) => {
 });
 
 
-const keepAlive = require('./keepAlive');
-keepAlive(client); // Hidupkan bot
+const keepAlive = require('./keepAlive')(client); // Hidupkan bot
 
 client.commands = new Collection();         // Slash Commands
 client.messageCommands = new Collection();  // Message Commands
