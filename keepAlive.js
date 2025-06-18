@@ -35,10 +35,7 @@ function keepAlive(client) {
     next();
   });
 
-  // Static files (themeToggle.js, etc.)
-  app.use(express.static('website'));
-
-  // Route untuk paparkan index.html dengan data dinamik
+  // ✅ ROUTE / (custom template logic MESTI DULU)
   app.get('/', (req, res) => {
     const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
     const htmlPath = path.join(__dirname, 'website', 'index.html');
@@ -59,9 +56,10 @@ function keepAlive(client) {
     });
   });
 
-  app.use(express.static('website'));
-  
-  // API status
+  // ✅ static file untuk script seperti /themeToggle.js
+  app.use(express.static(path.join(__dirname, 'website')));
+
+  // ✅ API
   app.get('/status.json', (req, res) => {
     const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
     res.json({
