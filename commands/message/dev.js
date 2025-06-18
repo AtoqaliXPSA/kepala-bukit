@@ -20,7 +20,7 @@ module.exports = {
       .setTitle('🛠️ Dev Panel')
       .addFields(
         { name: '***📊 Status Bot***', value: 'Klik untuk dapat status di DM', inline: true },
-        { name: '***🚀 Auto Deploy***', value: 'Klik untuk reset melalui `reset.js`', inline: true }
+        { name: '***🚀 Auto Deploy***', value: 'Klik untuk deploy semua commands', inline: true }
       )
       .setColor('Blue')
       .setTimestamp();
