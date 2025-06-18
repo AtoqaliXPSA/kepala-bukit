@@ -1,4 +1,12 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
+// Tiada perubahan besar
+// devcoins.js hanya guna reply dengan button ➕ ➖
+
+const {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder
+} = require('discord.js');
 const User = require('../../models/User');
 const adminId = process.env.ADMIN_ID;
 
@@ -6,7 +14,7 @@ module.exports = {
   name: 'devcoins',
   description: 'Tambah atau tolak coins pengguna (admin sahaja)',
 
-  async execute(message, args, client) {
+  async execute(message, args) {
     if (message.author.id !== adminId) {
       return message.reply('❌ Anda tiada kebenaran.');
     }

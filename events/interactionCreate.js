@@ -1,4 +1,4 @@
-const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder } = require('discord.js');
+const {ModalBuilder, TextInputBuilder,  TextInputStyle, ActionRowBuilder, EmbedBuilder } = require('discord.js');
 const User = require('../models/User');
 const adminId = process.env.ADMIN_ID;
 
@@ -7,13 +7,15 @@ module.exports = {
   async execute(interaction) {
     if (!interaction.isButton() && !interaction.isModalSubmit()) return;
 
-    // ✅ Modal untuk tambah/tolak
-    if (interaction.isButton()) {
-      if (interaction.user.id !== adminId) {
-        return interaction.reply({ content: '❌ Akses terhad untuk admin sahaja.', ephemeral: true });
-      }
+    // ⛔ Hanya admin
+    if (interaction.user.id !== adminId)
+      return interaction.reply({ content: '❌ Admin sahaja.', flags : 64 });
 
+    // 🔘 Bila tekan button ➕ ➖
+    if (interaction.isButton()) {
       const [action, userId] = interaction.customId.split('_');
+      if (!['add', 'remove'].includes(action)) return;
+
       const modal = new ModalBuilder()
         .setCustomId(`modal_${action}_${userId}`)
         .setTitle(action === 'add' ? 'Tambah Coins' : 'Tolak Coins');
@@ -27,51 +29,37 @@ module.exports = {
 
       const row = new ActionRowBuilder().addComponents(input);
       modal.addComponents(row);
-
-      try {
-        await interaction.showModal(modal);
-      } catch (error) {
-        console.error('Gagal papar modal:', error);
-        if (!interaction.replied && !interaction.deferred) {
-          return interaction.reply({ content: '❌ Gagal papar modal. Sila cuba semula.', ephemeral: true });
-        }
-      }
+      return await interaction.showModal(modal);
     }
 
-    // ✅ Proses input modal
+    // 📥 Bila hantar modal
     if (interaction.isModalSubmit()) {
       const [_, action, userId] = interaction.customId.split('_');
       const amount = parseInt(interaction.fields.getTextInputValue('amount'));
-
-      if (interaction.user.id !== adminId) {
-        return interaction.reply({ content: '❌ Akses ditolak.', ephemeral: true });
+      if (isNaN(amount)) {
+        return interaction.reply({ content: '❌ Jumlah tidak sah.', flags : 64 });
       }
 
-      if (isNaN(amount) || amount < 0) {
-        return interaction.reply({ content: '❌ Jumlah tidak sah. Gunakan nombor positif.', ephemeral: true });
-      }
-
-      const targetData = await User.findOne({ userId });
-      if (!targetData) {
-        return interaction.reply({ content: '❌ Data pengguna tiada.', ephemeral: true });
+      const userData = await User.findOne({ userId });
+      if (!userData) {
+        return interaction.reply({ content: '❌ Data pengguna tiada.', flags : 64 });
       }
 
       if (action === 'add') {
-        targetData.balance += amount;
+        userData.balance += amount;
       } else if (action === 'remove') {
-        targetData.balance -= amount;
-        if (targetData.balance < 0) targetData.balance = 0;
+        userData.balance -= amount;
+        if (userData.balance < 0) userData.balance = 0;
       }
 
-      await targetData.save();
+      await userData.save();
 
       const embed = new EmbedBuilder()
         .setTitle('✅ Coins Dikemaskini')
-        .setDescription(`**${action === 'add' ? 'Tambah' : 'Tolak'} ${amount} coins** kepada <@${userId}>.\n💰 Baki sekarang: **${targetData.balance}**`)
-        .setColor(action === 'add' ? 'Green' : 'Red')
-        .setTimestamp();
+        .setDescription(`**${action === 'add' ? 'Tambah' : 'Tolak'} ${amount} coins** kepada <@${userId}>.\nBaki sekarang: **${userData.balance}**`)
+        .setColor(action === 'add' ? 'Green' : 'Red');
 
-      await interaction.reply({ embeds: [embed] });
+      return interaction.reply({ embeds: [embed] });
     }
   }
 };

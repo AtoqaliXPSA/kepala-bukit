@@ -1,13 +1,7 @@
-const {
-  EmbedBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle
 } = require('discord.js');
 const os = require('os');
 const moment = require('moment');
-const User = require('../../models/User');
-const ms = require('ms');
 const { exec } = require('child_process');
 
 module.exports = {
