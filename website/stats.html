@@ -1,63 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Status Bot</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: monospace;
       background: #111;
       color: #0f0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .container {
-      background: #1a1a1a;
+      font-family: Arial, sans-serif;
+      text-align: center;
       padding: 2rem;
-      border: 2px solid #0f0;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 500px;
     }
 
     h1 {
-      text-align: center;
-      margin-bottom: 1.5rem;
+      color: #0f0;
+      margin-bottom: 1rem;
     }
 
-    .stat-line {
-      margin: 0.3rem 0;
+    .stat {
+      margin: 1rem 0;
+      font-size: 1.2rem;
     }
 
-    .label {
-      color: #0ff;
+    button {
+      margin-top: 2rem;
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      background: #0f0;
+      color: #111;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
 
-    a.logout {
-      display: block;
-      margin-top: 1rem;
-      color: #f55;
-      text-align: center;
-      text-decoration: underline;
+    button:hover {
+      background: #1fff1f;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Status Bot</h1>
-    <div class="stat-line"><span class="label">⏱️ Uptime:</span> {{uptime}}</div>
-    <div class="stat-line"><span class="label">📶 Ping:</span> {{ping}} ms</div>
-    <div class="stat-line"><span class="label">🧠 RAM Digunakan:</span> {{ram}} MB</div>
-    <div class="stat-line"><span class="label">⚙️ Load Average:</span> {{loadavg}}</div>
-    <div class="stat-line"><span class="label">🌐 Servers:</span> {{servers}}</div>
-    <div class="stat-line"><span class="label">👥 Users:</span> {{users}}</div>
-    <div class="stat-line"><span class="label">🛠️ Owner:</span> {{owner}}</div>
-    <a class="logout" href="/dashboard.html">Keluar</a>
-  </div>
+  <h1>📊 Status Bot</h1>
+
+  <div class="stat">⏱️ Uptime: <span id="uptime">...</span></div>
+  <div class="stat">📶 Ping: <span id="ping">...</span></div>
+  <div class="stat">🌐 Servers: <span id="servers">...</span></div>
+  <div class="stat">👥 Users: <span id="users">...</span></div>
+  <div class="stat">💾 RAM: <span id="ram">...</span> MB</div>
+  <div class="stat">📈 Load Avg: <span id="loadavg">...</span></div>
+  <div class="stat">👑 Owner: <span id="owner">AtoqaliXPSA</span></div>
+
+  <button onclick="window.location.href='/dashboard.html'">← Kembali</button>
+
+  <script src="/stats.js"></script>
 </body>
 </html>
