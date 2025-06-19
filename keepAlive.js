@@ -120,7 +120,7 @@ function keepAlive(client) {
   });
 
   app.get('/stats', checkAuth, (req, res) => {
-    const uptimeSec = Math.floor((Date.now() - startTime) / 1000); // ✅ Diperlukan di sini
+    const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
     const htmlPath = path.join(__dirname, 'website', 'stats.html');
 
     fs.readFile(htmlPath, 'utf8', (err, html) => {
@@ -139,7 +139,7 @@ function keepAlive(client) {
     });
   });
 
-
+  // 👇 LETAK static selepas route
   app.use(express.static(path.join(__dirname, 'website')));
 
   app.get('/status.json', (req, res) => {
