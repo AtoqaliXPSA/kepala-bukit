@@ -4,7 +4,7 @@ async function login() {
   const password = document.getElementById("password").value.trim();
   const msg = document.getElementById("msg");
   document.getElementById("loginBtn").addEventListener("click", login);
-  const registerLink = document.getElementById("register-link
+  const registerLink = document.getElementById("register-link");
                                                
 
   const res = await fetch('/login', {
