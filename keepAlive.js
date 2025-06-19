@@ -119,8 +119,9 @@ function keepAlive(client) {
     next();
   });
 
-    app.get('/stats', checkAuth, (req, res) => {
-      const htmlPath = path.join(__dirname, 'website', 'stats.html');
+  app.get('/stats', checkAuth, (req, res) => {
+    const uptimeSec = Math.floor((Date.now() - startTime) / 1000); // ✅ Diperlukan di sini
+    const htmlPath = path.join(__dirname, 'website', 'stats.html');
 
     fs.readFile(htmlPath, 'utf8', (err, html) => {
       if (err) return res.status(500).send('⚠️ HTML Error');
@@ -137,6 +138,7 @@ function keepAlive(client) {
       res.send(html);
     });
   });
+
 
   app.use(express.static(path.join(__dirname, 'website')));
 
