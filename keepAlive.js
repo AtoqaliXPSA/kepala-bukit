@@ -21,7 +21,15 @@ function keepAlive(client) {
   const startTime = Date.now();
 
   app.set('trust proxy', 1);
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          "script-src-attr": ["'unsafe-inline'"]
+        }
+      }
+    })
+  );
   app.use(express.json());
 
   // Global rate limiter
