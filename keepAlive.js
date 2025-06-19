@@ -22,7 +22,7 @@ function keepAlive(client) {
 
   function checkAuth(req, res, next) {
     if (req.session && req.session.user) return next();
-    res.redirect('/login.html'); // atau res.status(401).send('Unauthorized')
+    res.redirect('/stats.html'); // atau res.status(401).send('Unauthorized')
   }
 
 
