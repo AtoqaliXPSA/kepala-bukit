@@ -63,7 +63,7 @@ function keepAlive(client) {
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI, // letak dalam .env
+      mongoUrl: process.env.MONGODB_URI, // letak dalam .env
       collectionName: 'sessions',
     }),
     cookie: {
