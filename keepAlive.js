@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const bcrypt = require('bcrypt');
 const os = require('os');
 const fs = require('fs');
+const session = require('express-session');
 const path = require('path');
 
 function formatDuration(seconds) {
@@ -38,6 +39,15 @@ function keepAlive(client) {
     max: 30,
     message: { error: '🚫 Too many requests. Try again later.' }
   }));
+
+  // Session middleware
+  app.use(session({
+    secret: 'superSecretSessionKey', // ganti dengan key sebenar dan rahsiakan!
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } // true jika guna HTTPS
+  }));
+
 
   // Login limiter
   const loginLimiter = rateLimit({
@@ -101,7 +111,7 @@ function keepAlive(client) {
     next();
   });
 
-  app.get('/', (req, res) => {
+  app.get('/stats', (req, res) => {
     const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
     const htmlPath = path.join(__dirname, 'website', 'index.html');
 
