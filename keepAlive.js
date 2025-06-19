@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const os = require('os');
 const fs = require('fs');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const path = require('path');
 
 function formatDuration(seconds) {
@@ -53,6 +54,21 @@ function keepAlive(client) {
     cookie: {
       secure: false, // set true kalau HTTPS
       maxAge: 3600000 // 1 jam
+    }
+  }));
+
+  // MangoDB session store
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'secret-key-here',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI, // letak dalam .env
+      collectionName: 'sessions',
+    }),
+    cookie: {
+      secure: false, // true kalau HTTPS
+      maxAge: 1000 * 60 * 60 // 1 jam
     }
   }));
 
