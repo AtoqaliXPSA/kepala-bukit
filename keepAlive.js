@@ -72,7 +72,6 @@ function keepAlive(client) {
     }
   }));
 
-
   // Login limiter
   const loginLimiter = rateLimit({
     windowMs: 10 * 60 * 1000,
@@ -165,6 +164,7 @@ function keepAlive(client) {
       timestamp: new Date().toISOString(),
       uptime_seconds: uptimeSec,
       uptime_human: formatDuration(uptimeSec),
+      ping: client.ws.ping,
       guilds: client.guilds.cache.size,
       users: client.users.cache.size,
       memory_usage_mb: +(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2),
