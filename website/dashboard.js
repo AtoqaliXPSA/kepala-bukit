@@ -1,17 +1,29 @@
-// dashboard.js
+// === dashboard.js ===
+document.addEventListener("DOMContentLoaded", () => {
 
-const user = localStorage.getItem("user");
-if (!user) {
-  window.location.href = "/index.html"; // redirect ke login jika tiada user
-} else {
+  // 1. Semak sesi
+  const user = sessionStorage.getItem("user");
+  if (!user) {
+    window.location.href = "/login.html";   // atau "/index.html" jika itu halaman login anda
+    return;                                 // hentikan skrip selanjutnya
+  }
   document.getElementById("user").textContent = user;
-}
 
-document.getElementById("statusBtn").addEventListener("click", () => {
-  window.location.href = "/stats"; // bukannya "/"
-});
+  // 2. Butang Status
+  const statusBtn = document.getElementById("statusBtn");
+  if (statusBtn) {
+    statusBtn.addEventListener("click", () => {
+      window.location.href = "/stats";      // route dinamik
+    });
+  }
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.removeItem("user");
-  window.location.href = "/index.html";
+  // 3. Butang Logout
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      sessionStorage.removeItem("user");
+      window.location.href = "/login.html"; // balik ke login
+    });
+  }
+
 });
