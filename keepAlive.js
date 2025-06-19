@@ -42,10 +42,13 @@ function keepAlive(client) {
 
   // Session middleware
   app.use(session({
-    secret: 'superSecretSessionKey', // ganti dengan key sebenar dan rahsiakan!
+    secret: 'secret-key-here',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } // true jika guna HTTPS
+    cookie: {
+      secure: false, // set true kalau HTTPS
+      maxAge: 3600000 // 1 jam
+    }
   }));
 
 
@@ -111,9 +114,8 @@ function keepAlive(client) {
     next();
   });
 
-  app.get('/stats', (req, res) => {
-    const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
-    const htmlPath = path.join(__dirname, 'website', 'index.html');
+    app.get('/stats', checkAuth, (req, res) => {
+      const htmlPath = path.join(__dirname, 'website', 'stats.html');
 
     fs.readFile(htmlPath, 'utf8', (err, html) => {
       if (err) return res.status(500).send('⚠️ HTML Error');
