@@ -2,5 +2,9 @@
   {
     "username": "admin",
     "password": "test"
+  },
+  {
+    "username": "admin1",
+    "password": "$2b$10$2LL7VmmJ/Pqwb.VffF3dJOZWcgWb8lmdtRUjl6keafnIRqcByFBjy"
   }
 ]
