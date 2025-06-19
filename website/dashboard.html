@@ -36,21 +36,25 @@
 <body>
   <h1>Selamat Datang, <span id="user"></span>!</h1>
 
-  <button onclick="window.location.href='/'">Lihat Status Bot</button>
-  <button onclick="logout()">Logout</button>
+  <button id="statusBtn">Lihat Status Bot</button>
+  <button id="logoutBtn">Logout</button>
 
   <script>
     const user = localStorage.getItem("user");
     if (!user) {
-      window.location.href = "/index.html"; // redirect kalau belum login
+      window.location.href = "/index.html";
     } else {
       document.getElementById("user").textContent = user;
     }
 
-    function logout() {
+    document.getElementById("statusBtn").addEventListener("click", () => {
+      window.location.href = "/";
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("user");
       window.location.href = "/index.html";
-    }
+    });
   </script>
 </body>
 </html>
