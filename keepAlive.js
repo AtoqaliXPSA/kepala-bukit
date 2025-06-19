@@ -1,4 +1,3 @@
-// keepAlive.js
 // === keepAlive.js ===
 const express = require('express');
 const rateLimit = require('express-rate-limit');
@@ -20,6 +19,12 @@ function formatDuration(seconds) {
 function keepAlive(client) {
   const app = express();
   const startTime = Date.now();
+
+  function checkAuth(req, res, next) {
+    if (req.session && req.session.user) return next();
+    res.redirect('/login.html'); // atau res.status(401).send('Unauthorized')
+  }
+
 
   app.set('trust proxy', 1);
   app.use(
