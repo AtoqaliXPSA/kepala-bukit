@@ -1,17 +1,27 @@
 // === website/stats.js ===
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const res = await fetch('/status.json');
-    const data = await res.json();
-
-    document.getElementById("uptime").textContent = data.uptime_human;
-    document.getElementById("ping").textContent = data.ping || "N/A"; // kalau tiada
-    document.getElementById("servers").textContent = data.guilds || "0";
-    document.getElementById("users").textContent = data.users || "0";
-    document.getElementById("ram").textContent = data.memory_usage_mb || "0";
-    document.getElementById("loadavg").textContent = data.load_average?.join(', ') || "0, 0, 0";
-  } catch (err) {
-    alert("❌ Gagal memuatkan status bot.");
-    console.error(err);
+const ramChart = new Chart(document.getElementById('ramChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Digunakan (MB)', 'Baki (anggaran)'],
+    datasets: [{
+      data: [0, 0], // akan diisi kemudian
+      backgroundColor: ['#0f0', '#333']
+    }]
+  },
+  options: {
+    plugins: { legend: { labels: { color: '#0f0' } } }
   }
 });
+
+// Update nilai RAM
+setInterval(async () => {
+  const res = await fetch('/status.json');
+  const data = await res.json();
+  const used = data.memory_usage_mb;
+  const total = 512; // anggaran RAM bot
+  const free = Math.max(total - used, 0);
+
+  ramChart.data.datasets[0].data = [used, free];
+  ramChart.update();
+}, 3000); // Update setiap 3 saat
+
