@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f0">
   <style>
     :root {
       --bg: #111;
@@ -35,7 +36,8 @@
       align-items: center;
       padding: 1rem 2rem;
       border-bottom: 1px solid var(--glow);
-      position: relative;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     .brand {
@@ -50,6 +52,7 @@
       align-items: center;
       gap: 0.7rem;
       position: relative;
+      flex-wrap: wrap;
     }
 
     .topbar button {
@@ -98,6 +101,7 @@
       justify-content: center;
       align-items: center;
       height: 80vh;
+      padding: 1rem;
     }
 
     .welcome-box {
@@ -108,15 +112,53 @@
       animation: fadeIn 1s ease-in-out;
       box-shadow: 0 0 20px var(--glow);
       min-width: 280px;
+      max-width: 90vw;
     }
 
     .welcome-box h1 {
       margin-bottom: 1rem;
+      font-size: 1.8rem;
+    }
+
+    .welcome-box p {
+      font-size: 1.2rem;
+      margin: 0;
+      font-weight: bold;
     }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .topbar-right {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .topbar button {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+      }
+
+      .brand {
+        font-size: 1.3rem;
+      }
+
+      .welcome-box h1 {
+        font-size: 1.5rem;
+      }
+
+      .welcome-box p {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
