@@ -7,6 +7,8 @@ const os = require('os');
 const fs = require('fs');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const http = require('http');
+const WebSocket = require('ws');
 const path = require('path');
 
 function formatDuration(seconds) {

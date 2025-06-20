@@ -1,59 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Status Bot</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      body {
-        background: #111;
-        color: #0f0;
-        font-family: Arial, sans-serif;
-        text-align: center;
-        padding: 2rem;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📊 Bot Stats Real-time</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: #111;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    .stats {
+      margin-bottom: 2rem;
+      font-size: 1.2rem;
+    }
+    canvas {
+      background: #222;
+      border: 1px solid #0f0;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Bot Stats Real-time</h1>
+  <div class="stats">
+    <p>⏱️ Uptime: <span id="uptime">-</span></p>
+    <p>📡 Ping: <span id="ping">-</span></p>
+    <p>🧑‍🤝‍🧑 Users: <span id="users">-</span></p>
+    <p>🌐 Servers: <span id="servers">-</span></p>
+    <p>💾 RAM: <span id="ram">-</span> MB</p>
+    <p>⚙️ CPU Load: <span id="load">-</span></p>
+  </div>
+  <canvas id="pingChart" width="400" height="200"></canvas>
 
-      h1 {
-        color: #0f0;
-        margin-bottom: 1rem;
-      }
-
-      .stat {
-        margin: 1rem 0;
-        font-size: 1.2rem;
-      }
-
-      button {
-        margin-top: 2rem;
-        padding: 0.5rem 1.5rem;
-        font-size: 1rem;
-        background: #0f0;
-        color: #111;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      button:hover {
-        background: #1fff1f;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>📊 Status Bot</h1>
-
-    <canvas id="ramChart" width="300" height="150"></canvas>
-
-    <div class="stat">Uptime: <span id="uptime">...</span></div>
-    <div class="stat">Ping: <span id="ping">...</span></div>
-    <div class="stat">Servers: <span id="servers">...</span></div>
-    <div class="stat">Users: <span id="users">...</span></div>
-    <div class="stat">RAM: <span id="ram">...</span> MB</div>
-    <div class="stat">Load Avg: <span id="loadavg">...</span></div>
-    <div class="stat">Owner: <span id="owner">AtoqaliXPSA</span></div>
-
-    <button onclick="window.location.href='/dashboard.html'">Kembali</button>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  </body>
+  <script src="stats.js"></script>
+</body>
 </html>
