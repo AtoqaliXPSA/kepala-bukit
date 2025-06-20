@@ -1,108 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>📊 Bot Stats Real-time</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      background: #111;
-      color: #0f0;
-      font-family: 'Courier New', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
+const uptimeEl = document.getElementById('uptime');
+const pingEl = document.getElementById('ping');
+const usersEl = document.getElementById('users');
+const serversEl = document.getElementById('servers');
+const ramEl = document.getElementById('ram');
+const loadEl = document.getElementById('load');
+
+const ctx = document.getElementById('pingChart').getContext('2d');
+const pingChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: [],
+    datasets: [{
+      label: 'Ping (ms)',
+      data: [],
+      borderColor: '#0f0',
+      backgroundColor: 'rgba(0,255,0,0.2)',
+      tension: 0.3
+    }]
+  },
+  options: {
+    scales: {
+      x: { ticks: { color: '#0f0' } },
+      y: { ticks: { color: '#0f0' } }
+    },
+    plugins: {
+      legend: { labels: { color: '#0f0' } }
     }
-    canvas {
-      background: #222;
-      border: 1px solid #0f0;
-      border-radius: 10px;
-      padding: 1rem;
-    }
-  </style>
-</head>
-<body>
-  <h1>📊 Bot Stats Real-time</h1>
-  <div class="stats">
-    <p>⏱️ Uptime: <span id="uptime">-</span></p>
-    <p>📡 Ping: <span id="ping">-</span></p>
-    <p>🧑‍🤝‍🧑 Users: <span id="users">-</span></p>
-    <p>🌐 Servers: <span id="servers">-</span></p>
-    <p>💾 RAM: <span id="ram">-</span> MB</p>
-    <p>⚙️ CPU Load: <span id="load">-</span></p>
-  </div>
-  <canvas id="pingChart" width="400" height="200"></canvas>
+  }
+});
 
-  <!-- ✅ Chart.js dimuat dulu -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+function updateStats(data) {
+  uptimeEl.textContent = data.uptime_human;
+  pingEl.textContent = data.ping + 'ms';
+  usersEl.textContent = data.users;
+  serversEl.textContent = data.guilds;
+  ramEl.textContent = data.memory_usage_mb;
+  loadEl.textContent = data.load_average.join(', ');
 
-  <!-- ✅ Skrip dimuat selepas itu -->
-  <script>
-    const uptimeEl = document.getElementById('uptime');
-    const pingEl = document.getElementById('ping');
-    const usersEl = document.getElementById('users');
-    const serversEl = document.getElementById('servers');
-    const ramEl = document.getElementById('ram');
-    const loadEl = document.getElementById('load');
+  const time = new Date().toLocaleTimeString();
+  pingChart.data.labels.push(time);
+  pingChart.data.datasets[0].data.push(data.ping);
 
-    const ctx = document.getElementById('pingChart').getContext('2d');
-    const pingChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Ping (ms)',
-          data: [],
-          borderColor: '#0f0',
-          backgroundColor: 'rgba(0,255,0,0.2)',
-          tension: 0.3
-        }]
-      },
-      options: {
-        scales: {
-          x: { ticks: { color: '#0f0' } },
-          y: { ticks: { color: '#0f0' } }
-        },
-        plugins: {
-          legend: { labels: { color: '#0f0' } }
-        }
-      }
-    });
+  if (pingChart.data.labels.length > 20) {
+    pingChart.data.labels.shift();
+    pingChart.data.datasets[0].data.shift();
+  }
 
-    function updateStats(data) {
-      uptimeEl.textContent = data.uptime_human;
-      pingEl.textContent = data.ping + 'ms';
-      usersEl.textContent = data.users;
-      serversEl.textContent = data.guilds;
-      ramEl.textContent = data.memory_usage_mb;
-      loadEl.textContent = data.load_average.join(', ');
+  pingChart.update();
+}
 
-      const time = new Date().toLocaleTimeString();
-      pingChart.data.labels.push(time);
-      pingChart.data.datasets[0].data.push(data.ping);
+async function fetchStats() {
+  try {
+    const res = await fetch('/status.json');
+    const data = await res.json();
+    updateStats(data);
+  } catch (err) {
+    console.error('❌ Gagal fetch stats:', err);
+  }
+}
 
-      if (pingChart.data.labels.length > 20) {
-        pingChart.data.labels.shift();
-        pingChart.data.datasets[0].data.shift();
-      }
-
-      pingChart.update();
-    }
-
-    async function fetchStats() {
-      try {
-        const res = await fetch('/status.json');
-        const data = await res.json();
-        updateStats(data);
-      } catch (err) {
-        console.error('❌ Gagal fetch stats:', err);
-      }
-    }
-
-    setInterval(fetchStats, 5000);
-    fetchStats();
-  </script>
-</body>
-</html>
+setInterval(fetchStats, 5000);
+fetchStats();
