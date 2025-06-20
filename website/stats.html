@@ -54,10 +54,14 @@
       max-height: 280px;
     }
 
-    .refresh-btn {
-      display: block;
-      margin: 1rem auto;
-      padding: 0.6rem 1.4rem;
+    .buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .buttons button {
+      padding: 0.7rem 1.4rem;
       font-size: 1rem;
       background: var(--text);
       color: var(--bg);
@@ -67,7 +71,7 @@
       transition: transform 0.2s ease;
     }
 
-    .refresh-btn:hover {
+    .buttons button:hover {
       transform: scale(1.05);
       opacity: 0.9;
     }
@@ -81,9 +85,13 @@
         font-size: 0.75rem;
       }
 
-      .refresh-btn {
+      .buttons {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .buttons button {
         width: 100%;
-        font-size: 1rem;
       }
     }
   </style>
@@ -102,7 +110,9 @@
 
   <canvas id="pingChart"></canvas>
 
-  <button class="refresh-btn" id="refreshBtn">🔄 Refresh</button>
+  <div class="buttons">
+    <button id="backBtn">🔙 Kembali</button>
+  </div>
 
   <script>
     const uptimeEl = document.getElementById('uptime');
@@ -173,10 +183,10 @@
       }
     }
 
-    // Manual refresh button
-    document.getElementById('refreshBtn').onclick = fetchStats;
+    document.getElementById('backBtn').onclick = () => {
+      window.location.href = '/dashboard.html';
+    };
 
-    // Auto fetch setiap 5 saat
     fetchStats();
     setInterval(fetchStats, 5000);
   </script>
