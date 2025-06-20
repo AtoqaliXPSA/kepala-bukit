@@ -47,14 +47,43 @@
     }
 
     canvas {
-      margin-top: 2rem;
+      display: block;
+      margin: 2rem auto 1rem;
       width: 100%;
-      max-height: 300px;
+      max-width: 100%;
+      max-height: 280px;
+    }
+
+    .refresh-btn {
+      display: block;
+      margin: 1rem auto;
+      padding: 0.6rem 1.4rem;
+      font-size: 1rem;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .refresh-btn:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
     }
 
     @media (max-width: 500px) {
       h1 {
         font-size: 1.4rem;
+      }
+
+      .label {
+        font-size: 0.75rem;
+      }
+
+      .refresh-btn {
+        width: 100%;
+        font-size: 1rem;
       }
     }
   </style>
@@ -71,7 +100,9 @@
     <div class="box"><div class="label">⚙️ CPU Load</div><div id="load">-</div></div>
   </div>
 
-  <canvas id="chart" height="100"></canvas>
+  <canvas id="pingChart"></canvas>
+
+  <button class="refresh-btn" id="refreshBtn">🔄 Refresh</button>
 
   <script>
     const uptimeEl = document.getElementById('uptime');
@@ -81,68 +112,73 @@
     const ramEl = document.getElementById('ram');
     const loadEl = document.getElementById('load');
 
-    const ctx = document.getElementById('chart').getContext('2d');
+    const ctx = document.getElementById('pingChart').getContext('2d');
+    const pingChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Ping (ms)',
+          data: [],
+          borderColor: '#0f0',
+          backgroundColor: 'rgba(0,255,0,0.1)',
+          tension: 0.3,
+          pointRadius: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            ticks: { color: '#0f0' },
+            grid: { color: '#222' }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#0f0' },
+            grid: { color: '#222' }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: '#0f0' } }
+        }
+      }
+    });
 
-    fetch('/status.json')
-      .then(res => res.json())
-      .then(data => {
+    async function fetchStats() {
+      try {
+        const res = await fetch('/status.json');
+        const data = await res.json();
+
         uptimeEl.textContent = data.uptime_human;
-        pingEl.textContent = data.ping + 'ms';
+        pingEl.textContent = data.ping + ' ms';
         usersEl.textContent = data.users;
         serversEl.textContent = data.guilds;
         ramEl.textContent = data.memory_usage_mb + ' MB';
         loadEl.textContent = data.load_average.join(', ');
 
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['RAM (MB)', 'Servers', 'Users', 'Ping (ms)', 'Load'],
-            datasets: [{
-              label: 'Bot Stats',
-              data: [
-                data.memory_usage_mb,
-                data.guilds,
-                data.users,
-                data.ping,
-                data.load_average[0]
-              ],
-              backgroundColor: [
-                '#0f0',
-                '#0c0',
-                '#090',
-                '#6f6',
-                '#3c3'
-              ],
-              borderRadius: 8
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: { color: '#0f0' },
-                grid: { color: '#333' }
-              },
-              x: {
-                ticks: { color: '#0f0' },
-                grid: { color: '#333' }
-              }
-            },
-            plugins: {
-              legend: {
-                labels: {
-                  color: '#0f0'
-                }
-              }
-            }
-          }
-        });
-      })
-      .catch(err => {
+        const time = new Date().toLocaleTimeString();
+        pingChart.data.labels.push(time);
+        pingChart.data.datasets[0].data.push(data.ping);
+
+        if (pingChart.data.labels.length > 20) {
+          pingChart.data.labels.shift();
+          pingChart.data.datasets[0].data.shift();
+        }
+
+        pingChart.update();
+      } catch (err) {
         console.error('❌ Gagal fetch status:', err);
-      });
+      }
+    }
+
+    // Manual refresh button
+    document.getElementById('refreshBtn').onclick = fetchStats;
+
+    // Auto fetch setiap 5 saat
+    fetchStats();
+    setInterval(fetchStats, 5000);
   </script>
 </body>
 </html>
