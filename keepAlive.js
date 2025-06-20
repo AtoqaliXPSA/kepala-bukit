@@ -28,17 +28,27 @@ function keepAlive(client) {
     res.redirect('/stats.html'); // atau res.status(401).send('Unauthorized')
   }
 
-
-  app.set('trust proxy', 1);
+/// helmet 
   app.use(
     helmet({
       contentSecurityPolicy: {
         directives: {
-          "script-src-attr": ["'unsafe-inline'"]
+          defaultSrc: ["'self'"],
+          scriptSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            'https://cdn.jsdelivr.net'
+          ],
+          styleSrc: [
+            "'self'",
+            "'unsafe-inline'"
+          ],
+          objectSrc: ["'none'"],
         }
       }
     })
   );
+  
   app.use(express.json());
 
   // Global rate limiter
