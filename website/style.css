@@ -11,20 +11,50 @@
   transition: opacity 0.5s ease;
 }
 
-.theme-selector {
-  text-align: center;
-  margin-top: 2rem;
+.theme-wrapper {
+  position: relative;
+}
+
+.theme-toggle-btn {
+  background: var(--button-bg);
+  color: var(--button-text);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
   font-size: 1rem;
 }
 
-.theme-selector select {
-  padding: 0.4rem;
-  font-size: 1rem;
+.theme-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--text);
-  border-radius: 5px;
+  border: 1px solid var(--glow);
+  border-radius: 6px;
+  overflow: hidden;
+  display: none;
+  z-index: 100;
+  min-width: 120px;
 }
+
+.theme-menu li {
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.theme-menu li:hover {
+  background: rgba(0,255,0,0.1);
+}
+
+.hidden {
+  display: none;
+}
+
 
 .brand-fixed {
   position: absolute;

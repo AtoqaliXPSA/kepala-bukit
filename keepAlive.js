@@ -71,7 +71,7 @@ function keepAlive(client) {
 
   // MangoDB session store
   app.use(session({
-    secret: process.env.SESSION_SECRET || 'secret-key-here',
+    secret: process.env.SESSION_SECRET || 'djbot',
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({

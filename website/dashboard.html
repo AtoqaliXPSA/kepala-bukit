@@ -23,8 +23,7 @@
 
     body {
       margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       background: var(--bg);
       color: var(--text);
       transition: background 0.3s, color 0.3s;
@@ -35,18 +34,22 @@
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
+      border-bottom: 1px solid var(--glow);
+      position: relative;
     }
 
     .brand {
       font-size: 1.5rem;
       font-weight: bold;
-      text-shadow: 0 0 8px var(--glow), 0 0 16px var(--glow);
-      letter-spacing: 2px;
+      text-shadow: 0 0 10px var(--glow);
+      color: var(--text);
     }
 
     .topbar-right {
       display: flex;
-      gap: 0.8rem;
+      align-items: center;
+      gap: 0.7rem;
+      position: relative;
     }
 
     .topbar button {
@@ -61,58 +64,60 @@
     }
 
     .topbar button:hover {
-      opacity: 0.85;
+      opacity: 0.9;
       transform: scale(1.05);
+    }
+
+    #themeMenu {
+      position: absolute;
+      top: 2.8rem;
+      right: 0;
+      background: var(--bg);
+      border: 1px solid var(--glow);
+      border-radius: 6px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: none;
+      z-index: 999;
+    }
+
+    #themeMenu li {
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      display: block;
+      white-space: nowrap;
+    }
+
+    #themeMenu li:hover {
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .main {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-top: 10vh;
+      height: 80vh;
     }
 
     .welcome-box {
-      background: rgba(0, 255, 0, 0.1);
+      padding: 2rem;
       border: 2px solid var(--glow);
-      padding: 2rem 3rem;
       border-radius: 12px;
-      box-shadow: 0 0 15px var(--glow);
       text-align: center;
-      animation: fadeIn 0.6s ease;
+      animation: fadeIn 1s ease-in-out;
+      box-shadow: 0 0 20px var(--glow);
+      min-width: 280px;
     }
 
     .welcome-box h1 {
-      margin: 0;
-      font-size: 1.6rem;
-    }
-
-    .welcome-box span {
-      color: var(--text);
-      font-weight: bold;
-      text-shadow: none;
+      margin-bottom: 1rem;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
-    .theme-selector {
-      text-align: center;
-      margin-top: 2rem;
-      font-size: 1rem;
-    }
-
-    .theme-selector select {
-      padding: 0.4rem;
-      font-size: 1rem;
-      background: var(--bg);
-      color: var(--text);
-      border: 1px solid var(--text);
-      border-radius: 5px;
-    }
-
   </style>
 </head>
 <body>
@@ -121,65 +126,76 @@
     <div class="topbar-right">
       <button id="statusBtn">Dashboard</button>
       <button id="logoutBtn">Logout</button>
+      <div class="theme-toggle">
+        <button id="themeBtn">🖥️</button>
+        <ul id="themeMenu">
+          <li data-theme="light">Light</li>
+          <li data-theme="dark">Dark</li>
+          <li data-theme="system">System</li>
+        </ul>
+      </div>
     </div>
   </div>
 
   <div class="main">
     <div class="welcome-box">
-      <h1>Selamat Datang <span id="username">user</span>!</h1>
+      <h1>Selamat Datang</h1>
+      <p id="username"></p>
     </div>
   </div>
 
-  <div class="theme-selector">
-    <label for="themeSelect">Tema: </label>
-    <select id="themeSelect">
-      <option value="system">Ikut Sistem</option>
-      <option value="light">Cerah</option>
-      <option value="dark">Gelap</option>
-    </select>
-  </div>
-
   <script>
+    // === THEME ===
     const body = document.body;
-    const themeSelect = document.getElementById("themeSelect");
+    const themeBtn = document.getElementById("themeBtn");
+    const themeMenu = document.getElementById("themeMenu");
 
-    // Tukar tema
     function applyTheme(mode) {
-      if (mode === "light") {
-        body.classList.add("light");
-      } else if (mode === "dark") {
-        body.classList.remove("light");
-      } else {
-        // Ikut sistem
-        const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-        prefersLight ? body.classList.add("light") : body.classList.remove("light");
+      body.classList.remove("light", "dark");
+      if (mode === "light") body.classList.add("light");
+      else if (mode === "dark") body.classList.add("dark");
+      else {
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (prefersDark) body.classList.add("dark");
+        else body.classList.add("light");
       }
+      themeBtn.textContent = mode === "light" ? "🌞" : mode === "dark" ? "🌙" : "🖥️";
     }
 
-    // Bila tukar dropdown
-    themeSelect.addEventListener("change", () => {
-      const selected = themeSelect.value;
-      localStorage.setItem("theme", selected);
-      applyTheme(selected);
+    themeBtn.addEventListener("click", () => {
+      themeMenu.style.display = themeMenu.style.display === "block" ? "none" : "block";
     });
 
-    // Set tema masa buka
+    document.querySelectorAll("#themeMenu li").forEach(item => {
+      item.addEventListener("click", () => {
+        const selected = item.dataset.theme;
+        localStorage.setItem("theme", selected);
+        applyTheme(selected);
+        themeMenu.style.display = "none";
+      });
+    });
+
+    // Hide menu if click outside
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".theme-toggle")) {
+        themeMenu.style.display = "none";
+      }
+    });
+
     const savedTheme = localStorage.getItem("theme") || "system";
-    themeSelect.value = savedTheme;
     applyTheme(savedTheme);
 
-    // Papar username
+    // === USER ===
     const user = sessionStorage.getItem("user");
     if (!user) window.location.href = "/login.html";
     document.getElementById("username").textContent = user;
 
-    // Logout
+    // === BUTTONS ===
     document.getElementById("logoutBtn").onclick = () => {
       sessionStorage.removeItem("user");
       window.location.href = "/login.html";
     };
 
-    // Ke /stats
     document.getElementById("statusBtn").onclick = () => {
       window.location.href = "/stats";
     };
