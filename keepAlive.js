@@ -7,8 +7,6 @@ const os = require('os');
 const fs = require('fs');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
-const http = require('http');
-const WebSocket = require('ws');
 const path = require('path');
 
 function formatDuration(seconds) {
@@ -28,6 +26,8 @@ function keepAlive(client) {
     res.redirect('/stats.html'); // atau res.status(401).send('Unauthorized')
   }
 
+  app.set('trust proxy', 1);
+  
 /// helmet 
   app.use(
     helmet({
