@@ -2,107 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>📊 Bot Stats Real-time</title>
+  <title>Status Bot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <canvas id="pingChart" style="width: 100%; height: 300px;"></canvas>
   <style>
-    body {
-      background: #111;
-      color: #0f0;
-      font-family: 'Courier New', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
+    :root {
+      --bg: #111;
+      --text: #0f0;
+      --box: #222;
+      --border: #0f0;
     }
-    canvas {
-      background: #222;
-      border: 1px solid #0f0;
-      border-radius: 10px;
+
+    body {
+      margin: 0;
       padding: 1rem;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Arial', sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .box {
+      background: var(--box);
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      text-align: center;
+      box-shadow: 0 0 10px #0f02;
+    }
+
+    .label {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    canvas {
+      margin-top: 2rem;
+      max-width: 100%;
+    }
+
+    @media (max-width: 500px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .label {
+        font-size: 0.75rem;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>📊 Bot Stats Real-time</h1>
-  <div class="stats">
-    <p> Uptime: <span id="uptime">-</span></p>
-    <p> Ping: <span id="ping">-</span></p>
-    <p> Users: <span id="users">-</span></p>
-    <p> Servers: <span id="servers">-</span></p>
-    <p> RAM: <span id="ram">-</span> MB</p>
-    <p> CPU Load: <span id="load">-</span></p>
+  <h1>Status DJKEPALABUKIT</h1>
+
+  <div class="grid">
+    <div class="box">
+      <div class="label">⏱️ Uptime</div>
+      <div>{{uptime}}</div>
+    </div>
+    <div class="box">
+      <div class="label">📡 Ping</div>
+      <div>{{ping}}</div>
+    </div>
+    <div class="box">
+      <div class="label">🧑‍🤝‍🧑 Users</div>
+      <div>{{users}}</div>
+    </div>
+    <div class="box">
+      <div class="label">🌐 Servers</div>
+      <div>{{servers}}</div>
+    </div>
+    <div class="box">
+      <div class="label">💾 RAM</div>
+      <div>{{ram}} MB</div>
+    </div>
+    <div class="box">
+      <div class="label">⚙️ CPU Load</div>
+      <div>{{loadavg}}</div>
+    </div>
   </div>
-  <canvas id="pingChart" width="200" height="50"></canvas>
 
-  <!-- ✅ Chart.js dimuat dulu -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <canvas id="chart" height="100"></canvas>
 
-  <!-- ✅ Skrip dimuat selepas itu -->
   <script>
-    const uptimeEl = document.getElementById('uptime');
-    const pingEl = document.getElementById('ping');
-    const usersEl = document.getElementById('users');
-    const serversEl = document.getElementById('servers');
-    const ramEl = document.getElementById('ram');
-    const loadEl = document.getElementById('load');
-
-    const ctx = document.getElementById('pingChart').getContext('2d');
-    const pingChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Ping (ms)',
-          data: [],
-          borderColor: '#0f0',
-          backgroundColor: 'rgba(0,255,0,0.2)',
-          tension: 0.3
-        }]
-      },
-      options: {
-        scales: {
-          x: { ticks: { color: '#0f0' } },
-          y: { ticks: { color: '#0f0' } }
-        },
-        plugins: {
-          legend: { labels: { color: '#0f0' } }
-        }
-      }
-    });
-
-    function updateStats(data) {
-      uptimeEl.textContent = data.uptime_human;
-      pingEl.textContent = data.ping + 'ms';
-      usersEl.textContent = data.users;
-      serversEl.textContent = data.guilds;
-      ramEl.textContent = data.memory_usage_mb;
-      loadEl.textContent = data.load_average.join(', ');
-
-      const time = new Date().toLocaleTimeString();
-      pingChart.data.labels.push(time);
-      pingChart.data.datasets[0].data.push(data.ping);
-
-      if (pingChart.data.labels.length > 20) {
-        pingChart.data.labels.shift();
-        pingChart.data.datasets[0].data.shift();
-      }
-
-      pingChart.update();
-    }
-
-    async function fetchStats() {
-      try {
-        const res = await fetch('/status.json');
-        const data = await res.json();
-        updateStats(data);
-      } catch (err) {
-        console.error('❌ Gagal fetch stats:', err);
-      }
-    }
-
-    setInterval(fetchStats, 5000);
-    fetchStats();
+    const ctx = document.getElementById('chart').getContext('2d');
+    fetch('/status.json')
+      .then(res => res.json())
+      .then(data => {
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['RAM (MB)', 'Servers', 'Users', 'Ping (ms)', 'Load'],
+            datasets: [{
+              label: 'Bot Stats',
+              data: [
+                data.memory_usage_mb,
+                data.guilds,
+                data.users,
+                data.ping,
+                data.load_average[0]
+              ],
+              backgroundColor: [
+                '#0f0',
+                '#0c0',
+                '#090',
+                '#6f6',
+                '#3c3'
+              ],
+              borderRadius: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  color: '#0f0'
+                },
+                grid: { color: '#333' }
+              },
+              x: {
+                ticks: { color: '#0f0' },
+                grid: { color: '#333' }
+              }
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#0f0'
+                }
+              }
+            }
+          }
+        });
+      });
   </script>
 </body>
 </html>
