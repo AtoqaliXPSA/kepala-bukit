@@ -17,6 +17,7 @@
       display: flex;
       justify-content: flex-end;
       padding: 1rem;
+      gap: 1rem;
     }
 
     .topbar button {
@@ -35,38 +36,23 @@
 
     .container {
       text-align: center;
-      padding-top: 5rem;
+      padding-top: 6rem;
     }
 
     h1 {
       margin-bottom: 2rem;
-    }
-
-    #statusBtn {
-      background: #0f0;
-      color: #111;
-      padding: 0.6rem 1.5rem;
-      margin: 1rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-
-    #statusBtn:hover {
-      background: #0c0;
     }
   </style>
 </head>
 <body>
 
   <div class="topbar">
+    <button id="statusBtn">Dashboard</button>
     <button id="logoutBtn">Logout</button>
   </div>
 
   <div class="container">
     <h1>Selamat Datang, <span id="user"></span>!</h1>
-    <button id="statusBtn">Lihat Status Bot</button>
   </div>
 
   <script src="dashboard.js"></script>
