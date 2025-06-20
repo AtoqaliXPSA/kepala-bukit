@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com""toggleTheme.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     // Simpan toggle tema dalam localStorage
     if (localStorage.getItem('theme') === 'light') {
@@ -22,7 +22,8 @@
     <div class="flex items-center gap-3">
       <button id="statusBtn" class="bg-green-500 text-black px-4 py-2 rounded hover:bg-green-600 transition">Status Bot</button>
       <button id="logoutBtn" class="bg-green-500 text-black px-4 py-2 rounded hover:bg-green-600 transition">Logout</button>
-      <button id="toggleMode" class="bg-transparent border border-green-500 px-3 py-2 rounded text-sm hover:bg-green-600 transition">🌙</button>
+      <button id="toggleMode" class="... transition duration-300">🌙</button>
+      <script src="toggleTheme.js"></script>
     </div>
   </div>
 
