@@ -1,10 +1,8 @@
 // === toggleTheme.js ===
-
 document.addEventListener("DOMContentLoaded", () => {
   const toggleBtn = document.getElementById("toggleMode");
   const html = document.documentElement;
 
-  // Fungsi untuk tukar ikon dan simpan pilihan
   const applyTheme = (mode) => {
     if (mode === "dark") {
       html.classList.add("dark");
@@ -16,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("theme", mode);
   };
 
-  // Semak dan guna tema sedia ada dari localStorage atau sistem
   const savedTheme = localStorage.getItem("theme");
   if (savedTheme) {
     applyTheme(savedTheme);
@@ -25,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     applyTheme(prefersDark ? "dark" : "light");
   }
 
-  // Bila butang ditekan, tukar tema
   toggleBtn.addEventListener("click", () => {
     const current = html.classList.contains("dark") ? "dark" : "light";
     applyTheme(current === "dark" ? "light" : "dark");
