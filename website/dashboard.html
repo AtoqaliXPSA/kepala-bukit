@@ -16,7 +16,7 @@
     body.light {
       --bg: #f3f3f3;
       --text: #111;
-      --glow: #333;
+      --glow: #222;
       --button-bg: #111;
       --button-text: #f3f3f3;
     }
@@ -24,7 +24,7 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       transition: background 0.3s, color 0.3s;
@@ -65,11 +65,6 @@
       transform: scale(1.05);
     }
 
-    #toggleMode {
-      font-size: 1.2rem;
-      padding: 0.4rem 0.9rem;
-    }
-
     .main {
       display: flex;
       justify-content: center;
@@ -78,33 +73,46 @@
     }
 
     .welcome-box {
-      padding: 2rem 3rem;
+      background: rgba(0, 255, 0, 0.1);
       border: 2px solid var(--glow);
+      padding: 2rem 3rem;
       border-radius: 12px;
+      box-shadow: 0 0 15px var(--glow);
       text-align: center;
-      color: var(--text);
-      animation: fadeSlide 1.2s ease forwards;
-      opacity: 0;
-      transform: translateY(30px);
+      animation: fadeIn 0.6s ease;
     }
 
     .welcome-box h1 {
-      font-size: 2rem;
       margin: 0;
+      font-size: 1.6rem;
     }
 
     .welcome-box span {
-      font-weight: bold;
       color: var(--text);
-      text-shadow: 0 0 5px var(--glow);
+      font-weight: bold;
+      text-shadow: none;
     }
 
-    @keyframes fadeSlide {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
     }
+
+    .theme-selector {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 1rem;
+    }
+
+    .theme-selector select {
+      padding: 0.4rem;
+      font-size: 1rem;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--text);
+      border-radius: 5px;
+    }
+
   </style>
 </head>
 <body>
@@ -113,42 +121,65 @@
     <div class="topbar-right">
       <button id="statusBtn">Dashboard</button>
       <button id="logoutBtn">Logout</button>
-      <button id="toggleMode">🌙</button>
     </div>
   </div>
 
   <div class="main">
     <div class="welcome-box">
-      <h1>Selamat Datang, <span id="username"></span>!</h1>
+      <h1>Selamat Datang <span id="username">user</span>!</h1>
     </div>
   </div>
 
+  <div class="theme-selector">
+    <label for="themeSelect">Tema: </label>
+    <select id="themeSelect">
+      <option value="system">Ikut Sistem</option>
+      <option value="light">Cerah</option>
+      <option value="dark">Gelap</option>
+    </select>
+  </div>
+
   <script>
-    const toggleBtn = document.getElementById('toggleMode');
     const body = document.body;
+    const themeSelect = document.getElementById("themeSelect");
 
-    toggleBtn.addEventListener('click', () => {
-      body.classList.toggle('light');
-      const isLight = body.classList.contains('light');
-      toggleBtn.textContent = isLight ? '🌞' : '🌙';
-      localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    });
-
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') {
-      body.classList.add('light');
-      toggleBtn.textContent = '🌞';
+    // Tukar tema
+    function applyTheme(mode) {
+      if (mode === "light") {
+        body.classList.add("light");
+      } else if (mode === "dark") {
+        body.classList.remove("light");
+      } else {
+        // Ikut sistem
+        const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+        prefersLight ? body.classList.add("light") : body.classList.remove("light");
+      }
     }
 
+    // Bila tukar dropdown
+    themeSelect.addEventListener("change", () => {
+      const selected = themeSelect.value;
+      localStorage.setItem("theme", selected);
+      applyTheme(selected);
+    });
+
+    // Set tema masa buka
+    const savedTheme = localStorage.getItem("theme") || "system";
+    themeSelect.value = savedTheme;
+    applyTheme(savedTheme);
+
+    // Papar username
     const user = sessionStorage.getItem("user");
     if (!user) window.location.href = "/login.html";
     document.getElementById("username").textContent = user;
 
+    // Logout
     document.getElementById("logoutBtn").onclick = () => {
       sessionStorage.removeItem("user");
       window.location.href = "/login.html";
     };
 
+    // Ke /stats
     document.getElementById("statusBtn").onclick = () => {
       window.location.href = "/stats";
     };
