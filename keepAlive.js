@@ -79,7 +79,7 @@ function keepAlive(client) {
       collectionName: 'sessions',
     }),
     cookie: {
-      secure: false, // true kalau HTTPS
+      secure: true, // true kalau HTTPS
       maxAge: 1000 * 60 * 60 // 1 jam
     }
   }));
