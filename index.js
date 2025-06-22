@@ -6,7 +6,7 @@ const connectToDatabase = require('./utils/database');
 const { checkCooldown , setCooldown } = require('./utils/cooldownHelper');
 const { handleSpam } = require('./Antisystem/AntiSpam');
 require('./utils/cron');
-const Jimp = require('jimp').default;
+const Jimp = require('jimp');
 
 const client = new Client({
   intents: [
