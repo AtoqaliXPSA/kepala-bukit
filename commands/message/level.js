@@ -17,7 +17,7 @@ module.exports = {
     const maxXp = level * 100;
     const rank = 1234; // Contoh, boleh kira ikut leaderboard
 
-    const avatarURL = message.author.displayAvatarURL({ extinsion: 'png', size: 512 });
+    const avatarURL = message.author.displayAvatarURL({ extension: 'png', size: 512 });
 
     const imageBuffer = await generateLevelCard({
       username: message.author.username,
