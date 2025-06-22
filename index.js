@@ -6,6 +6,7 @@ const connectToDatabase = require('./utils/database');
 const { checkCooldown , setCooldown } = require('./utils/cooldownHelper');
 const { handleSpam } = require('./Antisystem/AntiSpam');
 require('./utils/cron');
+const Jimp = require('jimp').default;
 
 const client = new Client({
   intents: [
@@ -15,20 +16,6 @@ const client = new Client({
     GatewayIntentBits.GuildVoiceStates
   ],
 });
-
-const Jimp = require('jimp').default;
-
-async function generateLevelCard(userData) {
-  const image = await Jimp.read('background.png');
-  const font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
-
-  image.print(font, 10, 10, `Username: ${userData.username}`);
-  image.print(font, 10, 50, `Level: ${userData.level}`);
-  image.print(font, 10, 90, `XP: ${userData.xp}/${userData.xpNeeded}`);
-
-  const buffer = await image.getBufferAsync(Jimp.MIME_PNG);
-  return buffer;
-}
 
 const { exec } = require("child_process");
 
