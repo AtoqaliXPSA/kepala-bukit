@@ -28,7 +28,7 @@ module.exports = {
       avatarURL,
     });
 
-    const attachment = new AttachmentBuilder(imageBuffer, { name: 'background.png' });
+    const attachment = new AttachmentBuilder(imageBuffer, { name: 'level.png' });
     message.channel.send({ files: [attachment] });
   }
 };
