@@ -14,7 +14,6 @@ module.exports = {
     interaction.client.commands.forEach(cmd => {
       embed.addFields({
         name: `/${cmd.data.name}`,
-        value: cmd.data.description || 'Tiada deskripsi.',
         inline: false
       });
     });
