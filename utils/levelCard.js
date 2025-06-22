@@ -12,7 +12,7 @@ async function generateLevelCard({ username, level, xp, maxXp, rank, avatarURL }
   const avatar = await Jimp.read(avatarURL);
   avatar.resize(128, 128);
 
-  background.composite(avatar, 30, 30);
+  background.composite(avatar, 20, 20);
   background.print(font, 180, 30, ` ${username}`);
   background.print(font, 180, 80, ` Level: ${level}`);
   background.print(font, 180, 130, ` XP: ${xp} / ${maxXp}`);
