@@ -104,7 +104,7 @@ client.on(Events.MessageCreate, async message => {
   // ✨ Auto XP
   const user = await User.findOneAndUpdate(
     { userId: message.author.id },
-    { $inc: { xp: 10 } },
+    { $inc: { xp: 1 } },
     { upsert: true, new: true }
   );
 
