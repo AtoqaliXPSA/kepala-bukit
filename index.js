@@ -5,6 +5,7 @@ const path = require('path');
 const connectToDatabase = require('./utils/database');
 const { checkCooldown , setCooldown } = require('./utils/cooldownHelper')
 const { handleSpam} = require('./Antisystem/AntiSpam')
+require('./utils/cron')
 
 const client = new Client({
   intents: [
