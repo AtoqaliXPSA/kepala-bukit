@@ -1,24 +1,59 @@
 const Jimp = require('jimp');
+const path = require('path');
 
-async function generateLevelCard(username, level, xp) {
-  const background = await Jimp.read('background.png');
+async function generateLevelCard({ username, level, xp, maxXp, rank, avatarURL }) {
+  const width = 800;
+  const height = 240;
+
+  const bg = await Jimp.read(path.join(__dirname, 'background.png'));
+  const avatar = await Jimp.read(avatarURL);
   const font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
+  const fontBold = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
 
-  const maxXp = level * 100;
-  const progress = Math.min(xp / maxXp, 1);
+  // Resize background to fit
+  bg.resize(width, height);
 
-  background.scan(50, 180, 700 * progress, 20, function (x, y, idx) {
-    this.bitmap.data[idx + 0] = 0;
-    this.bitmap.data[idx + 1] = 255;
-    this.bitmap.data[idx + 2] = 0;
-    this.bitmap.data[idx + 3] = 255;
+  // Resize avatar
+  avatar.resize(180, 180).circle();
+
+  // Letak avatar
+  bg.composite(avatar, 20, 30);
+
+  // Tulis nama
+  bg.print(fontBold, 220, 40, username);
+
+  // Tulis Rank dan XP
+  bg.print(font, 220, 100, `Rank: #${rank.toLocaleString()}`);
+  bg.print(font, 220, 140, `XP: ${xp.toLocaleString()} / ${maxXp.toLocaleString()}`);
+
+  // Tulis Level besar
+  bg.print(fontBold, 30, 210, `LVL ${level}`);
+
+  // Bar XP
+  const barX = 220;
+  const barY = 190;
+  const barWidth = 540;
+  const barHeight = 20;
+
+  const filledWidth = Math.floor((xp / maxXp) * barWidth);
+
+  // Empty bar (putih)
+  bg.scan(barX, barY, barWidth, barHeight, function (x, y, idx) {
+    this.bitmap.data[idx + 0] = 255; // R
+    this.bitmap.data[idx + 1] = 255; // G
+    this.bitmap.data[idx + 2] = 255; // B
+    this.bitmap.data[idx + 3] = 255; // A
   });
 
-  background.print(font, 50, 40, `Username: ${username}`);
-  background.print(font, 50, 90, `Level: ${level}`);
-  background.print(font, 50, 140, `XP: ${xp} / ${maxXp}`);
+  // Filled bar (biru atau hijau)
+  bg.scan(barX, barY, filledWidth, barHeight, function (x, y, idx) {
+    this.bitmap.data[idx + 0] = 50;  // R
+    this.bitmap.data[idx + 1] = 200; // G
+    this.bitmap.data[idx + 2] = 255; // B
+    this.bitmap.data[idx + 3] = 255; // A
+  });
 
-  return await background.getBufferAsync(Jimp.MIME_PNG);
+  return await bg.getBufferAsync(Jimp.MIME_PNG);
 }
 
 module.exports = generateLevelCard;
