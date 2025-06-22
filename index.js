@@ -3,9 +3,9 @@ const { Client, Collection, GatewayIntentBits, Events } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const connectToDatabase = require('./utils/database');
-const { checkCooldown , setCooldown } = require('./utils/cooldownHelper')
-const { handleSpam} = require('./Antisystem/AntiSpam')
-require('./utils/cron')
+const { checkCooldown , setCooldown } = require('./utils/cooldownHelper');
+const { handleSpam } = require('./Antisystem/AntiSpam');
+require('./utils/cron');
 
 const client = new Client({
   intents: [
@@ -26,7 +26,6 @@ exec("sh push.sh", (err, stdout, stderr) => {
   console.log("✅ Git pushed!");
   console.log(stdout || stderr);
 });
-
 
 const keepAlive = require('./keepAlive')(client); // Hidupkan bot
 
@@ -64,11 +63,11 @@ client.once(Events.ClientReady, async () => {
   client.user.setPresence({
     activities: [
       {
-        name: 'over your server 👀', // ganti dengan apa saja
-        type: 3 // 0 = Playing, 1 = Streaming, 2 = Listening, 3 = Watching, 5 = Competing
+        name: 'over your server 👀',
+        type: 3
       }
     ],
-    status: 'online' // online | idle | dnd | invisible
+    status: 'online'
   });
 });
 
@@ -97,7 +96,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
 // ✅ Message Command Handler
 client.on(Events.MessageCreate, async message => {
-  if (message.author.bot || !message.guild ) return;
+  if (message.author.bot || !message.guild) return;
 
   const prefix = process.env.PREFIX || '!';
   if (!message.content.startsWith(prefix)) return;
@@ -105,7 +104,6 @@ client.on(Events.MessageCreate, async message => {
   const args = message.content.slice(prefix.length).trim().split(/ +/);
   const cmdName = args.shift().toLowerCase();
 
-  // ✅ Dapatkan command dari nama atau alias
   let command = client.messageCommands.get(cmdName);
   if (!command) {
     command = [...client.messageCommands.values()].find(cmd =>
@@ -115,13 +113,11 @@ client.on(Events.MessageCreate, async message => {
 
   if (!command) return;
 
-  // ✅ Cooldown check
   const cooldownEmbed = checkCooldown(cmdName, message.author.id, command.cooldown || 0);
   if (cooldownEmbed) {
     return message.reply({ embeds: [cooldownEmbed] });
   }
 
-  // Auto-load event handlers (dalam folder events/)
   const eventsPath = path.join(__dirname, 'events');
   const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
@@ -134,7 +130,6 @@ client.on(Events.MessageCreate, async message => {
     }
   }
 
-  // ✅ Anti-spam check
   const isSpamming = await handleSpam(message);
   if (isSpamming) return;
 

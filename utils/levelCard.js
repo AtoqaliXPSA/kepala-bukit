@@ -1,40 +1,31 @@
-const { createCanvas, loadImage, registerFont } = require('canvas');
-const path = require('path');
+const Jimp = require('jimp');
 
-registerFont(path.join(__dirname, '../fonts/Poppins-Bold.ttf'), { family: 'Poppins' });
+module.exports = async function generateLevelCard({ username, avatarURL, level, xp, xpNeeded }) {
+  const card = new Jimp(600, 200, '#1a1a1a');
+  const font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
+  const smallFont = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE);
 
-async function generateLevelCard({ username, avatarURL, level, xp, xpNeeded }) {
-  const canvas = createCanvas(800, 250);
-  const ctx = canvas.getContext('2d');
+  const avatar = await Jimp.read(avatarURL);
+  avatar.resize(100, 100);
+  card.composite(avatar, 30, 50);
 
-  ctx.fillStyle = '#111';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  card.print(font, 150, 40, username);
+  card.print(smallFont, 150, 80, `Level: ${level}`);
+  card.print(smallFont, 150, 110, `XP: ${xp} / ${xpNeeded}`);
 
-  const avatar = await loadImage(avatarURL);
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(125, 125, 75, 0, Math.PI * 2, true);
-  ctx.closePath();
-  ctx.clip();
-  ctx.drawImage(avatar, 50, 50, 150, 150);
-  ctx.restore();
+  // XP bar
+  const barWidth = 300;
+  const filledWidth = Math.floor((xp / xpNeeded) * barWidth);
+  const barY = 150;
 
-  ctx.fillStyle = '#0f0';
-  ctx.font = '28px Poppins';
-  ctx.fillText(username, 230, 80);
+  card.scan(150, barY, barWidth, 20, function (x, y, idx) {
+    const fill = x < 150 + filledWidth;
+    this.bitmap.data[idx + 0] = fill ? 0 : 100; // R
+    this.bitmap.data[idx + 1] = fill ? 255 : 100; // G
+    this.bitmap.data[idx + 2] = fill ? 0 : 100; // B
+    this.bitmap.data[idx + 3] = 255;
+  });
 
-  ctx.font = '22px Poppins';
-  ctx.fillText(`Level: ${level}`, 230, 120);
-  ctx.fillText(`XP: ${xp} / ${xpNeeded}`, 230, 160);
-
-  const barWidth = 400;
-  const progress = Math.min(xp / xpNeeded, 1);
-  ctx.fillStyle = '#333';
-  ctx.fillRect(230, 180, barWidth, 20);
-  ctx.fillStyle = '#0f0';
-  ctx.fillRect(230, 180, barWidth * progress, 20);
-
-  return canvas.toBuffer('image/png');
-}
-
-module.exports = generateLevelCard;
+  const buffer = await card.getBufferAsync(Jimp.MIME_PNG);
+  return buffer;
+};
