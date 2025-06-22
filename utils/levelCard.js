@@ -1,4 +1,4 @@
-const Jimp = require('jimp').default; // ✅ gunakan `.default`
+const Jimp = require('jimp'); // ✅ gunakan `.default`
 
 async function generateLevelCard(username, level, xp) {
   const width = 800;
