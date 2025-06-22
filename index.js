@@ -16,6 +16,20 @@ const client = new Client({
   ],
 });
 
+const Jimp = require('jimp');
+
+async function generateLevelCard(userData) {
+  const image = await Jimp.read('background.png');
+  const font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
+
+  image.print(font, 10, 10, `Username: ${userData.username}`);
+  image.print(font, 10, 50, `Level: ${userData.level}`);
+  image.print(font, 10, 90, `XP: ${userData.xp}/${userData.xpNeeded}`);
+
+  const buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+  return buffer;
+}
+
 const { exec } = require("child_process");
 
 exec("sh push.sh", (err, stdout, stderr) => {
