@@ -112,6 +112,25 @@ client.on(Events.MessageCreate, async message => {
     );
   }
 
+  // ✨ Auto XP
+  if (!message.author.bot) {
+    const user = await User.findOneAndUpdate(
+      { userId: message.author.id },
+      { $inc: { xp: 10 } }, // tambah 10 XP setiap mesej
+      { upsert: true, new: true }
+    );
+
+    // ✨ Naik level bila cukup XP
+    const xpNeeded = user.level * 100;
+    if (user.xp >= xpNeeded) {
+      user.level += 1;
+      user.xp = 0;
+      await user.save();
+
+      message.channel.send(`🎉 Tahniah ${message.author}, anda telah naik ke Level ${user.level}!`);
+    }
+  }
+
   if (!command) return;
 
   const cooldownEmbed = checkCooldown(cmdName, message.author.id, command.cooldown || 0);
