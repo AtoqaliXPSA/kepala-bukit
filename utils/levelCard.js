@@ -1,5 +1,4 @@
 const Jimp = require('jimp');
-const path = require('path');
 
 async function generateLevelCard({ username, level, xp, maxXp, rank, avatarURL }) {
   const width = 800;
