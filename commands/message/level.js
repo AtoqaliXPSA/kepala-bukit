@@ -4,6 +4,7 @@ const User = require('../../models/User');
 
 module.exports = {
   name: 'level',
+  alias: ['xp'],
   description: 'Semak tahap XP anda',
   cooldown: 5,
   async execute(message) {
