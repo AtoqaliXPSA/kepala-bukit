@@ -1,26 +1,16 @@
-const { AttachmentBuilder } = require('discord.js');
-const generateLevelCard = require('../../utils/levelCard');
+const Jimp = require('jimp').default;
+const path = require('path');
 
-// Simpanan contoh, nanti boleh sambung MongoDB
-const userData = {
-  level: 5,
-  xp: 120,
-  xpNeeded: 200,
-};
+async function generateLevelCard(username, level, xp) {
+  const bg = await Jimp.read(path.join(__dirname, '../assets/background.png'));
+  const font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
 
-module.exports = {
-  name: 'level',
-  description: 'Tunjuk level kamu',
-  async execute(message) {
-    const buffer = await generateLevelCard({
-      username: message.author.username,
-      avatarURL: message.author.displayAvatarURL({ extension: 'png', size: 128 }),
-      level: userData.level,
-      xp: userData.xp,
-      xpNeeded: userData.xpNeeded,
-    });
+  bg.print(font, 20, 20, `User: ${username}`);
+  bg.print(font, 20, 60, `Level: ${level}`);
+  bg.print(font, 20, 100, `XP: ${xp}`);
 
-    const attachment = new AttachmentBuilder(buffer, { name: 'levelcard.png' });
-    message.channel.send({ files: [attachment] });
-  },
-};
+  const buffer = await bg.getBufferAsync(Jimp.MIME_PNG);
+  return buffer;
+}
+
+module.exports = generateLevelCard;

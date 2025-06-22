@@ -16,7 +16,7 @@ const client = new Client({
   ],
 });
 
-const Jimp = require('jimp');
+const Jimp = require('jimp').default;
 
 async function generateLevelCard(userData) {
   const image = await Jimp.read('background.png');
