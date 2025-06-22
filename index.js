@@ -3,38 +3,40 @@ const { Client, Collection, GatewayIntentBits, Events } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const connectToDatabase = require('./utils/database');
-const { checkCooldown , setCooldown } = require('./utils/cooldownHelper');
+const { checkCooldown } = require('./utils/cooldownHelper');
 const { handleSpam } = require('./Antisystem/AntiSpam');
-require('./utils/cron');
 const Jimp = require('jimp');
+require('./utils/cron');
+
+const User = require('./models/User'); // ✅ Import User model
 
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildVoiceStates
+    GatewayIntentBits.GuildVoiceStates,
   ],
 });
 
-const { exec } = require("child_process");
+const { exec } = require('child_process');
 
-exec("sh push.sh", (err, stdout, stderr) => {
+exec('sh push.sh', (err, stdout, stderr) => {
   if (err) {
-    console.error("❌ Push gagal:", err);
+    console.error('❌ Push gagal:', err);
     return;
   }
-  console.log("✅ Git pushed!");
+  console.log('✅ Git pushed!');
   console.log(stdout || stderr);
 });
 
-const keepAlive = require('./keepAlive')(client); // Hidupkan bot
+const keepAlive = require('./keepAlive')(client);
 
-client.commands = new Collection();         // Slash Commands
-client.messageCommands = new Collection();  // Message Commands
-client.cooldowns = new Collection();        // Cooldowns untuk Slash Commands
+client.commands = new Collection();
+client.messageCommands = new Collection();
+client.cooldowns = new Collection();
 
-// 🔁 Load Slash Commands (commands/*.js)
+// 🔁 Load Slash Commands
 const slashPath = path.join(__dirname, 'commands');
 const slashFiles = fs.readdirSync(slashPath).filter(file => file.endsWith('.js'));
 
@@ -45,7 +47,7 @@ for (const file of slashFiles) {
   }
 }
 
-// 🔁 Load Message Commands (commands/message/*.js)
+// 🔁 Load Message Commands
 const msgCmdPath = path.join(__dirname, 'commands/message');
 const msgCmdFiles = fs.readdirSync(msgCmdPath).filter(file => file.endsWith('.js'));
 
@@ -56,23 +58,23 @@ for (const file of msgCmdFiles) {
   }
 }
 
-// ✅ Bot Ready
+// ✅ Ready
 client.once(Events.ClientReady, async () => {
   console.log(`🤖 Logged in as ${client.user.tag}`);
-  await connectToDatabase(); // Sambung MongoDB
+  await connectToDatabase();
 
   client.user.setPresence({
     activities: [
       {
         name: 'over your server 👀',
-        type: 3
-      }
+        type: 3,
+      },
     ],
-    status: 'online'
+    status: 'online',
   });
 });
 
-// ✅ Slash Command Handler
+// ✅ Slash Commands
 client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
@@ -81,7 +83,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
   const cooldownEmbed = checkCooldown(command.data.name, interaction.user.id, command.cooldown || 0);
   if (cooldownEmbed) {
-    return interaction.reply({ embeds: [cooldownEmbed], flags: 64 });
+    return interaction.reply({ embeds: [cooldownEmbed], ephemeral: true });
   }
 
   try {
@@ -90,15 +92,32 @@ client.on(Events.InteractionCreate, async interaction => {
     console.error(err);
     await interaction.reply({
       content: '⚠️ Berlaku ralat semasa jalankan arahan.',
-      ephemeral: true
+      ephemeral: true,
     });
   }
 });
 
-// ✅ Message Command Handler
+// ✅ Message Commands + Auto XP
 client.on(Events.MessageCreate, async message => {
   if (message.author.bot || !message.guild) return;
 
+  // ✨ Auto XP
+  const user = await User.findOneAndUpdate(
+    { userId: message.author.id },
+    { $inc: { xp: 10 } },
+    { upsert: true, new: true }
+  );
+
+  const xpNeeded = user.level * 100;
+  if (user.xp >= xpNeeded) {
+    user.level += 1;
+    user.xp = 0;
+    await user.save();
+
+    message.channel.send(`🎉 Tahniah ${message.author}, anda telah naik ke Level ${user.level}!`);
+  }
+
+  // ✅ Message Command
   const prefix = process.env.PREFIX || '!';
   if (!message.content.startsWith(prefix)) return;
 
@@ -110,25 +129,6 @@ client.on(Events.MessageCreate, async message => {
     command = [...client.messageCommands.values()].find(cmd =>
       cmd.alias && cmd.alias.includes(cmdName)
     );
-  }
-
-  // ✨ Auto XP
-  if (!message.author.bot) {
-    const user = await User.findOneAndUpdate(
-      { userId: message.author.id },
-      { $inc: { xp: 10 } }, // tambah 10 XP setiap mesej
-      { upsert: true, new: true }
-    );
-
-    // ✨ Naik level bila cukup XP
-    const xpNeeded = user.level * 100;
-    if (user.xp >= xpNeeded) {
-      user.level += 1;
-      user.xp = 0;
-      await user.save();
-
-      message.channel.send(`🎉 Tahniah ${message.author}, anda telah naik ke Level ${user.level}!`);
-    }
   }
 
   if (!command) return;
