@@ -5,7 +5,7 @@ async function generateLevelCard({ username, level, xp, maxXp, rank, avatarURL }
   const width = 800;
   const height = 240;
 
-  const bg = await Jimp.read(path.join(__dirname, './utils/background.png'));
+  const bg = await Jimp.read(path.join(__dirname, './background.png'));
   const avatar = await Jimp.read(avatarURL);
   const font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
   const fontBold = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
