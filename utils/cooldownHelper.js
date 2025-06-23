@@ -1,16 +1,15 @@
-// utils/cooldownHelper.js
-const { Collection, EmbedBuilder } = require('discord.js');
+const { Collection } = require('discord.js');
 
 const cooldowns = new Collection();
 
 /**
- * Semak dan laksanakan cooldown untuk command.
+ * Check and apply cooldown.
+ * @param {object} message - Discord message object.
  * @param {string} commandName - Nama command.
- * @param {string} userId - ID pengguna.
- * @param {number} cooldownSeconds - Tempoh cooldown dalam saat.
- * @returns {EmbedBuilder|null} - Embed jika dalam cooldown, null jika boleh teruskan.
+ * @param {number} cooldownSeconds - Cooldown dalam saat.
+ * @returns {boolean} - True jika masih dalam cooldown, false jika boleh teruskan.
  */
-function checkCooldown(commandName, userId, cooldownSeconds) {
+async function checkCooldown(message, commandName, cooldownSeconds) {
   if (!cooldowns.has(commandName)) {
     cooldowns.set(commandName, new Collection());
   }
@@ -18,25 +17,22 @@ function checkCooldown(commandName, userId, cooldownSeconds) {
   const now = Date.now();
   const timestamps = cooldowns.get(commandName);
   const cooldownTime = cooldownSeconds * 1000;
+  const userId = message.author.id;
 
   if (timestamps.has(userId)) {
-    const expirationTime = timestamps.get(userId) + cooldownTime;
+    const expires = timestamps.get(userId) + cooldownTime;
 
-    if (now < expirationTime) {
-      const remaining = ((expirationTime - now) / 1000).toFixed(1);
-
-      return new EmbedBuilder()
-        .setTitle('⏳ Tunggu sebentar!')
-        .setDescription(`Anda perlu tunggu **${remaining}s** sebelum boleh guna command ini semula.`)
-        .setColor('Red')
-        .setTimestamp();
+    if (now < expires) {
+      const remaining = ((expires - now) / 1000).toFixed(1);
+      const reply = await message.reply(`⏳| ${user} Sila tunggu ${remaining}s sebelum guna semula.`);
+      setTimeout(() => reply.delete().catch(() => {}), expires - now); // auto delete selepas timeout
+      return true; // user masih dalam cooldown
     }
   }
 
   timestamps.set(userId, now);
   setTimeout(() => timestamps.delete(userId), cooldownTime);
-
-  return null;
+  return false; // tiada cooldown
 }
 
 module.exports = { checkCooldown };
