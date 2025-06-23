@@ -13,11 +13,11 @@ module.exports = {
     let user = await User.findOne({ userId: target.id });
     if (!user) user = await User.create({ userId: target.id });
 
-    const embed = new EmbedBuilder()
-      .setTitle(` Baki - ${target.username}`)
-      .setColor('#00f6ff')
-      .setDescription(`Duit semasa: **${user.balance.toLocaleString()}** DJCoins.`);
+    if (!user) {
+      // Jika pengguna tiada dalam DB, daftar automatik dengan balance 0
+      user = await User.create({ userId, balance: 0 });
+    }
 
-    return message.reply({ embeds: [embed] });
+    message.reply(`💰 ${message.author.username}, you have $${user.balance.toLocaleString()}.`);
   }
 };
