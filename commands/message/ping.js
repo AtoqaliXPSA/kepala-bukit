@@ -1,5 +1,3 @@
-const { EmbedBuilder } = require('discord.js');
-
 module.exports = {
   name: 'ping',
   description: 'Uji kepantasan respon bot!',
@@ -8,18 +6,12 @@ module.exports = {
   async execute(message, args, client) {
     const start = Date.now();
 
-    // Hantar mesej awal
     const sentMessage = await message.reply('🏓 Mengira ping...');
+    const latency = Date.now() - start;
+    const apiPing = Math.round(client.ws.ping || 0);
 
-    const ping = Date.now() - start;
-    const apiPing = Math.round(message.client.ws.ping);
-
-    const embed = new EmbedBuilder()
-      .setTitle('🏓 Pong!')
-      .setDescription(`**Bot Ping:** ${apiPing}ms`)
-      .setColor('#00f6ff')
-      .setTimestamp();
-
-    await sentMessage.edit({ content: '', embeds: [embed] });
+    await sentMessage.edit(
+      `🏓 Pong!\n: ${apiPing}ms`
+    );
   }
 };
