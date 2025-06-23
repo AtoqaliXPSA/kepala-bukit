@@ -3,6 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = {
   name: 'ping',
   description: 'Uji kepantasan respon bot!',
+  cooldown: 5,
 
   async execute(message, args, client) {
     const start = Date.now();
