@@ -7,16 +7,15 @@ module.exports = {
   description: 'Kaburkan avatar pengguna',
   cooldown: 5,
 
-  async execute(message, args) {
+  async execute(message) {
     try {
       const targetUser = message.mentions.users.first() || message.author;
       const avatarURL = targetUser.displayAvatarURL({ format: 'png', size: 512 });
 
-      // Dapatkan avatar sebagai buffer
+      // Dapatkan avatar sebagai buffer betul
       const response = await axios.get(avatarURL, { responseType: 'arraybuffer' });
-      const avatarBuffer = Buffer.from(response.data, 'utf-8');
+      const avatarBuffer = Buffer.from(response.data); // ❗ PENTING
 
-      // Efek blur dengan Canvacord
       const image = await canvacord.Canvas.blur(avatarBuffer);
 
       const attachment = new AttachmentBuilder(image, { name: 'blur.png' });
