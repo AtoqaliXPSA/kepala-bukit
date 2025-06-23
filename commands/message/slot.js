@@ -3,7 +3,7 @@ const User = require('../../models/User');
 module.exports = {
   name: 'slot',
   alias: ['s'],
-  description: '🎰 Mesin slot DJ Kepalabukit!',
+  description: 'Mesin slot DJ Kepalabukit!',
   cooldown: 10,
 
   async execute(message, args) {
@@ -24,36 +24,34 @@ module.exports = {
     const randomSlot = () => emojis[Math.floor(Math.random() * emojis.length)];
     const slot = [randomSlot(), randomSlot(), randomSlot()];
 
-    const slotUI = (s1, s2, s3, bet, result = '') => {
+    const slotBox = (s1, s2, s3, taruhan, result = '') => {
       return `\`\`\`
-🎰 DJ KEPALABUKIT SLOT 🎰
-┌─────────┬─────────┬─────────┐
-│   ${s1}   │   ${s2}   │   ${s3}   │
-└─────────┴─────────┴─────────┘
-Taruhan: $${bet}
+ DKB SLOT
+┌───────────────┐
+│ ${s1} │ ${s2} │ ${s3} │ Bet $${taruhan}
+└───────────────┘
 ${result}
 \`\`\``;
     };
 
-    const msg = await message.channel.send(slotUI('❓', '❓', '❓', bet));
-    await delay(500); await msg.edit(slotUI(slot[0], '❓', '❓', bet));
-    await delay(500); await msg.edit(slotUI(slot[0], slot[1], '❓', bet));
-    await delay(500); await msg.edit(slotUI(...slot, bet));
+    const msg = await message.channel.send(slotBox('❓', '❓', '❓', bet));
+    await delay(500); await msg.edit(slotBox(slot[0], '❓', '❓', bet));
+    await delay(500); await msg.edit(slotBox(slot[0], slot[1], '❓', bet));
+    await delay(500); await msg.edit(slotBox(...slot, bet));
 
-    // Penilaian
     let winnings = 0;
     let resultText = '';
 
     const isTriple = slot[0] === slot[1] && slot[1] === slot[2];
     if (isTriple) {
       winnings = slot[0] === '💎' ? bet * 10 : bet * 5;
-      resultText = `🎉 **JACKPOT!** Anda menang $${winnings}!`;
+      resultText = `You Win $${winnings}!`;
     }
 
     user.balance += winnings;
     await user.save();
 
     await delay(700);
-    await msg.edit(slotUI(...slot, bet, winnings > 0 ? resultText : ''));
+    await msg.edit(slotBox(...slot, bet, winnings > 0 ? resultText : ''));
   }
 };
