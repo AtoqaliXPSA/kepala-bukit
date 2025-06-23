@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "type": "module",
     "@discordjs/voice": "^0.18.0",
     "@types/node": "^22.13.11",
     "axios": "^1.10.0",
