@@ -28,8 +28,8 @@ async function checkCooldown(source, commandName, cooldownSeconds) {
       const reply = source.reply?.bind(source) || source.channel?.send?.bind(source.channel);
       if (reply) {
         try {
-          const msg = await reply(`⏳ Sila tunggu **${timeLeft}s** sebelum guna semula.`);
-          setTimeout(() => msg?.delete?.().catch(() => {}), 3000); // auto delete selepas 3 saat
+          const msg = await reply(`⏳ Sila tunggu **${timeLeft}s**...`);
+          setTimeout(() => msg.delete().catch(() => {}), 3000);
         } catch (err) {
           console.error('❌ Cooldown message gagal dihantar:', err.message);
         }
