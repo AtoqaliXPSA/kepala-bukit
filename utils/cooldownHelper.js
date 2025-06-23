@@ -1,38 +1,48 @@
 const { Collection } = require('discord.js');
 
 const cooldowns = new Collection();
+const cooldownNotified = new Collection(); // Simpan user yang dah diberi amaran cooldown
 
 /**
- * Check and apply cooldown.
- * @param {object} message - Discord message object.
- * @param {string} commandName - Nama command.
- * @param {number} cooldownSeconds - Cooldown dalam saat.
- * @returns {boolean} - True jika masih dalam cooldown, false jika boleh teruskan.
+ * Cek cooldown dan hantar amaran SEKALI sahaja semasa cooldown.
+ * @param {object} source - message atau interaction
+ * @param {string} commandName
+ * @param {number} cooldownSeconds
+ * @returns {boolean} true jika dalam cooldown, false jika tidak
  */
-async function checkCooldown(message, commandName, cooldownSeconds) {
-  if (!cooldowns.has(commandName)) {
-    cooldowns.set(commandName, new Collection());
-  }
+async function checkCooldown(source, commandName, cooldownSeconds) {
+  const userId = source.author?.id || source.user?.id;
+  if (!userId) return false;
 
   const now = Date.now();
-  const timestamps = cooldowns.get(commandName);
-  const cooldownTime = cooldownSeconds * 1000;
-  const userId = message.author.id;
+  const timestamps = cooldowns.get(commandName) || new Collection();
+  cooldowns.set(commandName, timestamps);
+
+  const cooldownAmount = cooldownSeconds * 1000;
 
   if (timestamps.has(userId)) {
-    const expires = timestamps.get(userId) + cooldownTime;
+    const expirationTime = timestamps.get(userId) + cooldownAmount;
+    const timeLeft = ((expirationTime - now) / 1000).toFixed(1);
 
-    if (now < expires) {
-      const remaining = ((expires - now) / 1000).toFixed(1);
-      const reply = await message.reply(`⏳| Please waiting **${remaining}s** for use again.`);
-      setTimeout(() => reply.delete().catch(() => {}), expires - now); // auto delete selepas timeout
-      return true; // user masih dalam cooldown
+    const notifyKey = `${commandName}_${userId}`;
+
+    // ✅ Hanya reply sekali semasa cooldown aktif
+    if (!cooldownNotified.has(notifyKey)) {
+      const reply = source.reply?.bind(source) || source.channel?.send?.bind(source.channel);
+      if (reply) await reply(`⏳ Tunggu **${timeLeft}s** sebelum guna semula arahan ini.`);
+
+      cooldownNotified.set(notifyKey, true);
+
+      // Lepas cooldown tamat, reset notify supaya boleh reply semula nanti
+      setTimeout(() => cooldownNotified.delete(notifyKey), expirationTime - now);
     }
+
+    return true;
   }
 
   timestamps.set(userId, now);
-  setTimeout(() => timestamps.delete(userId), cooldownTime);
-  return false; // tiada cooldown
+  setTimeout(() => timestamps.delete(userId), cooldownAmount);
+  return false;
 }
 
 module.exports = { checkCooldown };
