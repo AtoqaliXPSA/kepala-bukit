@@ -2,11 +2,11 @@ const { Collection } = require('discord.js');
 const cooldowns = new Collection();
 
 /**
- * Cek dan set cooldown untuk sesuatu arahan.
+ * Semak dan set cooldown untuk command.
  * @param {object} source - `message` atau `interaction` object
  * @param {string} commandName
  * @param {number} cooldownSeconds
- * @returns {boolean} - true jika dalam cooldown, false jika tidak
+ * @returns {boolean} - `true` jika masih dalam cooldown, `false` jika boleh guna
  */
 async function checkCooldown(source, commandName, cooldownSeconds) {
   const userId = source.author?.id || source.user?.id;
@@ -24,19 +24,24 @@ async function checkCooldown(source, commandName, cooldownSeconds) {
     if (now < expirationTime) {
       const timeLeft = ((expirationTime - now) / 1000).toFixed(1);
 
-      const replyFunc = source.reply?.bind(source) || source.channel?.send?.bind(source.channel);
-      if (replyFunc) {
-        const msg = await replyFunc(`⏳ Sila tunggu **${timeLeft}s** sebelum guna semula arahan ini.`);
-        setTimeout(() => msg.delete().catch(() => {}), 3000); // padam mesej selepas 3s
+      // Pilih fungsi balas yang sesuai
+      const reply = source.reply?.bind(source) || source.channel?.send?.bind(source.channel);
+      if (reply) {
+        try {
+          const msg = await reply(`⏳ Sila tunggu **${timeLeft}s** sebelum guna semula.`);
+          setTimeout(() => msg?.delete?.().catch(() => {}), 3000); // auto delete selepas 3 saat
+        } catch (err) {
+          console.error('❌ Cooldown message gagal dihantar:', err.message);
+        }
       }
 
-      return true;
+      return true; // masih dalam cooldown
     }
   }
 
   timestamps.set(userId, now);
   setTimeout(() => timestamps.delete(userId), cooldownAmount);
-  return false;
+  return false; // tiada cooldown, boleh guna
 }
 
 module.exports = { checkCooldown };
