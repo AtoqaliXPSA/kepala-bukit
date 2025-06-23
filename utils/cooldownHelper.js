@@ -20,7 +20,7 @@ async function checkCooldown(source, commandName, cooldownSeconds) {
     const expires = timestamps.get(userId) + cooldownTime;
     if (now < expires) {
       const remaining = ((expires - now) / 1000).toFixed(1);
-      const sent = await sendReply(`⏳ Tunggu ${remaining}s sebelum guna semula.`);
+      const sent = await sendReply(`⏳ Tunggu sebelum guna semula.`);
       if (sent?.delete) {
         setTimeout(() => sent.delete().catch(() => {}), expires - now);
       }
