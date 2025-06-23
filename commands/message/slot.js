@@ -40,7 +40,7 @@ ${result}
     await delay(500); await msg.edit(slotBox(...slot, bet));
 
     let winnings = 0;
-    let resultText = '';
+    let resultText = 'You Lost!';
 
     const isTriple = slot[0] === slot[1] && slot[1] === slot[2];
     if (isTriple) {
