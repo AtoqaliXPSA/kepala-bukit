@@ -45,19 +45,14 @@ ${resultText}
 
     if (isTriple) {
       winnings = slot[0] === '💎' ? bet * 10 : bet * 5;
-      resultText = `🎉 JACKPOT! Win $${winnings}!`;
+      resultText = `JACKPOT! Win $${winnings}!`;
     } else if (isDouble) {
       winnings = bet * 2;
-      resultText = `✨ Small Win! $${winnings}`;
+      resultText = `Small Win! $${winnings}`;
     }
 
     user.balance += winnings;
     await user.save();
-
-    await delay(700);
-    const finalBox = winnings > 0
-      ? slotBox(...slot, bet, `${resultText}\n💰 Baki: $${user.balance}`)
-      : slotBox(...slot, bet, resultText);
 
     await msg.edit(finalBox);
   }
