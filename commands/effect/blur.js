@@ -9,10 +9,10 @@ module.exports = {
   async execute(message) {
     try {
       const targetUser = message.mentions.users.first() || message.author;
-      const avatarURL = targetUser.displayAvatarURL({ extension: 'png', size: 512 });
+      const avatarURL = targetUser.displayAvatarURL({ format: 'png', size: 512 });
 
-      const avatar = await Jimp.read(avatarURL);
-      avatar.blur(10); // nilai 10 = tahap kabur
+      const avatar = await Jimp.read(avatarURL); // ✅ Tak error selepas downgrade
+      avatar.blur(10);
 
       const buffer = await avatar.getBufferAsync(Jimp.MIME_PNG);
       const attachment = new AttachmentBuilder(buffer, { name: 'blur.png' });
