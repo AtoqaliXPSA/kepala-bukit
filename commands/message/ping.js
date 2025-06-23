@@ -6,12 +6,16 @@ module.exports = {
   async execute(message, args, client) {
     const start = Date.now();
 
+    // Hantar mesej awal
     const sentMessage = await message.reply('🏓 Mengira ping...');
+
+    // Kira ping selepas mesej dihantar
     const latency = Date.now() - start;
     const apiPing = Math.round(client.ws.ping || 0);
 
+    // Edit mesej dengan maklumat ping
     await sentMessage.edit(
-      `🏓 Pong!\n: ${apiPing}ms`
+      `🏓 Pong!\n📶 Bot Latency: ${latency}ms\n💻 API Latency: ${apiPing}ms`
     );
   }
 };
