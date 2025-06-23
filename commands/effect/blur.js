@@ -16,7 +16,8 @@ module.exports = {
       const response = await axios.get(avatarURL, { responseType: 'arraybuffer' });
       const avatarBuffer = Buffer.from(response.data); // ❗ PENTING
 
-      const image = await canvacord.Canvas.blur(avatarBuffer);
+      const image = await console.log(typeof canvacord.blur); // jika undefined, maka fungsi memang tiada
+      console.log(typeof canvacord.Canvas?.blur); // alternatif (versi lama)
 
       const attachment = new AttachmentBuilder(image, { name: 'blur.png' });
       await message.reply({ files: [attachment] });
