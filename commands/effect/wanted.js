@@ -8,7 +8,7 @@ module.exports = {
   async execute(message) {
     try {
       const user = message.mentions.users.first() || message.author;
-      const avatar = user.displayAvatarURL({ format: 'png', size: 512 });
+      const avatar = user.displayAvatarURL({ extension: 'png', size: 512 });
 
       // ⛔️ Penting: Import ESM module secara dinamik
       const canvacord = await import('canvacord');
