@@ -2,20 +2,27 @@ const { AttachmentBuilder } = require('discord.js');
 
 module.exports = {
   name: 'blur',
-  description: 'Kaburkan avatar anda!',
-  cooldown: 5,
+  description: 'Kaburkan avatar pengguna',
 
   async execute(message) {
     try {
+      // 🧠 Guna dynamic import untuk ESM module
       const { Canvas } = await import('canvacord');
-      const avatar = message.author.displayAvatarURL({ extension: 'png', size: 512 });
-      const image = await Canvas.blur(avatar);
 
+      // 🎯 Ambil avatar user (atau user yang disebut)
+      const user = message.mentions.users.first() || message.author;
+      const avatarURL = user.displayAvatarURL({ format: 'png', size: 512 });
+
+      // 🔄 Buat imej blur
+      const image = await Canvas.blur(avatarURL);
+
+      // 🖼️ Hantar sebagai attachment
       const attachment = new AttachmentBuilder(image, { name: 'blur.png' });
-      await message.channel.send({ files: [attachment] });
+      await message.reply({ files: [attachment] });
+
     } catch (err) {
       console.error('❌ Error in blur command:', err);
-      message.reply('⚠️ Gagal kaburkan avatar.');
+      message.reply('⚠️ Gagal kaburkan avatar. Sila cuba lagi.');
     }
   }
 };
