@@ -3,11 +3,6 @@ module.exports = {
   description: 'Uji kepantasan respon bot!',
   cooldown: 5,
 
-  if (embed.data && !embed.data.description && (!embed.data.fields || embed.data.fields.length === 0)) {
-    console.error('❌ Embed kosong tidak boleh dihantar!');
-    return;
-  }
-
   async execute(message, args, client) {
     const start = Date.now();
 
