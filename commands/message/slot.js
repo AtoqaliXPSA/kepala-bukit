@@ -1,68 +1,49 @@
-const { EmbedBuilder } = require('discord.js');
-const User = require('../../models/User'); // Pastikan laluan betul
+const User = require('../../models/User');
 
 module.exports = {
   name: 'slot',
-  alias: ['s', 'spin'],
-  cooldown: 15, // saat
+  alias: ['spin'],
+  description: 'Main slot dan cuba menang coins',
+  cooldown: 5,
   async execute(message, args) {
-    const userId = message.author.id;
-    const amount = parseInt(args[0]) || 1;
+    const bet = parseInt(args[0]);
+    const emojis = ['🍒', '🍋', '🔔', '💎', '🍇', '🍀'];
 
-    let user = await User.findOne({ userId });
-    if (!user) user = await User.create({ userId });
-
-    if (user.balance < amount) {
-      return message.reply(`❌ Anda perlukan sekurang-kurangnya ${amount} coins untuk main slot.`);
+    if (isNaN(bet) || bet <= 0) {
+      return message.reply('❌ Sila masukkan jumlah taruhan yang sah. Contoh: `!slot 100`');
     }
 
-    const emojis = ['🍒', '🍋', '🔔', '⭐', '🍇'];
-    const getRandomSlots = () => [
+    const user = await User.findOne({ userId: message.author.id });
+    if (!user || user.balance < bet) {
+      return message.reply('❌ Anda tiada cukup duit untuk bertaruh.');
+    }
+
+    // Potong duit dulu
+    user.balance -= bet;
+
+    // Random hasil slot
+    const slot = [
       emojis[Math.floor(Math.random() * emojis.length)],
       emojis[Math.floor(Math.random() * emojis.length)],
-      emojis[Math.floor(Math.random() * emojis.length)]
+      emojis[Math.floor(Math.random() * emojis.length)],
     ];
 
-    const embed = new EmbedBuilder()
-      .setTitle('🎰 Mesin Slot')
-      .setColor('Orange')
-      .setDescription('⏳ Memutar slot...')
-      .setFooter({ text: `Diminta oleh ${message.author.tag}`, iconURL: message.author.displayAvatarURL() });
-
-    const sentMessage = await message.reply({ embeds: [embed] });
-
-    // Simulasi animasi gulungan
-    for (let i = 0; i < 3; i++) {
-      const [a, b, c] = getRandomSlots();
-      embed.setDescription(` | ${a} | ${b} | ${c} |\n\n⏳ Memutar...`);
-      await sentMessage.edit({ embeds: [embed] });
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
-
-    const [slot1, slot2, slot3] = getRandomSlots();
-    let result = '';
+    let result = '😢 Anda kalah!';
     let winnings = 0;
 
-    if (slot1 === slot2 && slot2 === slot3) {
-      winnings = amount * 5;
-      user.balance += winnings;
-      result = `🎉 Jackpot! Anda menang **${winnings.toLocaleString()}** coins!`;
-    } else if (slot1 === slot2 || slot2 === slot3 || slot1 === slot3) {
-      winnings = amount * 2;
-      user.balance += winnings;
-      result = `✨ Menang kecil! Anda dapat **${winnings.toLocaleString()}** coins.`;
-    } else {
-      user.balance -= amount;
-      result = `😢 Anda kalah **${amount.toLocaleString()}** coins.`;
+    if (slot[0] === slot[1] && slot[1] === slot[2]) {
+      winnings = bet * 5;
+      result = `🎉 Jackpot! Anda menang $${winnings}!`;
+    } else if (slot[0] === slot[1] || slot[1] === slot[2] || slot[0] === slot[2]) {
+      winnings = bet * 2;
+      result = `✨ Menang kecil! Anda menang $${winnings}!`;
     }
 
+    user.balance += winnings;
     await user.save();
 
-    embed
-      .setColor('#00f6ff')
-      .setDescription(` | ${slot1} | ${slot2} | ${slot3} |\n\n${result}`)
-      .addFields({ name: '💰 Baki Semasa =>', value: `${user.balance.toLocaleString()} coins`, inline: true });
-
-    await sentMessage.edit({ embeds: [embed] });
+    return message.reply(
+      `🎰 | [ ${slot.join(' | ')} ]\n\n${result}\n💰 Baki anda: $${user.balance.toLocaleString()}`
+    );
   }
 };
