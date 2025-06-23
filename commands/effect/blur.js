@@ -1,5 +1,6 @@
-const Jimp = require('jimp');
 const { AttachmentBuilder } = require('discord.js');
+const canvacord = require('canvacord');
+const axios = require('axios');
 
 module.exports = {
   name: 'blur',
@@ -11,15 +12,16 @@ module.exports = {
       const targetUser = message.mentions.users.first() || message.author;
       const avatarURL = targetUser.displayAvatarURL({ format: 'png', size: 512 });
 
-      const avatar = await Jimp.read(avatarURL); // ✅ Tak error selepas downgrade
-      avatar.blur(10);
+      // Dapatkan avatar sebagai buffer betul
+      const response = await axios.get(avatarURL, { responseType: 'arraybuffer' });
+      const avatarBuffer = Buffer.from(response.data); // ❗ PENTING
 
-      const buffer = await avatar.getBufferAsync(Jimp.MIME_PNG);
-      const attachment = new AttachmentBuilder(buffer, { name: 'blur.png' });
+      const image = await const image = await canvacord.Canvas.blur(avatarBuffer);
 
+      const attachment = new AttachmentBuilder(image, { name: 'blur.png' });
       await message.reply({ files: [attachment] });
-    } catch (err) {
-      console.error('❌ Error in blur command:', err);
+    } catch (error) {
+      console.error('❌ Error in blur command:', error);
       message.reply('⚠️ Gagal kaburkan avatar.');
     }
   }
