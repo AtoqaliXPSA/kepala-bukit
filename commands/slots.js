@@ -13,6 +13,11 @@ module.exports = {
 
   cooldown: 15, // Cooldown
 
+  if (embed.data && !embed.data.description && (!embed.data.fields || embed.data.fields.length === 0)) {
+    console.error('❌ Embed kosong tidak boleh dihantar!');
+    return;
+  }
+
   async execute(interaction) {
     const userId = interaction.user.id;
     const amount = interaction.options.getInteger('taruhan') || 1;
