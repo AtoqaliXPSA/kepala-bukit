@@ -1,28 +1,29 @@
-const canvacord = require("canvacord");
-const { AttachmentBuilder } = require("discord.js");
-const axios = require("axios");
+const { AttachmentBuilder } = require('discord.js');
+const canvacord = require('canvacord');
+const axios = require('axios');
 
 module.exports = {
-  name: "blur",
-  description: "Kaburkan avatar anda",
+  name: 'blur',
+  description: 'Kaburkan avatar pengguna',
   cooldown: 5,
 
-  async execute(message) {
+  async execute(message, args) {
     try {
-      const avatarURL = message.author.displayAvatarURL({ format: "png", size: 512 });
+      const targetUser = message.mentions.users.first() || message.author;
+      const avatarURL = targetUser.displayAvatarURL({ format: 'png', size: 512 });
 
-      // Dapatkan data avatar user sebagai buffer
-      const response = await axios.get(avatarURL, { responseType: "arraybuffer" });
-      const avatarBuffer = Buffer.from(response.data, "utf-8");
+      // Dapatkan avatar sebagai buffer
+      const response = await axios.get(avatarURL, { responseType: 'arraybuffer' });
+      const avatarBuffer = Buffer.from(response.data, 'utf-8');
 
-      // Gunakan Canvacord untuk blurkan imej
+      // Efek blur dengan Canvacord
       const image = await canvacord.Canvas.blur(avatarBuffer);
 
-      const attachment = new AttachmentBuilder(image, { name: "blur.png" });
+      const attachment = new AttachmentBuilder(image, { name: 'blur.png' });
       await message.reply({ files: [attachment] });
-    } catch (err) {
-      console.error(`❌ Error in blur command:`, err);
-      await message.reply("⚠️ Gagal kaburkan avatar.");
+    } catch (error) {
+      console.error('❌ Error in blur command:', error);
+      message.reply('⚠️ Gagal kaburkan avatar.');
     }
   }
 };
