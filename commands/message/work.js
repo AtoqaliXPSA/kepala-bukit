@@ -33,7 +33,7 @@ module.exports = {
 
     const jobs = [
       'YouTuber', 'Chef', 'Waiter', 'Streamer', 'Seller air ketum',
-      'Programmer', 'Delivery Rider', 'Driver Grab', 'Cheff', 'Zoo keeper'
+      'Programmer', 'Delivery Rider', 'Driver Grab', 'Chef', 'Zoo keeper'
     ];
 
     const chosenJob = jobs[Math.floor(Math.random() * jobs.length)];

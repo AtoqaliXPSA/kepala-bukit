@@ -18,7 +18,7 @@ module.exports = {
         { name: '***📊 Status Bot***', value: 'Klik untuk dapat status', inline: true },
         { name: '***🚀 Auto Deploy***', value: 'Klik untuk deploy semua commands', inline: true }
       )
-      .setColor('Blue')
+      .setColor('#00f6ff')
       .setTimestamp();
 
     const row = new ActionRowBuilder().addComponents(
@@ -53,7 +53,7 @@ module.exports = {
             { name: 'Platform', value: os.platform(), inline: true },
             { name: 'CPU', value: os.cpus()[0].model, inline: false }
           )
-          .setColor('Blue')
+          .setColor('#00f6ff')
           .setFooter({ text: 'Bot Info' })
           .setTimestamp();
 

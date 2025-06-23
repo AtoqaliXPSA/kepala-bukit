@@ -11,7 +11,7 @@ module.exports = {
     const user = await getUser(interaction.user.id);
 
     const embed = new EmbedBuilder()
-      .setColor('Green')
+      .setColor('#00f6ff')
       .setTitle(`👤 Profil ${interaction.user.username}`)
       .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
       .addFields(

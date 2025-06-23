@@ -16,7 +16,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setTitle('🏓 Pong!')
       .setDescription(`**Bot Ping:** ${apiPing}ms`)
-      .setColor('Blue')
+      .setColor('#00f6ff')
       .setTimestamp();
 
     await sentMessage.edit({ content: '', embeds: [embed] });

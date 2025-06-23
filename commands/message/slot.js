@@ -59,7 +59,7 @@ module.exports = {
     await user.save();
 
     embed
-      .setColor('Blue')
+      .setColor('#00f6ff')
       .setDescription(` | ${slot1} | ${slot2} | ${slot3} |\n\n${result}`)
       .addFields({ name: '💰 Baki Semasa =>', value: `${user.balance.toLocaleString()} coins`, inline: true });
 

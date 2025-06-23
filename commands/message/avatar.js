@@ -14,7 +14,7 @@ module.exports = {
       .setTitle(`Avatar`)
       .setImage(avatarUrl)
       .setURL(avatarUrl)
-      .setColor(0x00AEFF)
+      .setColor('#00f6ff')
       .setFooter({ text: `Diminta oleh ${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) })
       .setTimestamp();
 

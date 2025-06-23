@@ -15,7 +15,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setTitle(` Baki - ${target.username}`)
-      .setColor('Blue')
+      .setColor('#00f6ff')
       .setDescription(`Duit semasa: **${user.balance.toLocaleString()}** DJCoins.`);
 
     return message.reply({ embeds: [embed] });
