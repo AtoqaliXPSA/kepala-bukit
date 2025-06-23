@@ -1,10 +1,10 @@
 const { Collection } = require('discord.js');
 
 const cooldowns = new Collection();
-const cooldownNotified = new Collection(); // Simpan user yang dah diberi amaran cooldown
+const cooldownNotified = new Collection();
 
 /**
- * Cek cooldown dan hantar amaran SEKALI sahaja semasa cooldown.
+ * Cek cooldown dan hantar mesej SEKALI sahaja, dan auto-delete selepas cooldown tamat.
  * @param {object} source - message atau interaction
  * @param {string} commandName
  * @param {number} cooldownSeconds
@@ -26,15 +26,21 @@ async function checkCooldown(source, commandName, cooldownSeconds) {
 
     const notifyKey = `${commandName}_${userId}`;
 
-    // ✅ Hanya reply sekali semasa cooldown aktif
+    // ✅ Hantar hanya sekali jika belum pernah diberitahu
     if (!cooldownNotified.has(notifyKey)) {
       const reply = source.reply?.bind(source) || source.channel?.send?.bind(source.channel);
-      if (reply) await reply(`⏳ Tunggu **${timeLeft}s** sebelum guna semula arahan ini.`);
+      if (reply) {
+        const msg = await reply(`⏳| Please wait **${timeLeft}s** for use again.`);
+        cooldownNotified.set(notifyKey, msg);
 
-      cooldownNotified.set(notifyKey, true);
-
-      // Lepas cooldown tamat, reset notify supaya boleh reply semula nanti
-      setTimeout(() => cooldownNotified.delete(notifyKey), expirationTime - now);
+        // 🕒 Auto delete selepas cooldown tamat
+        setTimeout(async () => {
+          try {
+            await msg.delete();
+          } catch (e) {}
+          cooldownNotified.delete(notifyKey);
+        }, expirationTime - now);
+      }
     }
 
     return true;
