@@ -18,6 +18,6 @@ module.exports = {
       user = await User.create({ userId, balance: 0 });
     }
 
-    message.reply(` **${message.author.username}**, you current have __**${user.balance.toLocaleString()} DJCoins**__ .`);
+    message.reply(` **${message.author.username}**, you current have __**${user.balance.toLocaleString()}**__ __**DJCoins**__ .`);
   }
 };
