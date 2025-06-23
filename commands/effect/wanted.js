@@ -2,15 +2,15 @@ const { AttachmentBuilder } = require('discord.js');
 
 module.exports = {
   name: 'wanted',
-  description: '🪧 Buat gambar wanted poster daripada avatar pengguna.',
+  description: '🎯 Buat poster wanted dari avatar user',
   cooldown: 5,
 
-  async execute(message, args, client) {
+  async execute(message) {
     try {
       const user = message.mentions.users.first() || message.author;
       const avatar = user.displayAvatarURL({ format: 'png', size: 512 });
 
-      // ✅ Import canvacord secara dinamik
+      // ⛔️ Penting: Import ESM module secara dinamik
       const canvacord = await import('canvacord');
       const image = await canvacord.Canvas.wanted(avatar);
 
@@ -19,7 +19,7 @@ module.exports = {
 
     } catch (err) {
       console.error('❌ Error in wanted command:', err);
-      message.reply('⚠️ Ralat berlaku semasa menjana gambar "wanted".');
+      return message.reply('⚠️ Gagal hasilkan gambar "wanted".');
     }
   }
 };
