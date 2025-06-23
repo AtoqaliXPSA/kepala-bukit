@@ -46,10 +46,25 @@ for (const file of slashFiles) {
 }
 
 // Load Message Commands
-const msgCmdPath = path.join(__dirname, 'commands/message');
-const msgCmdFiles = fs.readdirSync(msgCmdPath).filter(file => file.endsWith('.js'));
+const msgCmdRoot = path.join(__dirname, 'commands');
+const msgCmdFiles = [];
+
+function readCommandsRecursively(dir) {
+  const files = fs.readdirSync(dir);
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+    if (fs.statSync(fullPath).isDirectory()) {
+      readCommandsRecursively(fullPath); // rekursif
+    } else if (file.endsWith('.js')) {
+      msgCmdFiles.push(fullPath);
+    }
+  }
+}
+
+readCommandsRecursively(msgCmdRoot);
+
 for (const file of msgCmdFiles) {
-  const command = require(`./commands/message/${file}`);
+  const command = require(file);
   if (command.name) {
     client.messageCommands.set(command.name, command);
   }
