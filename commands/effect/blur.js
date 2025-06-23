@@ -1,27 +1,20 @@
 const { AttachmentBuilder } = require('discord.js');
-import canvacord from 'canvacord';
-const axios = require('axios');
 
 module.exports = {
   name: 'blur',
-  description: 'Kaburkan avatar pengguna',
+  description: 'Kaburkan avatar anda!',
   cooldown: 5,
 
   async execute(message) {
     try {
-      const targetUser = message.mentions.users.first() || message.author;
-      const avatarURL = targetUser.displayAvatarURL({ format: 'png', size: 512 });
-
-      // Dapatkan avatar sebagai buffer betul
-      const response = await axios.get(avatarURL, { responseType: 'arraybuffer' });
-      const avatarBuffer = Buffer.from(response.data); // ❗ PENTING
-
-      const image = await canvacord.Canvas.blur(avatarBuffer);
+      const { Canvas } = await import('canvacord');
+      const avatar = message.author.displayAvatarURL({ extension: 'png', size: 512 });
+      const image = await Canvas.blur(avatar);
 
       const attachment = new AttachmentBuilder(image, { name: 'blur.png' });
-      await message.reply({ files: [attachment] });
-    } catch (error) {
-      console.error('❌ Error in blur command:', error);
+      await message.channel.send({ files: [attachment] });
+    } catch (err) {
+      console.error('❌ Error in blur command:', err);
       message.reply('⚠️ Gagal kaburkan avatar.');
     }
   }
