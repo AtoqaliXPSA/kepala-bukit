@@ -1,10 +1,15 @@
+const { checkCooldown } = require('../../utils/cooldownHelper');
+
 module.exports = {
   name: 'ping',
   description: 'Uji kepantasan respon bot!',
   cooldown: 5,
 
   async execute(message, args, client) {
-    const start = Date.now();
+    const onCooldown = await checkCooldown(message, 'ping', 5);
+    if (onCooldown) return;
+
+    const start = Date.now(); // ✅ tambah ini sebelum hantar mesej
 
     // Hantar mesej awal
     const sentMessage = await message.reply('🏓 Mengira ping...');
@@ -14,8 +19,6 @@ module.exports = {
     const apiPing = Math.round(client.ws.ping || 0);
 
     // Edit mesej dengan maklumat ping
-    await sentMessage.edit(
-      `🏓 Pong: ${latency}ms`
-    );
+    await sentMessage.edit(`🏓 Pong: **${latency}ms**`);
   }
 };
