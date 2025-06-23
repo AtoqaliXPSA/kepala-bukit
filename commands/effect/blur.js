@@ -1,5 +1,5 @@
 const { AttachmentBuilder } = require('discord.js');
-const canvacord = require('canvacord');
+import canvacord = import 'canvacord';
 const axios = require('axios');
 
 module.exports = {
