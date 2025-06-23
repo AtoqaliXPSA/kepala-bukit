@@ -6,7 +6,7 @@ module.exports = {
   description: '🎰 Main slot dan cuba menang coins',
   cooldown: 10,
   async execute(message, args) {
-    const bet = parseInt(args[0]) || 0; // 0 jika tiada args
+    const bet = parseInt(args[0]) || 1; // 0 jika tiada args
     const emojis = ['🍒', '🍋', '🔔', '💎', '🍇', '🍀'];
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
