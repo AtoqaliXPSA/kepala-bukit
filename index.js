@@ -150,6 +150,17 @@ client.on(Events.MessageCreate, async message => {
     }
   }
 
+  // Contoh handler anda (dalam index.js / main file)
+  client.on('messageCreate', async message => {
+    try {
+      // semua logik command detection & execute
+      await command.execute(message, args, client);
+    } catch (err) {
+      console.error(`❌ Error in message command '${cmdName}':`, err);
+      await message.reply('⚠️ Berlaku ralat pada command ini.');
+    }
+  });
+
   const isSpamming = await handleSpam(message);
   if (isSpamming) return;
 
