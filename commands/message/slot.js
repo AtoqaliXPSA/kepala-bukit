@@ -52,6 +52,6 @@ ${result}
     await user.save();
 
     await delay(700);
-    await msg.edit(slotBox(...slot, bet, winnings > 0 ? resultText : ''));
+    await msg.edit(slotBox(...slot, bet, winnings > 0 ? resultText : 'You Lost!'));
   }
 };
