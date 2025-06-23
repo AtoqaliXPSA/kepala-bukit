@@ -26,9 +26,8 @@ module.exports = {
       return `\`\`\`
  DJ KEPALA SLOT 
 ┌───────────────┐
-│ ${s1} │ ${s2} │ ${s3} │
+│ ${s1} │ ${s2} │ ${s3} │ Bet $${taruhan}
 └───────────────┘
-Bet $${taruhan}
 ${resultText}
 \`\`\``;
     };
