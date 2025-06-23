@@ -3,8 +3,9 @@ const User = require('../../models/User');
 module.exports = {
   name: 'slot',
   alias: ['spin'],
-  description: '🎰 Main mesin slot dan menang coins!',
+  description: 'Mesin slot DJ Kepalabukit!',
   cooldown: 10,
+
   async execute(message, args) {
     const bet = parseInt(args[0]) || 1;
     const emojis = ['🍒', '🍋', '🔔', '💎', '🍇', '🍀'];
@@ -13,8 +14,7 @@ module.exports = {
     const user = await User.findOne({ userId: message.author.id }) ||
       await new User({ userId: message.author.id, balance: 500 }).save();
 
-    if (bet < 1 || isNaN(bet)) return message.reply('❌ Masukkan jumlah taruhan yang sah.');
-    if (user.balance < bet) return message.reply(`❌ Baki tidak mencukupi. Anda ada $${user.balance}.`);
+    if (user.balance < bet) return message.reply(`❌ Anda cuma ada $${user.balance}, tak cukup untuk taruhan $${bet}`);
 
     user.balance -= bet;
     await user.save();
@@ -22,41 +22,44 @@ module.exports = {
     const randomSlot = () => emojis[Math.floor(Math.random() * emojis.length)];
     const slot = [randomSlot(), randomSlot(), randomSlot()];
 
-    const slotBox = (s1 = '❓', s2 = '❓', s3 = '❓') => {
+    const slotBox = (s1, s2, s3, taruhan, resultText = '') => {
       return `\`\`\`
  DJ KEPALA SLOT 
+Taruhan: $${taruhan}
 ┌───────────────┐
 │ ${s1} │ ${s2} │ ${s3} │
 └───────────────┘
+${resultText}
 \`\`\``;
     };
 
-    const msg = await message.channel.send(`💸 Taruhan: $${bet}\n${slotBox()}`);
-
-    await delay(600); await msg.edit(`💸 Taruhan: $${bet}\n${slotBox(slot[0], '❓', '❓')}`);
-    await delay(600); await msg.edit(`💸 Taruhan: $${bet}\n${slotBox(slot[0], slot[1], '❓')}`);
-    await delay(600); await msg.edit(`💸 Taruhan: $${bet}\n${slotBox(...slot)}`);
+    const msg = await message.channel.send(slotBox('❓', '❓', '❓', bet));
+    await delay(500); await msg.edit(slotBox(slot[0], '❓', '❓', bet));
+    await delay(500); await msg.edit(slotBox(slot[0], slot[1], '❓', bet));
+    await delay(500); await msg.edit(slotBox(...slot, bet));
 
     let winnings = 0;
-    let resultText = '😢 Anda kalah. Cuba lagi!';
+    let resultText = 'You lost.';
 
     const isTriple = slot[0] === slot[1] && slot[1] === slot[2];
     const isDouble = slot[0] === slot[1] || slot[1] === slot[2] || slot[0] === slot[2];
 
     if (isTriple) {
       winnings = slot[0] === '💎' ? bet * 10 : bet * 5;
-      resultText = `🎉 JACKPOT! Anda menang $${winnings}!`;
+      resultText = `🎉 JACKPOT! Win $${winnings}!`;
     } else if (isDouble) {
       winnings = bet * 2;
-      resultText = `✨ Menang kecil! Anda menang $${winnings}.`;
+      resultText = `✨ Small Win! $${winnings}`;
     }
 
     user.balance += winnings;
     await user.save();
 
-    await delay(800);
-    await msg.edit(
-      `💸 Taruhan: $${bet}\n${slotBox(...slot)}\n${resultText}\n💰 Baki semasa: $${user.balance}`
-    );
+    await delay(700);
+    const finalBox = winnings > 0
+      ? slotBox(...slot, bet, `${resultText}\n💰 Baki: $${user.balance}`)
+      : slotBox(...slot, bet, resultText);
+
+    await msg.edit(finalBox);
   }
 };
