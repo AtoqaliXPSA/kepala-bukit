@@ -1,30 +1,29 @@
 const { Collection } = require('discord.js');
-
 const cooldowns = new Collection();
 
 async function checkCooldown(source, commandName, cooldownSeconds) {
   const userId = source.author?.id || source.user?.id;
-  const replyFunc = source.reply.bind(source);
+  const sendReply = (msg) => {
+    if (source.reply) return source.reply(msg);
+    if (source.channel?.send) return source.channel.send(msg);
+  };
 
   if (!userId) return false;
 
-  if (!cooldowns.has(commandName)) {
-    cooldowns.set(commandName, new Collection());
-  }
-
   const now = Date.now();
-  const timestamps = cooldowns.get(commandName);
+  const timestamps = cooldowns.get(commandName) || new Collection();
+  cooldowns.set(commandName, timestamps);
+
   const cooldownTime = cooldownSeconds * 1000;
 
   if (timestamps.has(userId)) {
     const expires = timestamps.get(userId) + cooldownTime;
-
     if (now < expires) {
       const remaining = ((expires - now) / 1000).toFixed(1);
-      const reply = await replyFunc(`⏳| Sila tunggu ${remaining}s sebelum guna semula.`);
-      setTimeout(() => {
-        if (reply.delete) reply.delete().catch(() => {});
-      }, expires - now);
+      const sent = await sendReply(`⏳ Tunggu ${remaining}s sebelum guna semula.`);
+      if (sent?.delete) {
+        setTimeout(() => sent.delete().catch(() => {}), expires - now);
+      }
       return true;
     }
   }
