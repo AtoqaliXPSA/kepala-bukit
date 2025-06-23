@@ -2,7 +2,7 @@ const User = require('../../models/User');
 
 module.exports = {
   name: 'slot',
-  alias: ['spin'],
+  alias: ['s'],
   description: 'Mesin slot DJ Kepalabukit!',
   cooldown: 10,
 
@@ -25,10 +25,10 @@ module.exports = {
     const slotBox = (s1, s2, s3, taruhan, resultText = '') => {
       return `\`\`\`
  DJ KEPALA SLOT 
-Taruhan: $${taruhan}
 ┌───────────────┐
 │ ${s1} │ ${s2} │ ${s3} │
 └───────────────┘
+Bet $${taruhan}
 ${resultText}
 \`\`\``;
     };
