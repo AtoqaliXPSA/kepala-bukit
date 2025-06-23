@@ -9,7 +9,7 @@ module.exports = {
   async execute(message) {
     try {
       const targetUser = message.mentions.users.first() || message.author;
-      const avatarURL = targetUser.displayAvatarURL({ format: 'png', size: 512 });
+      const avatarURL = targetUser.displayAvatarURL({ extension: 'png', size: 512 });
 
       const avatar = await Jimp.read(avatarURL);
       avatar.blur(10); // nilai 10 = tahap kabur
