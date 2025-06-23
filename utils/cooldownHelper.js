@@ -24,7 +24,7 @@ async function checkCooldown(message, commandName, cooldownSeconds) {
 
     if (now < expires) {
       const remaining = ((expires - now) / 1000).toFixed(1);
-      const reply = await message.reply(`⏳ Sila tunggu ${remaining}s sebelum guna semula.`);
+      const reply = await message.reply(`⏳| Please waiting **${remaining}s** for use again.`);
       setTimeout(() => reply.delete().catch(() => {}), expires - now); // auto delete selepas timeout
       return true; // user masih dalam cooldown
     }
