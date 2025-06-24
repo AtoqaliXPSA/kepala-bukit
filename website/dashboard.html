@@ -131,7 +131,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Responsive */
     @media (max-width: 600px) {
       .topbar {
         flex-direction: column;
@@ -167,6 +166,7 @@
     <div class="brand">DJKEPALABUKIT</div>
     <div class="topbar-right">
       <button id="statusBtn">Dashboard</button>
+      <button id="restartBtn">Restart Bot</button>
       <button id="logoutBtn">Logout</button>
       <div class="theme-toggle">
         <button id="themeBtn">🖥️</button>
@@ -217,7 +217,6 @@
       });
     });
 
-    // Hide menu if click outside
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".theme-toggle")) {
         themeMenu.style.display = "none";
@@ -240,6 +239,19 @@
 
     document.getElementById("statusBtn").onclick = () => {
       window.location.href = "/stats";
+    };
+
+    document.getElementById("restartBtn").onclick = async () => {
+      const confirmRestart = confirm("Anda pasti nak restart bot?");
+      if (!confirmRestart) return;
+
+      try {
+        const res = await fetch('/restart', { method: 'POST' });
+        const data = await res.json();
+        alert(data.message || "Restart triggered.");
+      } catch (err) {
+        alert("❌ Gagal restart bot.");
+      }
     };
   </script>
 </body>
