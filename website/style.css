@@ -1,3 +1,27 @@
+:root {
+  --bg: #0a0a0a;
+  --text: #00f0ff;
+  --glow: #00f0ff;
+  --button-bg: #00f0ff;
+  --button-text: #0a0a0a;
+}
+
+body.light {
+  --bg: #f3f3f3;
+  --text: #0a0a0a;
+  --glow: #00c0ff;
+  --button-bg: #0a0a0a;
+  --button-text: #f3f3f3;
+}
+
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s, color 0.3s;
+}
+
 .loader {
   position: fixed;
   top: 0; left: 0;
@@ -79,7 +103,7 @@
 }
 
 .theme-menu li:hover {
-  background: rgba(0,255,0,0.1);
+  background: rgba(0, 240, 255, 0.1);
 }
 
 canvas {
@@ -101,5 +125,5 @@ canvas {
   letter-spacing: 1px;
   color: var(--text);
   z-index: 10;
-  pointer-events: none; /* supaya tak ganggu klik butang lain */
+  pointer-events: none;
 }

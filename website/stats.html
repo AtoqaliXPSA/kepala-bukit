@@ -8,9 +8,9 @@
   <style>
     :root {
       --bg: #111;
-      --text: #0f0;
+      --text: #00f0ff;
       --box: #222;
-      --border: #0f0;
+      --border: #00f0ff;
     }
 
     body {
@@ -38,7 +38,7 @@
       border-radius: 10px;
       border: 1px solid var(--border);
       text-align: center;
-      box-shadow: 0 0 10px #0f02;
+      box-shadow: 0 0 10px #00f0ff;
     }
 
     .label {
@@ -130,7 +130,7 @@
         datasets: [{
           label: 'Ping (ms)',
           data: [],
-          borderColor: '#0f0',
+          borderColor: '#00f0ff',
           backgroundColor: 'rgba(0,255,0,0.1)',
           tension: 0.3,
           pointRadius: 2
@@ -141,17 +141,17 @@
         maintainAspectRatio: false,
         scales: {
           x: {
-            ticks: { color: '#0f0' },
+            ticks: { color: '#00f0ff' },
             grid: { color: '#222' }
           },
           y: {
             beginAtZero: true,
-            ticks: { color: '#0f0' },
+            ticks: { color: '#00f0ff' },
             grid: { color: '#222' }
           }
         },
         plugins: {
-          legend: { labels: { color: '#0f0' } }
+          legend: { labels: { color: '#00f0ff' } }
         }
       }
     });
