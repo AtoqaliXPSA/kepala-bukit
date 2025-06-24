@@ -15,6 +15,12 @@
   position: relative;
 }
 
+.bot-logo {
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--glow);
+}
+
 .theme-toggle-btn {
   background: var(--button-bg);
   color: var(--button-text);
