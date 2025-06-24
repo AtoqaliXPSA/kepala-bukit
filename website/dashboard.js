@@ -1,11 +1,10 @@
 // === dashboard.js ===
 document.addEventListener("DOMContentLoaded", () => {
-
   // 1. Semak sesi
   const user = sessionStorage.getItem("user");
   if (!user) {
-    window.location.href = "/login.html";   // atau "/index.html" jika itu halaman login anda
-    return;                                 // hentikan skrip selanjutnya
+    window.location.href = "/login.html";
+    return;
   }
   document.getElementById("user").textContent = user;
 
@@ -13,17 +12,33 @@ document.addEventListener("DOMContentLoaded", () => {
   const statusBtn = document.getElementById("statusBtn");
   if (statusBtn) {
     statusBtn.addEventListener("click", () => {
-      window.location.href = "/stats";      // route dinamik
+      window.location.href = "/stats";
     });
   }
 
-  // 3. Butang Logout
+  // 3. Butang Restart
+  const restartBtn = document.getElementById("restartBtn");
+  if (restartBtn) {
+    restartBtn.addEventListener("click", async () => {
+      const confirmed = confirm("Anda pasti nak restart bot?");
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch('/restart', { method: 'POST' });
+        const data = await res.json();
+        alert(data.message || 'Restart triggered.');
+      } catch (err) {
+        alert("❌ Gagal restart bot.");
+      }
+    });
+  }
+
+  // 4. Butang Logout
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       sessionStorage.removeItem("user");
-      window.location.href = "/login.html"; // balik ke login
+      window.location.href = "/login.html";
     });
   }
-
 });

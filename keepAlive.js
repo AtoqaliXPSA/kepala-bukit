@@ -10,6 +10,8 @@ const fs = require('fs');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
+const app = express();
+const { exec } = require('child_process');
 
 function formatDuration(seconds) {
   const d = Math.floor(seconds / (3600 * 24));
@@ -111,6 +113,19 @@ function keepAlive(client) {
         return res.status(401).json({ success: false, message: '❌ Password salah' });
       }
     });
+  });
+
+  app.post('/restart', (req, res) => {
+    if (!req.session || !req.session.user || req.session.user !== 'admin1') {
+      return res.status(403).json({ message: '❌ Unauthorized' });
+    }
+
+    console.log('🔁 Restart requested');
+    res.status(200).json({ message: 'Restarting bot...' });
+
+    setTimeout(() => {
+      process.exit(1);
+    }, 1000);
   });
 
   app.post('/register', registerLimiter, async (req, res) => {
