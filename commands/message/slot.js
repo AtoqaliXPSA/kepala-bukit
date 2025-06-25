@@ -3,8 +3,8 @@ const User = require('../../models/User');
 module.exports = {
   name: 'slot',
   alias: ['s'],
-  description: 'Mesin slot DJ Kepalabukit!',
-  cooldown: 10,
+  description: 'Bermain slot',
+  cooldown: 5,
 
   async execute(message, args) {
     const bet = parseInt(args[0]) || 1;

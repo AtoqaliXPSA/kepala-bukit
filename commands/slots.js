@@ -3,8 +3,8 @@ const User = require('../models/User');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('slot')
-    .setDescription('🎰 Main slot dengan efek gulungan dalam embed!')
+    .setName('slot')   
+    .setDescription('Main slot dengan efek gulungan dalam embed!')
     .addIntegerOption(option =>
       option.setName('taruhan')
         .setDescription('Jumlah coin untuk dipertaruhkan')
