@@ -11,7 +11,7 @@ module.exports = {
         .setMinValue(1)
     ),
 
-  cooldown: 15, // Cooldown
+  cooldown: 5, // Cooldown
 
   async execute(interaction) {
     const userId = interaction.user.id;
