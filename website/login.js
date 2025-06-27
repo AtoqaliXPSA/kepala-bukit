@@ -43,7 +43,7 @@ async function login() {
       }
     }
   } catch (err) {
-    msg.textContent = "⚠️ Gagal sambung ke server.";
+    msg.textContent = "Gagal sambung ke server.";
     msg.style.color = "red";
   }
 
