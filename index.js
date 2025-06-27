@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const connectToDatabase = require('./utils/database');
 const { checkCooldown } = require('./utils/cooldownHelper');
-const { handleSpam } = require('./Antisystem/AntiSpam');
 const Jimp = require('jimp');
 require('./utils/cron');
 

@@ -48,6 +48,13 @@
       margin-top: 1rem;
       font-size: 0.9rem;
     }
+
+    .info {
+      color: #00f0ff;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
   </style>
 </head>
 <body onload="document.getElementById('username').focus()">
@@ -59,9 +66,7 @@
       <button id="loginBtn">Login</button>
     </form>
     <p id="msg"></p>
-    <p id="register-link" style="display:none; color:#0f0; margin-top:0.5rem;">
-      Belum ada akaun? <a href="register.html" style="color:#0f0; text-decoration:underline;">Daftar di sini</a>.
-    </p>
+    <div class="info">Tiada akaun? Hubungi admin untuk pendaftaran.</div>
   </div>
   <script src="login.js"></script>
 </body>
