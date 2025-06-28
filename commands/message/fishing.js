@@ -17,7 +17,7 @@ module.exports = {
     // ❌ Cek stamina
     const hasStamina = await economy.useStamina(userId);
     if (!hasStamina) {
-      return message.reply('❌ Anda keletihan. Tunggu stamina pulih untuk memancing semula.');
+      return message.reply('Anda keletihan. Tunggu stamina pulih untuk memancing semula.');
     }
 
     // 🎣 Random ikan
@@ -34,17 +34,17 @@ module.exports = {
       return roll <= totalChance;
     });
 
-    let resultText = `🎣 Anda memancing dan dapat ${caught.name}!`;
+    let resultText = `Anda memancing dan dapat ${caught.name}!`;
     if (caught.value > 0) {
       await economy.addCoins(userId, caught.value);
-      resultText += `\n💰 Anda mendapat **${caught.value} coins**!`;
+      resultText += `\nAnda mendapat **${caught.value} coins**!`;
     } else {
-      resultText += `\n😢 Tiada hasil hari ini...`;
+      resultText += `\nTiada hasil hari ini...`;
     }
 
     const userData = await economy.getUserData(userId);
     const bar = getStaminaBar(userData.stamina);
-    resultText += `\n\n⚡ **Stamina**: ${bar} \`${userData.stamina}/5\``;
+    resultText += `\n\n**Stamina**: ${bar} \`${userData.stamina}/5\``;
 
     const embed = new EmbedBuilder()
       .setTitle('Fishing Game 🎣')

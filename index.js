@@ -92,20 +92,46 @@ client.once(Events.ClientReady, async () => {
 });
 
 // Slash Command Handler
-client.on(Events.InteractionCreate, async interaction => {
-  if (!interaction.isChatInputCommand()) return;
-  const command = client.commands.get(interaction.commandName);
-  if (!command) return;
+client.on('interactionCreate', async interaction => {
+  if (!interaction.isButton()) return;
+  const [action, userId] = interaction.customId.split('_');
+  if (interaction.user.id !== process.env.ADMIN_ID) return;
 
-  const isCooldown = await checkCooldown(interaction, command.data.name, command.cooldown || 0);
-  if (isCooldown) return;
+  const user = await User.findOne({ userId });
+  if (!user) return interaction.reply({ content: '❌ User tidak dijumpai.', ephemeral: true });
 
-  try {
-    await command.execute(interaction);
-  } catch (err) {
-    console.error(err);
-    await interaction.reply({ content: '⚠️ Berlaku ralat semasa jalankan arahan.', ephemeral: true });
-  }
+  // Modal untuk input jumlah
+  const modal = new ModalBuilder()
+    .setCustomId(`${action}_modal_${userId}`)
+    .setTitle(action.includes('stamina') ? 'Tambah Stamina' : action.includes('add') ? 'Tambah Coins' : 'Tolak Coins');
+
+  const input = new TextInputBuilder()
+    .setCustomId('amount')
+    .setLabel('Jumlah:')
+    .setStyle(TextInputStyle.Short)
+    .setRequired(true);
+
+  modal.addComponents(new ActionRowBuilder().addComponents(input));
+  await interaction.showModal(modal);
+});
+
+client.on('interactionCreate', async interaction => {
+  if (!interaction.isModalSubmit()) return;
+
+  const [action, , userId] = interaction.customId.split('_');
+  const amount = parseInt(interaction.fields.getTextInputValue('amount'));
+  if (isNaN(amount)) return interaction.reply({ content: '❌ Jumlah tidak sah.', ephemeral: true });
+
+  const user = await User.findOne({ userId });
+  if (!user) return interaction.reply({ content: '❌ User tidak dijumpai.', ephemeral: true });
+
+  if (action === 'addcoins') user.balance += amount;
+  if (action === 'removecoins') user.balance = Math.max(user.balance - amount, 0);
+  if (action === 'addstamina') user.stamina = (user.stamina || 0) + amount;
+
+  await user.save();
+
+  await interaction.reply({ content: `✅ ${action} berjaya untuk <@${userId}>.`, ephemeral: true });
 });
 
 // Message Command Handler + XP
