@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema({
   xp: { type: Number, default: 0 },
   level: { type: Number, default: 1 },
   balance: { type: Number, default: 0 },
+  stamina: { type: Number, default: 5 },
+  lastRegen: { type: Number, default: Date.now },
   lastDaily: { type: Date, default: null }
 });
 
