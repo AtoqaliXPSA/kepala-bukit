@@ -169,7 +169,7 @@ function keepAlive(client) {
 
       html = html
         .replace('{{uptime}}', formatDuration(uptimeSec))
-        .replace('{{ping}}', `${client.ws.ping}ms`)
+        .replace('{{ping}}', `${client.ws.ping ?? 0}ms`)
         .replace('{{servers}}', client.guilds.cache.size)
         .replace('{{users}}', client.users.cache.size)
         .replace('{{ram}}', (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2))
