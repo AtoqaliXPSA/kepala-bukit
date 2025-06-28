@@ -25,11 +25,10 @@ module.exports = {
       .setColor('Aqua')
       .setDescription(`💰 Coins: **${userData.balance}**\n⚡ Stamina: **${userData.stamina ?? 0}**`);
 
-    const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId(`addcoins_${target.id}`).setLabel('➕ Coins').setStyle(ButtonStyle.Success),
-      new ButtonBuilder().setCustomId(`removecoins_${target.id}`).setLabel('➖ Coins').setStyle(ButtonStyle.Danger),
-      new ButtonBuilder().setCustomId(`addstamina_${target.id}`).setLabel('⚡ Tambah Stamina').setStyle(ButtonStyle.Primary),
-    );
+    const row = new ButtonBuilder().setCustomId(`add_coins_${target.id}`).setLabel('➕ Coins').setStyle(ButtonStyle.Success),
+      new ButtonBuilder().setCustomId(`remove_coins_${target.id}`).setLabel('➖ Coins').setStyle(ButtonStyle.Danger),
+      new ButtonBuilder().setCustomId(`add_stamina_${target.id}`).setLabel('🔋 Tambah Stamina').setStyle(ButtonStyle.Primary),
+      new ButtonBuilder().setCustomId(`remove_stamina_${target.id}`).setLabel('🪫 Tolak Stamina').setStyle(ButtonStyle.Secondary);
 
     await message.reply({ embeds: [embed], components: [row] });
   }
