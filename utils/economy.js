@@ -1,21 +1,19 @@
 // helpers/economy.js
-const User = require('../models/User');
+const User = require('../models/User'); // MongoDB model user
 
-async function getUser(userId) {
-  let user = await User.findOne({ userId });
-  if (!user) {
-    user = await User.create({ userId });
-  }
-  return user;
-}
-
-addBalance: async (userId, amount) => {
-    const user = await User.findOneAndUpdate(
-      { userId },
-      { $inc: { balance: amount } },
-      { new: true, upsert: true }
-    );
+module.exports = {
+  async addCoins(userId, amount) {
+    let user = await User.findOne({ userId });
+    if (!user) {
+      user = new User({ userId, coins: 0 });
+    }
+    user.coins += amount;
+    await user.save();
     return user.coins;
-  };
+  },
 
-module.exports = { getUser };
+  async getCoins(userId) {
+    const user = await User.findOne({ userId });
+    return user ? user.coins : 0;
+  }
+};
