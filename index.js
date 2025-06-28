@@ -141,9 +141,6 @@ client.on(Events.MessageCreate, async message => {
   const isCooldown = await checkCooldown(message, cmdName, command.cooldown || 0);
   if (isCooldown) return;
 
-  const isSpamming = await handleSpam(message);
-  if (isSpamming) return;
-
   try {
     await command.execute(message, args, client);
   } catch (err) {
