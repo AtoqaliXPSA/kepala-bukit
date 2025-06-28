@@ -3,6 +3,7 @@ const economy = require('../../utils/economy');
 
 module.exports = {
   name: 'fishing',
+  alias: ['fish'],
   description: '🎣 Pancing ikan dan dapat duit!',
   async execute(message, args) {
     const userId = message.author.id;
