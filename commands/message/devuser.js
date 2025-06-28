@@ -12,29 +12,32 @@ module.exports = {
   description: 'Panel dev untuk tambah/tolak coins & stamina (admin sahaja)',
 
   async execute(message, args) {
-    // ✅ Semak admin
     if (message.author.id !== adminId) {
       return message.reply('❌ Anda tiada kebenaran.');
     }
 
-    // ✅ Dapatkan user yang ditag
     const target = message.mentions.users.first();
     if (!target) return message.reply('❌ Sila tag user.');
 
-    // ✅ Cari atau cipta user dalam database
     const userData = await User.findOneAndUpdate(
       { userId: target.id },
       { $setOnInsert: { userId: target.id, balance: 0, stamina: 5 } },
       { upsert: true, new: true }
     );
 
-    // ✅ Buat embed untuk paparan info
+    const stamina = userData.stamina ?? 0;
+    const maxStamina = 5;
+
+    // 🔋 Bina stamina bar (contoh: ▓▓░░░)
+    const filled = '▓'.repeat(stamina);
+    const empty = '░'.repeat(maxStamina - stamina);
+    const staminaBar = `${filled}${empty} (${stamina}/${maxStamina})`;
+
     const embed = new EmbedBuilder()
       .setTitle(`🛠️ DEV PANEL: ${target.username}`)
       .setColor('Aqua')
-      .setDescription(`💰 Coins: **${userData.balance}**\n⚡ Stamina: **${userData.stamina ?? 0}**`);
+      .setDescription(`💰 Coins: **${userData.balance}**\n⚡ Stamina: ${staminaBar}`);
 
-    // ✅ Susun butang tambah/tolak coins & stamina
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId(`add_coins_${target.id}`)
@@ -54,7 +57,6 @@ module.exports = {
         .setStyle(ButtonStyle.Secondary)
     );
 
-    // ✅ Hantar mesej dengan embed dan butang
     await message.reply({ embeds: [embed], components: [row] });
   }
 };
