@@ -15,7 +15,7 @@ addBalance: async (userId, amount) => {
       { $inc: { balance: amount } },
       { new: true, upsert: true }
     );
-    return user;
+    return user.coins;
   };
 
 module.exports = { getUser };
