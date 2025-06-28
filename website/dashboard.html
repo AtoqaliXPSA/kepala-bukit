@@ -186,6 +186,18 @@
     <div class="welcome-box">
       <h1>Selamat Datang</h1>
       <p id="username"></p>
+
+      <hr style="margin: 1.5rem 0; border-color: var(--glow);" />
+
+      <h3>Command Tester</h3>
+      <select id="testCmd">
+        <option value="">-- Pilih Command --</option>
+        <option value="ping">/ping</option>
+        <option value="work">/work</option>
+        <option value="daily">/daily</option>
+        <!-- Tambah ikut command anda -->
+      </select>
+      <button onclick="testCommand()" style="margin-top: 1rem;">Run</button>
     </div>
   </div>
 
