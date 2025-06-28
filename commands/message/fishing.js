@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
-const economy = require('../../helpers/economy');
+const economy = require('../../utils/economy');
 
 function getStaminaBar(current, max = 5) {
   const full = '🟦'.repeat(current);
