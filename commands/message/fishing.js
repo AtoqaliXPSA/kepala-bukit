@@ -2,13 +2,14 @@ const { EmbedBuilder } = require('discord.js');
 const economy = require('../../utils/economy');
 
 function getStaminaBar(current, max = 5) {
-  const full = '🟦'.repeat(current);
-  const empty = '⬛'.repeat(max - current);
+  const full = '▓'.repeat(current);
+  const empty = '░'.repeat(max - current);
   return full + empty;
 }
 
 module.exports = {
-  name: 'fish',
+  name: 'fishing',
+  alias: ['fish'],
   description: 'Pancing ikan dan dapatkan duit!',
 
   async execute(message) {
