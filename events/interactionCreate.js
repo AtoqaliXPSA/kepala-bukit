@@ -3,90 +3,86 @@ const {
   TextInputBuilder,
   TextInputStyle,
   ActionRowBuilder,
-  EmbedBuilder
+  EmbedBuilder,
+  ButtonStyle,
+  Events
 } = require('discord.js');
 const User = require('../models/User');
 const adminId = process.env.ADMIN_ID;
 
 module.exports = {
-  name: 'interactionCreate',
+  name: Events.InteractionCreate,
   async execute(interaction) {
     if (!interaction.isButton() && !interaction.isModalSubmit()) return;
 
-    // ⛔ Sekat bukan admin
+    // ⛔ Hanya admin
     if (interaction.user.id !== adminId) {
-      return interaction.reply({ content: '❌ Admin sahaja.', flag: 64 });
+      return interaction.reply({ content: '❌ Admin sahaja.', ephemeral: true });
     }
 
-    // ✅ Butang ditekan ➕ ➖
+    // ==========================
+    // 🔘 Handle Button Tekan
+    // ==========================
     if (interaction.isButton()) {
-      const [action, field, userId] = interaction.customId.split('_');
-      if (!['add', 'remove'].includes(action) || !['coins', 'stamina'].includes(field)) return;
+      const [action, type, userId] = interaction.customId.split('_');
+      if (!['add', 'remove'].includes(action) || !['coins', 'stamina'].includes(type)) return;
 
       const modal = new ModalBuilder()
-        .setCustomId(`modal_${action}_${field}_${userId}`)
-        .setTitle(`${action === 'add' ? 'Tambah' : 'Tolak'} ${field}`);
+        .setCustomId(`modal_${action}_${type}_${userId}`)
+        .setTitle(`${action === 'add' ? 'Tambah' : 'Tolak'} ${type === 'coins' ? 'Coins' : 'Stamina'}`);
 
       const input = new TextInputBuilder()
         .setCustomId('amount')
-        .setLabel(`Jumlah ${field} yang nak ${action === 'add' ? 'ditambah' : 'ditolak'}`)
+        .setLabel(`Masukkan jumlah ${type === 'coins' ? 'coins' : 'stamina'}:`)
         .setStyle(TextInputStyle.Short)
         .setPlaceholder('Contoh: 100')
         .setRequired(true);
 
-      modal.addComponents(new ActionRowBuilder().addComponents(input));
-      return interaction.showModal(modal);
+      const row = new ActionRowBuilder().addComponents(input);
+      modal.addComponents(row);
+
+      // ❗ Jangan reply lagi selepas showModal
+      return await interaction.showModal(modal);
     }
 
-    // 📥 Submit modal ➕ ➖
+    // ==========================
+    // 📝 Handle Modal Submit
+    // ==========================
     if (interaction.isModalSubmit()) {
-      const [_, action, field, userId] = interaction.customId.split('_');
+      const [_, action, type, userId] = interaction.customId.split('_');
       const amount = parseInt(interaction.fields.getTextInputValue('amount'));
-
-      if (isNaN(amount) || amount <= 0) {
-        return interaction.reply({
-          content: '❌ Masukkan jumlah yang sah (> 0).',
-          flag: 64
-        });
+      if (isNaN(amount)) {
+        return interaction.reply({ content: '❌ Jumlah tidak sah.', flags: 64 });
       }
 
       const userData = await User.findOne({ userId });
       if (!userData) {
-        return interaction.reply({
-          content: '❌ Data pengguna tidak dijumpai.',
-          flag: 64
-        });
+        return interaction.reply({ content: '❌ Data pengguna tiada.', flags: 64 });
       }
 
-      // Pastikan field wujud
-      if (field === 'stamina' && userData.stamina === undefined) {
-        userData.stamina = 100; // Default jika belum wujud
-      }
-
-      // Operasi tambah/tolak
-      if (action === 'add') {
-        userData[field] += amount;
-      } else if (action === 'remove') {
-        if (userData[field] < amount) {
-          return interaction.reply({
-            content: `❌ Pengguna hanya ada ${userData[field]} ${field}.`,
-            flag: 64
-          });
+      if (type === 'coins') {
+        if (action === 'add') {
+          userData.balance += amount;
+        } else {
+          userData.balance -= amount;
+          if (userData.balance < 0) userData.balance = 0;
         }
-        userData[field] -= amount;
+      } else if (type === 'stamina') {
+        if (action === 'add') {
+          userData.stamina += amount;
+        } else {
+          userData.stamina -= amount;
+          if (userData.stamina < 0) userData.stamina = 0;
+        }
       }
 
       await userData.save();
 
       const embed = new EmbedBuilder()
-        .setTitle(`✅ ${field.charAt(0).toUpperCase() + field.slice(1)} Dikemaskini`)
-        .setDescription(
-          `**${action === 'add' ? 'Tambah' : 'Tolak'} ${amount} ${field}** kepada <@${userId}>.\n` +
-          `Baki sekarang: **${userData[field]} ${field}**`
-        )
-        .setColor(action === 'add' ? 'Green' : 'Red')
-        .setFooter({ text: `Admin: ${interaction.user.tag}` })
-        .setTimestamp();
+        .setTitle(`✅ ${type === 'coins' ? 'Coins' : 'Stamina'} Dikemaskini`)
+        .setDescription(`**${action === 'add' ? 'Tambah' : 'Tolak'} ${amount} ${type}** kepada <@${userId}>.\n` +
+          `Baki sekarang: ${type === 'coins' ? `💰 **${userData.balance}**` : `⚡ **${userData.stamina}**`}`)
+        .setColor(action === 'add' ? 'Green' : 'Red');
 
       return interaction.reply({ embeds: [embed] });
     }
