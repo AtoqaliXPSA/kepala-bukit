@@ -15,7 +15,7 @@ module.exports = {
 
     // ⛔ Sekat bukan admin
     if (interaction.user.id !== adminId) {
-      return interaction.reply({ content: '❌ Admin sahaja.', ephemeral: true });
+      return interaction.reply({ content: '❌ Admin sahaja.', flag: 64 });
     }
 
     // ✅ Butang ditekan ➕ ➖
@@ -46,7 +46,7 @@ module.exports = {
       if (isNaN(amount) || amount <= 0) {
         return interaction.reply({
           content: '❌ Masukkan jumlah yang sah (> 0).',
-          ephemeral: true
+          flag: 64
         });
       }
 
@@ -54,7 +54,7 @@ module.exports = {
       if (!userData) {
         return interaction.reply({
           content: '❌ Data pengguna tidak dijumpai.',
-          ephemeral: true
+          flag: 64
         });
       }
 
@@ -70,7 +70,7 @@ module.exports = {
         if (userData[field] < amount) {
           return interaction.reply({
             content: `❌ Pengguna hanya ada ${userData[field]} ${field}.`,
-            ephemeral: true
+            flag: 64
           });
         }
         userData[field] -= amount;
