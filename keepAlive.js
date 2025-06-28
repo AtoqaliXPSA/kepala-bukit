@@ -196,6 +196,25 @@ function keepAlive(client) {
     });
   });
 
+  // Test Command
+  app.get('/test-command', async (req, res) => {
+    const cmd = req.query.cmd;
+    if (!cmd) return res.status(400).json({ result: '❌ Tiada command' });
+
+    try {
+      const testChannel = client.channels.cache.get(process.env.TEST_CHANNEL_ID);
+      if (!testChannel || !testChannel.isTextBased()) {
+        return res.status(404).json({ result: '❌ Channel tidak dijumpai' });
+      }
+
+      await testChannel.send(`✅ Testing command: \`/${cmd}\``);
+      res.json({ result: `✅ Command \`/${cmd}\` dihantar ke #${testChannel.name}` });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ result: '❌ Error semasa hantar command' });
+    }
+  });
+
   // Static files
   app.use(express.static(path.join(__dirname, 'website')));
 
