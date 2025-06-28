@@ -42,8 +42,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setTitle('Fishing Game 🎣')
       .setDescription(resultText)
-      .setColor(caught.value === 0 ? 'Red' : 'Blue')
-      .setFooter({ text: message.author.username, iconURL: message.author.displayAvatarURL() });
+      .setColor(caught.value === 0 ? 'Red' : 'Blue');
 
     message.reply({ embeds: [embed] });
   }
