@@ -38,9 +38,13 @@ module.exports = {
     const stamina = userData.stamina ?? 0;
     const maxStamina = userData.maxStamina ?? 5;
 
-    // 🔋 Stamina bar: ▓▓░░░ (contoh)
-    const filled = '▓'.repeat(stamina);
-    const empty = '░'.repeat(maxStamina - stamina);
+    // 🔋 Stamina bar dinamik (10 blok)
+    const blocks = 10;
+    const ratio = stamina / maxStamina;
+    const filledCount = Math.round(Math.min(ratio, 1) * blocks);
+    const emptyCount = blocks - filledCount;
+    const filled = '▓'.repeat(filledCount);
+    const empty = '░'.repeat(emptyCount);
     const staminaBar = `${filled}${empty} (${stamina}/${maxStamina})`;
 
     // 🖼️ Embed info
