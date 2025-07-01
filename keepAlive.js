@@ -50,6 +50,7 @@ function keepAlive(client) {
             "'unsafe-inline'",
             'https://cdn.jsdelivr.net'
           ],
+          imgSrc: ["'self'", "data:", "https://cdn.discordapp.com"],
           objectSrc: ["'none'"],
         }
       }
