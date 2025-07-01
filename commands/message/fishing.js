@@ -1,5 +1,5 @@
 const economy = require('../../utils/economy');
-const cooldown = require ('../../utils/cooldownHelper';
+const cooldown = require ('../../utils/cooldownHelper');
 
 function getStaminaBar(current, max = 5) {
   const full = '▓'.repeat(current);
