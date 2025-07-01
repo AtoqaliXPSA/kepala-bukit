@@ -10,6 +10,7 @@ module.exports = {
   name: 'fishing',
   alias: ['fish'],
   description: 'Pancing ikan dan dapatkan duit!',
+  cooldown: 3,
 
   async execute(message) {
     const userId = message.author.id;
