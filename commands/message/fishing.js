@@ -34,7 +34,7 @@ module.exports = {
       return roll <= totalChance;
     });
 
-    let resultText = `🎣 Anda memancing dan dapat ${caught.name}!`;
+    let resultText = `\`\`\`🎣 Anda memancing dan dapat ${caught.name} !\`\`\`\n`;
     if (caught.value > 0) {
       await economy.addCoins(userId, caught.value);
       resultText += `\n💰 Anda mendapat **${caught.value} coins**!`;
