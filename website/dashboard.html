@@ -269,20 +269,6 @@
       }
     };
 
-    // === COMMAND TESTER ===
-    function testCommand() {
-    const cmd = document.getElementById("testCmd").value;
-    if (!cmd) return alert("❌ Pilih command dulu!");
-
-    fetch(`/test-command?cmd=${cmd}`)
-      .then(res => res.json())
-      .then(data => {
-        alert(data.result || "✅ Command sent.");
-      })
-      .catch(() => {
-        alert("❌ Gagal trigger command.");
-      });
-      }
   </script>
 </body>
 </html>
