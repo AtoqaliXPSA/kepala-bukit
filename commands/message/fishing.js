@@ -16,11 +16,9 @@ module.exports = {
   async execute(message) {
     const userId = message.author.id;
 
-    // ⏳ Cek cooldown
-    const cd = await cooldown.check('fishing', userId, 60); // 60 saat
-    if (!cd.ready) {
-      return message.reply(`⏳ Tunggu **${cd.remaining}s** sebelum memancing semula.`);
-    }
+    
+    const cooldowned = await cooldown.checkCooldown(message, 'fishing', 60);
+    if (cooldowned) return; // Sudah reply dalam fungsi checkCooldown
 
     // 🎣 Senarai ikan
     const fishOptions = [
