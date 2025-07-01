@@ -18,17 +18,17 @@ module.exports = {
 
     const bet = parseInt(betStr);
     if (isNaN(bet) || bet <= 0) {
-      return interaction.reply({ content: '❌ Taruhan tidak sah.', ephemeral: true });
+      return interaction.reply({ content: '❌ Taruhan tidak sah.', flag: 64 });
     }
 
     // Cari user
     const user = await User.findOne({ userId: targetId });
     if (!user) {
-      return interaction.reply({ content: '❌ User tidak dijumpai.', ephemeral: true });
+      return interaction.reply({ content: '❌ User tidak dijumpai.', flag: 64 });
     }
 
     if (user.balance < bet) {
-      return interaction.reply({ content: `❌ Anda hanya ada $${user.balance}, tak cukup untuk taruhan $${bet}.`, ephemeral: true });
+      return interaction.reply({ content: `❌ Anda hanya ada $${user.balance}, tak cukup untuk taruhan $${bet}.`, flag: 64 });
     }
 
     user.balance -= bet;
