@@ -17,7 +17,7 @@ module.exports = {
     // ❌ Cek stamina
     const hasStamina = await economy.useStamina(userId);
     if (!hasStamina) {
-      return message.reply('❌ Anda keletihan. Tunggu stamina pulih untuk memancing semula.');
+      return message.reply('***Anda keletihan***. Tunggu stamina pulih untuk memancing semula.');
     }
 
     // 🎣 Random ikan
