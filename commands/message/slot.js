@@ -11,11 +11,11 @@ module.exports = {
 
     // 🎰 Simbol dan kebarangkalian
     const slotItems = [
-      { symbol: '🍒', chance: 0.4, payout: 3 },
-      { symbol: '🍋', chance: 0.3, payout: 4 },
+      { symbol: '🍋', chance: 0.4, payout: 3 },
+      { symbol: '🍒', chance: 0.3, payout: 4 },
       { symbol: '🔔', chance: 0.15, payout: 6 },
       { symbol: '💎', chance: 0.05, payout: 10 },
-      { symbol: '🍇', chance: 0.07, payout: 5 },
+      { symbol: '🍓', chance: 0.07, payout: 5 },
       { symbol: '🍀', chance: 0.03, payout: 20 }
     ];
 
