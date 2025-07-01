@@ -74,13 +74,6 @@ ${result}\`\`\``;
 
     const finalContent = slotBox(slot[0], slot[1], slot[2], bet, resultText, user.balance);
 
-    const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId(`spin_again_${message.author.id}_${bet}`)
-        .setLabel('🎰 Spin Lagi')
-        .setStyle(ButtonStyle.Success)
-    );
-
     await delay(700);
     const sentMsg = await msg.edit({ content: finalContent, components: [row] });
 
