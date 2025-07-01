@@ -1,4 +1,3 @@
-const { EmbedBuilder } = require('discord.js');
 const economy = require('../../utils/economy');
 
 function getStaminaBar(current, max = 5) {
@@ -18,7 +17,7 @@ module.exports = {
     // ❌ Cek stamina
     const hasStamina = await economy.useStamina(userId);
     if (!hasStamina) {
-      return message.reply('Anda keletihan. Tunggu stamina pulih untuk memancing semula.');
+      return message.reply('❌ Anda keletihan. Tunggu stamina pulih untuk memancing semula.');
     }
 
     // 🎣 Random ikan
@@ -35,22 +34,18 @@ module.exports = {
       return roll <= totalChance;
     });
 
-    let resultText = `Anda memancing dan dapat ${caught.name}!`;
+    let resultText = `🎣 Anda memancing dan dapat ${caught.name}!`;
     if (caught.value > 0) {
       await economy.addCoins(userId, caught.value);
-      resultText += `\nAnda mendapat **${caught.value} coins**!`;
+      resultText += `\n💰 Anda mendapat **${caught.value} coins**!`;
     } else {
-      resultText += `\nTiada hasil hari ini...`;
+      resultText += `\n😢 Tiada hasil hari ini...`;
     }
 
     const userData = await economy.getUserData(userId);
     const bar = getStaminaBar(userData.stamina);
     resultText += `\n\n**Stamina**: ${bar} \`${userData.stamina}/5\``;
 
-    const embed = new EmbedBuilder()
-      .setTitle('Fishing Game 🎣')
-      .setDescription(resultText)
-      .setColor(caught.value === 0 ? 'Red' : 'Blue');
-    message.reply({ embeds: [embed] });
+    return message.reply(resultText);
   }
 };
