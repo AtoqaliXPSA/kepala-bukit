@@ -11,13 +11,12 @@ module.exports = {
   name: 'fishing',
   alias: ['fish'],
   description: 'Pancing ikan dan dapatkan duit!',
-  cooldown: 3,
 
   async execute(message) {
     const userId = message.author.id;
 
     
-    const cooldowned = await cooldown.checkCooldown(message, 'fishing', 60);
+    const cooldowned = await cooldown.checkCooldown(message, 'fishing', 3);
     if (cooldowned) return; // Sudah reply dalam fungsi checkCooldown
 
     // 🎣 Senarai ikan
