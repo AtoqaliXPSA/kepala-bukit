@@ -36,7 +36,7 @@ module.exports = {
     // Tambah fallback ikan busuk
     const totalChance = fishOptions.reduce((acc, f) => acc + f.chance, 0);
     if (totalChance < 1) {
-      fishOptions.push({ name: '🪱 Cacing Busuk', chance: 1 - totalChance, value: 0 });
+      fishOptions.push({ name: '🥾 Kasut Lama', chance: 1 - totalChance, value: 0 });
     }
 
     // 🎲 Roll nasib
@@ -47,7 +47,7 @@ module.exports = {
       return roll <= cumulative;
     });
 
-    if (!caught) caught = { name: '🪱 Cacing Busuk', value: 0 };
+    if (!caught) caught = { name: '🥾 Kasut Lama', value: 0 };
 
     // 💸 Tambah coins jika dapat ikan berharga
     let resultText = `🎣 Anda memancing dan dapat ${caught.name}!\n`;
