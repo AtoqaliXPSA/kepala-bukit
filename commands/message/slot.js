@@ -12,10 +12,10 @@ module.exports = {
     const slotItems = [
       { symbol: '🍋', chance: 0.4, payout: 2 },
       { symbol: '🍒', chance: 0.03, payout: 3 },
-      { symbol: '🔔', chance: 0.15, payout: 4 },
-      { symbol: '🍓', chance: 0.17, payout: 5 },
-      { symbol: '💎', chance: 0.15, payout: 10 },
-      { symbol: '🍀', chance: 0.13, payout: 20 }
+      { symbol: '🔔', chance: 0.05, payout: 4 },
+      { symbol: '🍓', chance: 0.01, payout: 5 },
+      { symbol: '💎', chance: 0.001, payout: 10 },
+      { symbol: '🍀', chance: 0.0001, payout: 20 }
     ];
 
     function rollSymbol() {
@@ -34,7 +34,7 @@ module.exports = {
       await new User({ userId: message.author.id, balance: 500 }).save();
 
     if (user.balance < bet) {
-      return message.reply(`❌ Anda cuma ada $${user.balance}, tak cukup untuk taruhan $${bet}`);
+      return message.reply(`Anda cuma ada ***$${user.balance}***, tak cukup untuk taruhan ***$${bet}***`);
     }
 
     user.balance -= bet;
