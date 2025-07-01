@@ -1,14 +1,9 @@
-const {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle
-} = require('discord.js');
 const User = require('../../models/User');
 
 module.exports = {
   name: 'slot',
   alias: ['s'],
-  description: 'Bermain slot dengan butang "Spin Lagi"',
+  description: 'Bermain slot',
   cooldown: 5,
 
   async execute(message, args) {
@@ -16,11 +11,11 @@ module.exports = {
 
     const slotItems = [
       { symbol: '🍋', chance: 0.4, payout: 2 },
-      { symbol: '🍒', chance: 0.3, payout: 3 },
+      { symbol: '🍒', chance: 0.03, payout: 3 },
       { symbol: '🔔', chance: 0.15, payout: 4 },
-      { symbol: '💎', chance: 0.05, payout: 10 },
-      { symbol: '🍓', chance: 0.07, payout: 5 },
-      { symbol: '🍀', chance: 0.03, payout: 20 }
+      { symbol: '🍓', chance: 0.17, payout: 5 },
+      { symbol: '💎', chance: 0.15, payout: 10 },
+      { symbol: '🍀', chance: 0.13, payout: 20 }
     ];
 
     function rollSymbol() {
@@ -47,7 +42,7 @@ module.exports = {
 
     const slot = [rollSymbol(), rollSymbol(), rollSymbol()];
 
-    const slotBox = (s1, s2, s3, taruhan, result = '', balance = null) => {
+    const slotBox = (s1, s2, s3, taruhan, result = '') => {
       return `\`\`\`
  DKB SLOT
 ┌───────────────┐
@@ -72,23 +67,9 @@ ${result}\`\`\``;
     user.balance += winnings;
     await user.save();
 
-    const finalContent = slotBox(slot[0], slot[1], slot[2], bet, resultText, user.balance);
+    const finalContent = slotBox(slot[0], slot[1], slot[2], bet, resultText);
 
     await delay(700);
-    const sentMsg = await msg.edit({ content: finalContent, components: [row] });
-
-    // ❌ Auto delete selepas 30 saat jika tiada tekan butang
-    const collector = sentMsg.createMessageComponentCollector({
-      filter: i => i.user.id === message.author.id,
-      time: 30000
-    });
-
-    collector.on('end', async (_, reason) => {
-      if (reason === 'time') {
-        try {
-          await sentMsg.delete().catch(() => null);
-        } catch {}
-      }
-    });
+    const sentMsg = await msg.edit({ content: finalContent });
   }
 };
