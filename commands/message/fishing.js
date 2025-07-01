@@ -22,7 +22,7 @@ module.exports = {
     // ⚡ Gunakan 1 stamina dahulu
     const used = await economy.useStamina(userId);
     if (!used) {
-      return message.reply('🪫 Anda keletihan. Tunggu stamina pulih sebelum memancing semula.');
+      return message.reply('***Anda keletihan***. Stamina akan ditambah setiap 5 mins.');
     }
 
     // 🎣 Senarai ikan & peluang

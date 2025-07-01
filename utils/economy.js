@@ -15,8 +15,8 @@ async function getUserData(userId) {
     return user;
   }
 
-  // 🌱 Auto regen stamina setiap 10 minit
-  const regenRate = 10 * 60 * 1000; // 10 minit dalam ms
+  // 🌱 Auto regen stamina setiap 5 minit
+  const regenRate = 5 * 60 * 1000; // 5 minit dalam ms
   const elapsed = now - user.lastRegen;
 
   if (user.stamina < 5 && elapsed >= regenRate) {
