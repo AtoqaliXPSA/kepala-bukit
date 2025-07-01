@@ -24,9 +24,9 @@ module.exports = {
     // 🎣 Random ikan
     const fishOptions = [
       { name: '🐟 Ikan Bilis', chance: 0.6, value: 30 },
-      { name: '🐠 Ikan Donny', chance: 0.3, value: 130 },
-      { name: '🦈 Ikan Jering', chance: 0.09, value: 800 },
-      { name: '🐋 Ikan Paus', chance: 0.01, value: 1500 },
+      { name: '🐠 Ikan Donny', chance: 0.03, value: 130 },
+      { name: '🦈 Ikan Jering', chance: 0.009, value: 800 },
+      { name: '🐋 Ikan Paus', chance: 0.0001, value: 1500 },
     ];
 
     const roll = Math.random();
