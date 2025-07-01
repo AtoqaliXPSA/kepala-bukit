@@ -1,4 +1,5 @@
 const economy = require('../../utils/economy');
+const cooldown = require ('../../utils/cooldownHelper'
 
 function getStaminaBar(current, max = 5) {
   const full = '▓'.repeat(current);
@@ -15,13 +16,13 @@ module.exports = {
   async execute(message) {
     const userId = message.author.id;
 
-    // ❌ Cek stamina
-    const hasStamina = await economy.useStamina(userId);
-    if (!hasStamina) {
-      return message.reply('***Anda keletihan***. Tunggu stamina pulih untuk memancing semula.');
+    // ⏳ Cek cooldown
+    const cd = await cooldown.check('fishing', userId, 60); // 60 saat
+    if (!cd.ready) {
+      return message.reply(`⏳ Tunggu **${cd.remaining}s** sebelum memancing semula.`);
     }
 
-    // 🎣 Random ikan
+    // 🎣 Senarai ikan
     const fishOptions = [
       { name: '🐟 Ikan Bilis', chance: 0.6, value: 30 },
       { name: '🐠 Ikan Donny', chance: 0.03, value: 130 },
@@ -29,13 +30,24 @@ module.exports = {
       { name: '🐋 Ikan Paus', chance: 0.0001, value: 1500 },
     ];
 
+    // Pastikan jumlah peluang = 1.0
+    const totalChance = fishOptions.reduce((acc, f) => acc + f.chance, 0);
+    if (totalChance < 1) {
+      fishOptions.push({ name: '🪱 Cacing Busuk', chance: 1 - totalChance, value: 0 });
+    }
+
+    // 🎲 Roll tangkapan
     const roll = Math.random();
-    let caught = fishOptions.find((f, i, arr) => {
-      const totalChance = arr.slice(0, i + 1).reduce((acc, f) => acc + f.chance, 0);
-      return roll <= totalChance;
+    let cumulative = 0;
+    let caught = fishOptions.find(fish => {
+      cumulative += fish.chance;
+      return roll <= cumulative;
     });
 
-    let resultText = `🎣 Anda memancing dan dapat ${caught.name} !\n`;
+    if (!caught) caught = { name: '🪱 Cacing Busuk', value: 0 }; // Fallback
+
+    // 💰 Beri coins jika berjaya
+    let resultText = `🎣 Anda memancing dan dapat ${caught.name}!\n`;
     if (caught.value > 0) {
       await economy.addCoins(userId, caught.value);
       resultText += `\n💰 Anda mendapat **${caught.value} coins**!`;
@@ -43,6 +55,7 @@ module.exports = {
       resultText += `\n😢 Tiada hasil hari ini...`;
     }
 
+    // 🪫 Papar stamina semasa
     const userData = await economy.getUserData(userId);
     const bar = getStaminaBar(userData.stamina);
     resultText += `\n\n**Stamina**: ${bar} \`${userData.stamina}/5\``;

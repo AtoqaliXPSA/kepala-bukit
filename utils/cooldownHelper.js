@@ -30,7 +30,7 @@ async function checkCooldown(source, commandName, cooldownSeconds) {
     if (!cooldownNotified.has(notifyKey)) {
       const reply = source.reply?.bind(source) || source.channel?.send?.bind(source.channel);
       if (reply) {
-        const msg = await reply(`⏳| Please wait **${timeLeft}s** for use again.`);
+        const msg = await reply(`⏳ | Please wait **${timeLeft}s** for use again.`);
         cooldownNotified.set(notifyKey, msg);
 
         // 🕒 Auto delete selepas cooldown tamat
