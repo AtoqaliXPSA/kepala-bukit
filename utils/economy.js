@@ -5,7 +5,7 @@ async function getUserData(userId) {
   if (!user) {
     user = await User.create({
       userId,
-      balance: 0, // <-- tukar sini
+      balance: 0,
       stamina: 5,
       lastRegen: Date.now()
     });
@@ -27,7 +27,7 @@ async function getUserData(userId) {
 
 async function addCoins(userId, amount) {
   const user = await getUserData(userId);
-  user.balance += amount; // <-- fix field name
+  user.balance += amount; // ✅ betulkan di sini
   await user.save();
 }
 
