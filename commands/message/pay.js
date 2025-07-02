@@ -4,7 +4,7 @@ module.exports = {
   name: 'pay',
   alias: ['give'],
   description: 'Hantar coins kepada pengguna lain',
-  cooldown: 5
+  cooldown: 5,
 
   async execute(message, args) {
     const target = message.mentions.users.first();
