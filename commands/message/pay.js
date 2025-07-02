@@ -13,7 +13,7 @@ module.exports = {
 
     // ❌ Validasi input
     if (!target || isNaN(amount) || amount <= 0) {
-      return message.reply('❌ Sila tag pengguna dan masukkan jumlah yang sah. Contoh: `!pay @user 100`');
+      return message.reply('Sila tag pengguna dan masukkan jumlah yang sah. Contoh: `!pay @user 100`');
     }
 
     if (target.bot) return message.reply('🤖 Anda tidak boleh hantar duit kepada bot!');
@@ -26,7 +26,7 @@ module.exports = {
 
     // ❌ Cek balance
     if (sender.balance < amount) {
-      return message.reply(`❌ Anda cuma ada 💰 ${sender.balance} coins.`);
+      return message.reply(`Anda cuma ada ***$${sender.balance} coins***.`);
     }
 
     // 💸 Kirakan cukai
@@ -45,8 +45,8 @@ module.exports = {
 
     // ✅ Notifikasi
     return message.reply(
-      `✅ Anda telah hantar **💰 ${amountAfterTax} coins** kepada <@${target.id}>.\n` +
-      `🏛️ Cukai: **${taxAmount} coins** telah dimasukkan ke dompet kerajaan.`
+      `Anda telah hantar ** $${amountAfterTax} coins** kepada <@${target.id}>.\n` +
+      `Tax: **${taxAmount} coins**.`
     );
   }
 };
