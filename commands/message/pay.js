@@ -71,7 +71,7 @@ module.exports = {
     return message.reply(
       `Anda telah hantar **$${amountAfterTax} coins** kepada <@${target.id}>.\n` +
       `Tax: **$${taxAmount} coins**\n` +
-      `📤 Pemindahan hari ini: ${userData.count}/${dailyLimit}`
+      `Pemindahan hari ini: ${userData.count}/${dailyLimit}`
     );
   }
 };
