@@ -1,54 +1,26 @@
-const { EmbedBuilder } = require('discord.js');
+// commands/message/work.js
 const User = require('../../models/User');
 
 module.exports = {
   name: 'work',
-  cooldown: 5, // optional, untuk elak spam
+  description: 'Bekerja dan dapatkan gaji',
+  cooldown: 10, // seconds
 
-  async execute(message, args, client) {
+  async execute(message) {
     const userId = message.author.id;
+    const user = await User.findOne({ userId });
 
-    let userData = await User.findOne({ userId });
-    if (!userData) {
-      userData = await User.create({ userId });
+    if (!user || !user.job) {
+      return message.reply('Anda belum bekerja.');
     }
 
-    const now = Date.now();
-    const cooldown = 30 * 60 * 1000; // 30 minit
-    const lastWork = userData.lastWork ? userData.lastWork.getTime() : 0;
+    const minPay = 50;
+    const maxPay = 150;
+    const salary = Math.floor(Math.random() * (maxPay - minPay + 1)) + minPay;
 
-    if (now - lastWork < cooldown) {
-      const remaining = cooldown - (now - lastWork);
-      const minutes = Math.floor(remaining / 60000);
-      const seconds = Math.floor((remaining % 60000) / 1000);
+    user.balance += salary;
+    await user.save();
 
-      const cooldownEmbed = new EmbedBuilder()
-        .setTitle('⏳ Cooldown Aktif')
-        .setDescription(`Anda perlu tunggu **${minutes} minit ${seconds} saat** sebelum bekerja semula.`)
-        .setColor('Red')
-        .setFooter({ text: 'Sabar itu separuh dari kejayaan!' });
-
-      return message.reply({ embeds: [cooldownEmbed] });
-    }
-
-    const jobs = [
-      'YouTuber', 'Chef', 'Waiter', 'Streamer', 'Seller air ketum',
-      'Programmer', 'Delivery Rider', 'Driver Grab', 'Chef', 'Zoo keeper'
-    ];
-
-    const chosenJob = jobs[Math.floor(Math.random() * jobs.length)];
-    const earnings = Math.floor(Math.random() * 200) + 50;
-
-    userData.balance += earnings;
-    userData.lastWork = new Date();
-    await userData.save();
-
-    const embed = new EmbedBuilder()
-      .setTitle('💼 Kerja Berjaya!')
-      .setDescription(`Anda bekerja sebagai **${chosenJob}** dan menerima **RM${earnings}**!`)
-      .setColor(0x00AEFF)
-      .setFooter({ text: `Jangan lupa rehat!` });
-
-    await message.reply({ embeds: [embed] });
+    return message.reply(`Anda bekerja sebagai **${user.job}** dan mendapat **$${salary} coins**!`);
   }
 };
