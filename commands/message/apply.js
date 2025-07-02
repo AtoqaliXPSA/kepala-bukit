@@ -10,7 +10,7 @@ module.exports = {
     const user = await User.findOne({ userId }) || await new User({ userId, balance: 0, job: null }).save();
 
     if (user.job) {
-      return message.reply(`Anda sudah bekerja sebagai **${user.job}**. Gunakan \`!quit\` untuk berhenti.`);
+      return message.reply(`Anda sudah bekerja sebagai **${user.job}**.`);
     }
 
     const availableJobs = ['Petani', 'Nelayan', 'Penebang Pokok', 'Pemandu Grab'];
@@ -19,6 +19,6 @@ module.exports = {
     user.job = job;
     await user.save();
 
-    return message.reply(`Anda telah diterima bekerja sebagai **${job}**! Gunakan \`!work\` untuk mula bekerja.`);
+    return message.reply(`Anda telah diterima bekerja sebagai **${job}**!`);
   }
 };
