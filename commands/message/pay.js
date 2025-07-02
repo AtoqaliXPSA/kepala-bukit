@@ -3,7 +3,8 @@ const User = require('../../models/User');
 module.exports = {
   name: 'pay',
   alias: ['give'],
-  description: 'Hantar coins kepada pengguna lain (3% tax)',
+  description: 'Hantar coins kepada pengguna lain',
+  cooldown: 5
 
   async execute(message, args) {
     const target = message.mentions.users.first();
@@ -11,7 +12,7 @@ module.exports = {
 
     // 🔍 Semakan awal
     if (!target || isNaN(amount) || amount <= 0) {
-      return message.reply('❌ Sila tag pengguna dan masukkan jumlah yang sah.\nContoh: `!pay @user 100`');
+      return message.reply('Sila tag pengguna dan masukkan jumlah yang sah.\nContoh: `!pay @user 100`');
     }
 
     if (target.bot) return message.reply('🤖 Anda tidak boleh hantar duit kepada bot!');
@@ -25,7 +26,7 @@ module.exports = {
       await new User({ userId: target.id, balance: 500 }).save();
 
     if (sender.balance < amount) {
-      return message.reply(`❌ Duit anda tidak mencukupi. Anda cuma ada 💰 ${sender.balance} coins.`);
+      return message.reply(`Duit anda tidak mencukupi. Anda cuma ada 💰 ${sender.balance} coins.`);
     }
 
     // 💸 Kira cukai
@@ -41,8 +42,8 @@ module.exports = {
     await receiver.save();
 
     return message.reply(
-      `✅ Anda telah hantar 💰 **${amountAfterTax} coins** kepada <@${target.id}>.\n` +
-      `💸 Cukai: **${taxAmount} coins** (3%)`
+      `Berjaya , Anda telah hantar **$${amountAfterTax} coins** kepada <@${target.id}>.\n` +
+      `Tax: **$${taxAmount} coins** (3%)`
     );
   }
 };
