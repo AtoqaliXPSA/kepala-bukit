@@ -20,10 +20,10 @@ module.exports = {
 
     // ❌ Validasi input
     if (!target || isNaN(amount) || amount <= 0) {
-      return message.reply('❌ Sila tag pengguna dan masukkan jumlah yang sah. Contoh: `!pay @user 100`');
+      return message.reply('Sila tag pengguna dan masukkan jumlah yang sah. Contoh: `!pay @user 100`');
     }
     if (target.bot) return message.reply('🤖 Anda tidak boleh hantar duit kepada bot!');
-    if (target.id === senderId) return message.reply('❌ Anda tidak boleh bayar kepada diri sendiri.');
+    if (target.id === senderId) return message.reply('Anda tidak boleh bayar kepada diri sendiri.');
 
     // ✅ Ambil data user
     const sender = await User.findOne({ userId: senderId }) || await new User({ userId: senderId, balance: 500 }).save();
