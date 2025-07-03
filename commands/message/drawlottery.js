@@ -1,29 +1,41 @@
+const User = require('../../models/User');
+const Ticket = require('../../models/LotteryTicket');
+
 module.exports = {
   name: 'drawlottery',
-  description: 'Cabut pemenang loteri (admin sahaja)',
+  alias: ['cabut'],
+  description: 'Cabut undi dan pilih pemenang dari semua tiket loteri',
+  cooldown: 60,
 
   async execute(message) {
-    if (message.author.id !== process.env.ADMIN_ID) return message.reply('Hanya admin boleh buat cabutan.');
+    // ✅ Hanya admin boleh cabut undi (ubah ID anda)
+    const adminId = process.env.ADMIN_ID || 'YOUR_DISCORD_ID';
+    if (message.author.id !== adminId) {
+      return message.reply('Hanya admin boleh cabut undi!');
+    }
 
-    if (tickets.size === 0) return message.channel.send('Tiada peserta untuk cabutan loteri.');
+    const allTickets = await Ticket.find();
 
-    // Kumpulkan semua tiket
-    let pool = [];
-    tickets.forEach((count, userId) => {
-      for (let i = 0; i < count; i++) pool.push(userId);
-    });
+    const pool = [];
+    for (const ticket of allTickets) {
+      for (let i = 0; i < ticket.count; i++) {
+        pool.push(ticket.userId);
+      }
+    }
 
-    // Pilih secara rawak
+    if (pool.length === 0) {
+      return message.channel.send('😢 Tiada tiket dalam cabutan loteri.');
+    }
+
     const winnerId = pool[Math.floor(Math.random() * pool.length)];
-    const winner = await User.findOne({ userId: winnerId });
-    winner.balance += lotteryPool;
+    const prize = 500000; // Tetapkan hadiah (boleh ikut jumlah tiket juga jika mahu)
+
+    const winner = await User.findOne({ userId: winnerId }) || await new User({ userId: winnerId, balance: 0 }).save();
+    winner.balance += prize;
     await winner.save();
 
-    // Reset
-    tickets.clear();
-    const wonAmount = lotteryPool;
-    lotteryPool = 0;
+    await Ticket.deleteMany(); // Reset semua tiket
 
-    return message.channel.send(`Tahniah <@${winnerId}>! Anda menang **$${wonAmount}** daripada cabutan loteri!`);
+    return message.channel.send(`<@${winnerId}> memenangi loteri dan mendapat **$${prize} coins!**`);
   }
 };
