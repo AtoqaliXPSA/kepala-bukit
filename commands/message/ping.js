@@ -15,7 +15,7 @@ module.exports = {
 
     // Edit mesej dengan maklumat ping
     await sentMessage.edit(
-      `🏓 Pong! API Latency: ${apiPing}ms`
+      `🏓 Pong: ***${apiPing}ms***`
     );
   }
 };
