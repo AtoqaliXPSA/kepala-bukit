@@ -18,12 +18,26 @@ module.exports = {
 
     // Senarai respon rawak
     const beggers = [
-      'Orang tua di tepi jalan kasihan pada kamu.',
-      'Budak kecil bagi kamu sedikit syiling.',
-      'Pengemis profesional bagi tunjuk ajar.',
-      'Seorang dermawan murah hati tiba-tiba muncul.',
-      'Pelancong asing tertarik dan beri kamu duit.',
+      'Oi miskin nah duit.',
+      'Kesian kau mintak sedekah nah.',
+      'Alahai pengemis nahlah.',
+      'Eh terkejut saya , kesiannye.',
+      'Menariknya aksi awak buat.',
     ];
+
+    const fails = [
+      'Kerja la jangan mengemis je.',
+        'Orang tengok pun kesian, tapi tak bagi apa pun.',
+        'Kesian... tapi saya pun pokai bang.',
+        'Takde rezeki hari ni, cuba esok ye.',
+    ];
+
+    const isFail = Math.random() < 0.1;
+
+    if (isFail) {
+      const fails = fails[Math.floor(Math.random() * fails.length)];
+      return message.channel.send(`${fails}\nNo money for you!`)
+    }
 
     const amount = Math.floor(Math.random() * 500) + 1; // 1 - 100 coins
     const reason = beggers[Math.floor(Math.random() * beggers.length)];
