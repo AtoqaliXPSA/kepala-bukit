@@ -6,8 +6,8 @@ module.exports = {
   async execute(message, args, client) {
     const start = Date.now();
 
-    // Hantar mesej awal
-    const sentMessage = await message.reply('🏓 Mengira ping...');
+    // Hantar mesej awal TANPA reply user
+    const sentMessage = await message.channel.send('🏓 | Mengira ping...');
 
     // Kira ping selepas mesej dihantar
     const latency = Date.now() - start;
