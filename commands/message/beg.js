@@ -7,9 +7,6 @@ module.exports = {
   cooldown: 30, // cooldown dalam saat
 
   async execute(message) {
-    // Cek cooldown
-    const onCooldown = await checkCooldown(message, 'beg', 30);
-    if (onCooldown) return;
 
     const userId = message.author.id;
 
