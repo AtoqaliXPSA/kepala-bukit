@@ -15,7 +15,7 @@ module.exports = {
 
     // Edit mesej dengan maklumat ping
     await sentMessage.edit(
-      `🏓 Pong: ***${apiPing}ms***`
+      `🏓 | Pong: ***${apiPing}ms***`
     );
   }
 };
