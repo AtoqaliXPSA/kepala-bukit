@@ -3,22 +3,23 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('help')
-    .setDescription('Senarai command slash bot ini.'),
+    .setDescription('Senarai command mesej bot ini.'),
 
   async execute(interaction) {
     const embed = new EmbedBuilder()
-      .setTitle('📘 Slash Command Tersedia')
+      .setTitle('Senarai Command Mesej')
       .setColor('Blue')
-      .setDescription('Berikut adalah command yang boleh digunakan:');
+      .setDescription('Berikut adalah command mesej yang boleh digunakan:');
 
-    interaction.client.commands.forEach(cmd => {
+    // Akses command mesej melalui interaction.client.messageCommands
+    interaction.client.messageCommands.forEach(cmd => {
       embed.addFields({
-        name: `/${cmd.data.name}`,
-        value: cmd.data.description || 'Tiada deskripsi.',
+        name: `!${cmd.name}`,
+        value: cmd.description || 'Tiada deskripsi.',
         inline: false
       });
     });
 
-    await interaction.reply({ embeds: [embed], flag : 64 }); // hanya pengguna lihat
+    await interaction.reply({ embeds: [embed], ephemeral: true }); // hanya pengguna yang tekan boleh lihat
   }
 };

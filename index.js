@@ -7,6 +7,13 @@ const { checkCooldown } = require('./utils/cooldownHelper');
 const Jimp = require('jimp');
 require('./utils/cron');
 
+const {
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  ActionRowBuilder
+} = require('discord.js');
+
 const User = require('./models/User');
 
 const client = new Client({
@@ -18,6 +25,7 @@ const client = new Client({
   ],
 });
 
+// Auto push ke Git
 const { exec } = require('child_process');
 exec('sh push.sh', (err, stdout, stderr) => {
   if (err) {
@@ -28,8 +36,10 @@ exec('sh push.sh', (err, stdout, stderr) => {
   console.log(stdout || stderr);
 });
 
+// Keep alive (untuk uptime robot hosting)
 const keepAlive = require('./keepAlive')(client);
 
+// Setup koleksi commands
 client.commands = new Collection();
 client.messageCommands = new Collection();
 client.cooldowns = new Collection();
@@ -45,31 +55,16 @@ for (const file of slashFiles) {
 }
 
 // Load Message Commands
-const msgCmdRoot = path.join(__dirname, 'commands');
-const msgCmdFiles = [];
-
-function readCommandsRecursively(dir) {
-  const files = fs.readdirSync(dir);
-  for (const file of files) {
-    const fullPath = path.join(dir, file);
-    if (fs.statSync(fullPath).isDirectory()) {
-      readCommandsRecursively(fullPath); // rekursif
-    } else if (file.endsWith('.js')) {
-      msgCmdFiles.push(fullPath);
-    }
-  }
-}
-
-readCommandsRecursively(msgCmdRoot);
-
-for (const file of msgCmdFiles) {
-  const command = require(file);
+const messageCommandPath = path.join(__dirname, 'commands/message');
+const messageFiles = fs.readdirSync(messageCommandPath).filter(file => file.endsWith('.js'));
+for (const file of messageFiles) {
+  const command = require(path.join(messageCommandPath, file));
   if (command.name) {
     client.messageCommands.set(command.name, command);
   }
 }
 
-// Load Events (once)
+// Load Events
 const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 for (const file of eventFiles) {
@@ -81,71 +76,87 @@ for (const file of eventFiles) {
   }
 }
 
-// On Ready
+// When bot ready
 client.once(Events.ClientReady, async () => {
   console.log(`🤖 Logged in as ${client.user.tag}`);
   await connectToDatabase();
+
+  // ✅ Optional: Sync slash commands (auto update)
+  await client.application.commands.set(
+    [...client.commands.values()].map(cmd => cmd.data)
+  );
+
   client.user.setPresence({
     activities: [{ name: 'over your server 👀', type: 3 }],
     status: 'online',
   });
 });
 
-// Slash Command Handler
+// Slash Command Interaction (optional buttons/modals)
 client.on('interactionCreate', async interaction => {
-  if (!interaction.isButton()) return;
-  const [action, userId] = interaction.customId.split('_');
-  if (interaction.user.id !== process.env.ADMIN_ID) return;
+  if (interaction.isCommand()) {
+    const command = client.commands.get(interaction.commandName);
+    if (!command) return;
 
-  const user = await User.findOne({ userId });
-  if (!user) return interaction.reply({ content: '❌ User tidak dijumpai.', ephemeral: true });
+    try {
+      await command.execute(interaction);
+    } catch (err) {
+      console.error(err);
+      await interaction.reply({ content: '❌ Terdapat ralat semasa laksana slash command.', ephemeral: true });
+    }
+  }
 
-  // Modal untuk input jumlah
-  const modal = new ModalBuilder()
-    .setCustomId(`${action}_modal_${userId}`)
-    .setTitle(action.includes('stamina') ? 'Tambah Stamina' : action.includes('add') ? 'Tambah Coins' : 'Tolak Coins');
+  // 👇 Extra admin modal (jika masih mahu)
+  if (interaction.isButton()) {
+    const [action, userId] = interaction.customId.split('_');
+    if (interaction.user.id !== process.env.ADMIN_ID) return;
 
-  const input = new TextInputBuilder()
-    .setCustomId('amount')
-    .setLabel('Jumlah:')
-    .setStyle(TextInputStyle.Short)
-    .setRequired(true);
+    const user = await User.findOne({ userId });
+    if (!user) return interaction.reply({ content: '❌ User tidak dijumpai.', ephemeral: true });
 
-  modal.addComponents(new ActionRowBuilder().addComponents(input));
-  await interaction.showModal(modal);
-});
+    const modal = new ModalBuilder()
+      .setCustomId(`${action}_modal_${userId}`)
+      .setTitle(action.includes('stamina') ? 'Tambah Stamina' : action.includes('add') ? 'Tambah Coins' : 'Tolak Coins');
 
-client.on('interactionCreate', async interaction => {
-  if (!interaction.isModalSubmit()) return;
+    const input = new TextInputBuilder()
+      .setCustomId('amount')
+      .setLabel('Jumlah:')
+      .setStyle(TextInputStyle.Short)
+      .setRequired(true);
 
-  const [action, , userId] = interaction.customId.split('_');
-  const amount = parseInt(interaction.fields.getTextInputValue('amount'));
-  if (isNaN(amount)) return interaction.reply({ content: '❌ Jumlah tidak sah.', ephemeral: true });
+    modal.addComponents(new ActionRowBuilder().addComponents(input));
+    await interaction.showModal(modal);
+  }
 
-  const user = await User.findOne({ userId });
-  if (!user) return interaction.reply({ content: '❌ User tidak dijumpai.', ephemeral: true });
+  if (interaction.isModalSubmit()) {
+    const [action, , userId] = interaction.customId.split('_');
+    const amount = parseInt(interaction.fields.getTextInputValue('amount'));
+    if (isNaN(amount)) return interaction.reply({ content: '❌ Jumlah tidak sah.', ephemeral: true });
 
-  if (action === 'addcoins') user.balance += amount;
-  if (action === 'removecoins') user.balance = Math.max(user.balance - amount, 0);
-  if (action === 'addstamina') user.stamina = (user.stamina || 0) + amount;
+    const user = await User.findOne({ userId });
+    if (!user) return interaction.reply({ content: '❌ User tidak dijumpai.', ephemeral: true });
 
-  await user.save();
+    if (action === 'addcoins') user.balance += amount;
+    if (action === 'removecoins') user.balance = Math.max(user.balance - amount, 0);
+    if (action === 'addstamina') user.stamina = (user.stamina || 0) + amount;
 
-  await interaction.reply({ content: `✅ ${action} berjaya untuk <@${userId}>.`, ephemeral: true });
+    await user.save();
+    await interaction.reply({ content: `✅ ${action} berjaya untuk <@${userId}>.`, ephemeral: true });
+  }
 });
 
 // Message Command Handler + XP
 client.on(Events.MessageCreate, async message => {
   if (message.author.bot || !message.guild) return;
 
-  // Auto XP
+  // Auto XP system
   const user = await User.findOneAndUpdate(
     { userId: message.author.id },
     { $inc: { xp: 1 } },
     { upsert: true, new: true }
   );
 
-  const xpNeeded = user.level * 100;
+  const xpNeeded = Math.floor(50 * user.level + 100);
   if (user.xp >= xpNeeded) {
     user.level += 1;
     user.xp = 0;
@@ -153,13 +164,13 @@ client.on(Events.MessageCreate, async message => {
     message.channel.send(`🎉 Tahniah ${message.author}, anda telah naik ke Level ${user.level}!`);
   }
 
-  // Message command prefix
+  // Message Commands
   const prefix = process.env.PREFIX || '!';
   if (!message.content.startsWith(prefix)) return;
   const args = message.content.slice(prefix.length).trim().split(/ +/);
   const cmdName = args.shift().toLowerCase();
 
-  let command = client.messageCommands.get(cmdName) ||
+  const command = client.messageCommands.get(cmdName) ||
     [...client.messageCommands.values()].find(cmd => cmd.alias?.includes(cmdName));
 
   if (!command) return;
