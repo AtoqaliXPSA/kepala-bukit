@@ -10,7 +10,7 @@ module.exports = {
     const bet = parseInt(args[0]) || 1;
 
     const slotItems = [
-      { symbol: '🍋', chance: 0.4, payout: 2 },
+      { symbol: '🍋', chance: 0.1, payout: 2 },
       { symbol: '🍒', chance: 0.03, payout: 3 },
       { symbol: '🔔', chance: 0.05, payout: 4 },
       { symbol: '🍓', chance: 0.01, payout: 5 },

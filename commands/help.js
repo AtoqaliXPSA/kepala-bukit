@@ -14,7 +14,7 @@ module.exports = {
     // Akses command mesej melalui interaction.client.messageCommands
     interaction.client.messageCommands.forEach(cmd => {
       embed.addFields({
-        name: `!${cmd.name}`,
+        name: `dj${cmd.name}`,
         value: cmd.description || 'Tiada deskripsi.',
         inline: false
       });
