@@ -10,23 +10,13 @@ module.exports = {
     const bet = parseInt(args[0]) || 1;
 
     const slotItems = [
-      { symbol: '🍋', chance: 0.1, payout: 2 },
-      { symbol: '🍒', chance: 0.03, payout: 3 },
-      { symbol: '🔔', chance: 0.05, payout: 4 },
-      { symbol: '🍓', chance: 0.01, payout: 5 },
-      { symbol: '💎', chance: 0.001, payout: 10 },
-      { symbol: '🍀', chance: 0.0001, payout: 20 }
+      { symbol: '🍋', payout: 2 },
+      { symbol: '🍒', payout: 3 },
+      { symbol: '🔔', payout: 4 },
+      { symbol: '🍓', payout: 5 },
+      { symbol: '💎', payout: 10 },
+      { symbol: '🍀', payout: 20 }
     ];
-
-    function rollSymbol() {
-      const roll = Math.random();
-      let total = 0;
-      for (const item of slotItems) {
-        total += item.chance;
-        if (roll <= total) return item;
-      }
-      return slotItems[0]; // fallback
-    }
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -40,11 +30,25 @@ module.exports = {
     user.balance -= bet;
     await user.save();
 
-    const slot = [rollSymbol(), rollSymbol(), rollSymbol()];
+    // 🎰 Logic baru: Randomkan simbol asas
+    const mainSymbol = slotItems[Math.floor(Math.random() * slotItems.length)];
+
+    let slot = [mainSymbol, mainSymbol, mainSymbol]; // default: full match
+
+    // 🎯 5% chance sahaja dapat full match
+    const fullMatchChance = 0.05;
+    if (Math.random() > fullMatchChance) {
+      // Guna slot rawak (tiada match)
+      slot = [
+        slotItems[Math.floor(Math.random() * slotItems.length)],
+        slotItems[Math.floor(Math.random() * slotItems.length)],
+        slotItems[Math.floor(Math.random() * slotItems.length)],
+      ];
+    }
 
     const slotBox = (s1, s2, s3, taruhan, result = '') => {
       return `\`\`\`
- DKB SLOT
+   DKB SLOT
 ┌───────────────┐
 │ ${s1.symbol} │ ${s2.symbol} │ ${s3.symbol} │ Bet $${taruhan}
 └───────────────┘
@@ -60,7 +64,8 @@ ${result}\`\`\``;
     let resultText = '😢 You Lost!';
 
     if (slot[0].symbol === slot[1].symbol && slot[1].symbol === slot[2].symbol) {
-      winnings = bet * slot[0].payout;
+      const payout = slot[0].payout;
+      winnings = bet * payout;
       resultText = `🎉 You Win $${winnings} with ${slot[0].symbol} x3!`;
     }
 
@@ -68,8 +73,7 @@ ${result}\`\`\``;
     await user.save();
 
     const finalContent = slotBox(slot[0], slot[1], slot[2], bet, resultText);
-
     await delay(700);
-    const sentMsg = await msg.edit({ content: finalContent });
+    await msg.edit({ content: finalContent });
   }
 };
