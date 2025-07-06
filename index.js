@@ -143,8 +143,8 @@
     try {
       await command.execute(message, args, client);
     } catch (err) {
-      console.error(`❌ Error in message command '${cmdName}':`, err);
-      message.reply('⚠️ Berlaku ralat semasa laksana arahan.');
+      console.error(`Error in message command '${cmdName}':`, err);
+      message.reply('***Berlaku ralat semasa laksana arahan.***');
     }
   });
 
