@@ -29,7 +29,7 @@ module.exports = {
 
       const embedCooldown = new EmbedBuilder()
         .setColor('Red')
-        .setTitle('⏳ Sudah claim!')
+        .setTitle('Sudah claim!')
         .setDescription(`Cuba lagi dalam **${hours} jam ${minutes} minit**.`);
 
       return message.reply({ embeds: [embedCooldown] });
@@ -42,9 +42,9 @@ module.exports = {
 
     const embedSuccess = new EmbedBuilder()
       .setColor('Green')
-      .setTitle('💰 Duit Harian Diterima!')
+      .setTitle('Duit Harian Diterima!')
       .setDescription(`${username}, anda telah menerima **${REWARD}** duit harian.`)
-      .setFooter({ text: `Baki semasa: ${user.balance}` });
+      .setTimestamp();
 
     await message.reply({ embeds: [embedSuccess] });
   }
