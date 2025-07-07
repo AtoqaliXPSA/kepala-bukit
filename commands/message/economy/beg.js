@@ -1,5 +1,5 @@
-const { checkCooldown } = require('../../utils/cooldownHelper');
-const User = require('../../models/User');
+const { checkCooldown } = require('../../../utils/cooldownHelper');
+const User = require('../../../models/User');
 
 module.exports = {
   name: 'beg',
