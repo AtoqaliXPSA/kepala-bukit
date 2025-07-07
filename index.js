@@ -38,14 +38,20 @@ const User = require('./models/User');
   client.cooldowns = new Collection();
 
   // Load Slash Commands
-  const slashPath = path.join(__dirname, 'commands');
-  const slashFiles = fs.readdirSync(slashPath).filter(file => file.endsWith('.js'));
-  for (const file of slashFiles) {
-    const command = require(`./commands/slash/${file}`);
-    if (command.data && command.data.name) {
-      client.commands.set(command.data.name, command);
+function getAllCommandFiles(dir, fileList = []) {
+  const files = fs.readdirSync(dir);
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+    if (fs.statSync(fullPath).isDirectory()) {
+      getAllCommandFiles(fullPath, fileList);
+    } else if (file.endsWith('.js')) {
+      fileList.push(fullPath);
     }
   }
+  return fileList;
+}
+
+const slashFiles = getAllCommandFiles(path.join(__dirname, 'commands/slash'));
 
   // Load Message Commands
   const messageCommandPath = path.join(__dirname, 'commands/message');
