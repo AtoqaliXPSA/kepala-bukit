@@ -54,14 +54,27 @@ function getAllCommandFiles(dir, fileList = []) {
 const slashFiles = getAllCommandFiles(path.join(__dirname, 'commands/slash'));
 
   // Load Message Commands
-  const messageCommandPath = path.join(__dirname, 'commands/message');
-  const messageFiles = fs.readdirSync(messageCommandPath).filter(file => file.endsWith('.js'));
-  for (const file of messageFiles) {
-    const command = require(path.join(messageCommandPath, file));
-    if (command.name) {
-      client.messageCommands.set(command.name, command);
+const messageCommandPath = path.join(__dirname, 'commands/message');
+
+function loadMessageCommands(dir) {
+  const files = fs.readdirSync(dir);
+
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+    const stat = fs.statSync(fullPath);
+
+    if (stat.isDirectory()) {
+      loadMessageCommands(fullPath);
+    } else if (file.endsWith('.js')) {
+      const command = require(fullPath);
+      if (command.name) {
+        client.messageCommands.set(command.name, command);
+      }
     }
   }
+}
+
+loadMessageCommands(messageCommandPath);
 
   // Load Events
   const eventsPath = path.join(__dirname, 'events');
