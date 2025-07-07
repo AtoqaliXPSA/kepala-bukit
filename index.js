@@ -145,11 +145,11 @@ client.login(process.env.DISCORD_TOKEN);
 
 // === Global Error Handler (Luar event handler) ===
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌ [Unhandled Rejection]', reason);
+  console.error('❌[Unhandled Rejection]', reason);
   fs.appendFileSync('error.log', `[UNHANDLED] ${new Date().toISOString()}\n${reason.stack || reason}\n\n`);
 });
 
 process.on('uncaughtException', (err) => {
-  console.error('❌ [Uncaught Exception]', err);
+  console.error('❌[Uncaught Exception]', err);
   fs.appendFileSync('error.log', `[UNCAUGHT] ${new Date().toISOString()}\n${err.stack}\n\n`);
 });
