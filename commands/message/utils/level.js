@@ -1,6 +1,6 @@
 const { AttachmentBuilder } = require('discord.js');
-const generateLevelCard = require('../../utils/levelCard');
-const User = require('../../models/User');
+const generateLevelCard = require('../../../utils/levelCard');
+const User = require('../../../models/User');
 
 module.exports = {
   name: 'level',

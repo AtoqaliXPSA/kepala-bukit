@@ -1,5 +1,5 @@
-const User = require('../../models/User');
-const Ticket = require('../../models/LotteryTicket');
+const User = require('../../../models/User');
+const Ticket = require('../../../models/LotteryTicket');
 
 module.exports = {
   name: 'drawlottery',

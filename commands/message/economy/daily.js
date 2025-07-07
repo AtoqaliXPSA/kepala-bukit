@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
-const User = require('../../models/User');
+const User = require('../../../models/User');
 
 const COOLDOWN = 24 * 60 * 60 * 1000; // 24 jam
 const REWARD = 500;
