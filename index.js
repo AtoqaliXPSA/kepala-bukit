@@ -7,13 +7,6 @@
   const Jimp = require('jimp');
   require('./utils/cron');
 
-  const {
-    ModalBuilder,
-    TextInputBuilder,
-    TextInputStyle,
-    ActionRowBuilder
-  } = require('discord.js');
-
   const User = require('./models/User');
 
   const client = new Client({
