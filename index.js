@@ -38,7 +38,7 @@ const User = require('./models/User');
   client.cooldowns = new Collection();
 
   // Load Slash Commands
-const slashFiles = getAllCommandFiles(path.join(__dirname, 'commands/slash'));
+  const slashFiles = getAllCommandFiles(path.join(__dirname, 'commands/slash'));
 for (const file of slashFiles) {
   const command = require(file);
   if (command.data && command.execute) {
