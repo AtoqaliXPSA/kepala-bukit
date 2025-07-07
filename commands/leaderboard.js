@@ -4,7 +4,7 @@ const User = require('../models/User');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('leaderboard')
-    .setDescription('Lihat pengguna terkaya di sistem.'),
+    .setDescription('Lihat pengguna terkaya.'),
 
   async execute(interaction) {
     try {
@@ -31,7 +31,7 @@ module.exports = {
       }));
 
       const embed = new EmbedBuilder()
-        .setTitle('🏆 Top 10 Leaderboard')
+        .setTitle('Top 10 Leaderboard')
         .setDescription(leaderboardText.join('\n'))
         .setColor(0x00AEFF)
         .setFooter({ text: `Diminta oleh ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() })

@@ -17,7 +17,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setTitle('🏓 Pong!')
       .setDescription(`**Bot Ping:** ${ping}ms`)
-      .setColor('#00f6ff')
+      .setColor(0x00AEFF)
       .setTimestamp();
 
     await replyHelper.edit(interaction, { content: '', embeds: [embed] });

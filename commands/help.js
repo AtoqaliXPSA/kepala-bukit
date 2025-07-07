@@ -8,7 +8,7 @@ module.exports = {
   async execute(interaction) {
     const embed = new EmbedBuilder()
       .setTitle('Senarai Command Mesej')
-      .setColor('Blue')
+      .setColor(0x00AEFF)
       .setDescription('Berikut adalah command mesej yang boleh digunakan');
 
     // Akses command mesej melalui interaction.client.messageCommands
