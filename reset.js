@@ -4,10 +4,10 @@ require('dotenv').config();
 
 // Ambil semua command dalam folder `commands/`
 const commands = [];
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands/slash').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
+  const command = require(`./commands/slash/${file}`);
   if ('data' in command && 'execute' in command) {
     commands.push(command.data.toJSON());
   } else {
