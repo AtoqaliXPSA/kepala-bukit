@@ -1,13 +1,13 @@
-  require('dotenv').config();
-  const { Client, Collection, GatewayIntentBits, Events } = require('discord.js');
-  const fs = require('fs');
-  const path = require('path');
-  const connectToDatabase = require('./utils/database');
-  const { checkCooldown } = require('./utils/cooldownHelper');
-  const Jimp = require('jimp');
-  require('./utils/cron');
+require('dotenv').config();
+const { Client, Collection, GatewayIntentBits, Events } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
+const connectToDatabase = require('./utils/database');
+const { checkCooldown } = require('./utils/cooldownHelper');
+const Jimp = require('jimp');
+require('./utils/cron');
 
-  const User = require('./models/User');
+const User = require('./models/User');
 
   const client = new Client({
     intents: [
@@ -41,7 +41,7 @@
   const slashPath = path.join(__dirname, 'commands');
   const slashFiles = fs.readdirSync(slashPath).filter(file => file.endsWith('.js'));
   for (const file of slashFiles) {
-    const command = require(`./commands/${file}`);
+    const command = require(`./commands/slash/${file}`);
     if (command.data && command.data.name) {
       client.commands.set(command.data.name, command);
     }

@@ -1,4 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -7,19 +9,42 @@ module.exports = {
 
   async execute(interaction) {
     const embed = new EmbedBuilder()
-      .setTitle('Senarai Command Mesej')
+      .setTitle('📜 Senarai Command Mesej')
       .setColor(0x00AEFF)
-      .setDescription('Berikut adalah command mesej yang boleh digunakan');
+      .setDescription('Berikut adalah command mesej yang boleh digunakan:')
+      .setFooter({ text: `Diminta oleh ${interaction.user.tag}` })
+      .setTimestamp();
 
-    // Akses command mesej melalui interaction.client.messageCommands
-    interaction.client.messageCommands.forEach(cmd => {
-      embed.addFields({
-        name: `dj${cmd.name}`,
-        value: cmd.description || 'Tiada deskripsi.',
-        inline: false
-      });
+    const commandDir = path.join(__dirname, '../commands/message');
+
+    function readCommands(dir) {
+      const files = fs.readdirSync(dir);
+      for (const file of files) {
+        const fullPath = path.join(dir, file);
+        if (fs.statSync(fullPath).isDirectory()) {
+          readCommands(fullPath);
+        } else if (file.endsWith('.js')) {
+          try {
+            const cmd = require(fullPath);
+            if (cmd.name) {
+              embed.addFields({
+                name: `dj${cmd.name}`,
+                value: cmd.description || 'Tiada deskripsi.',
+                inline: false
+              });
+            }
+          } catch (err) {
+            console.error(`❌ Gagal baca command dari ${fullPath}`, err);
+          }
+        }
+      }
+    }
+
+    readCommands(commandDir);
+
+    await interaction.reply({
+      embeds: [embed],
+      ephemeral: true
     });
-
-    await interaction.reply({ embeds: [embed], flag: 'ephemeral' }); // hanya pengguna yang tekan boleh lihat
   }
 };
