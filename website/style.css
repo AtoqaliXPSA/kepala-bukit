@@ -64,42 +64,48 @@ body {
   position: fixed;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.8);
-  display: flex;
+  background: rgba(0, 0, 0, 0.95);
+  display: none;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 1rem;
 }
 
 .numpad-box {
-  background: var(--bg);
-  border: 2px solid var(--glow);
-  padding: 1rem;
-  border-radius: 10px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 0;
   text-align: center;
+  color: var(--text);
 }
 
 .pin-display {
-  font-size: 2rem;
-  letter-spacing: 1rem;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  letter-spacing: 1.5rem;
+  margin-bottom: 2rem;
   color: var(--text);
 }
 
 .numpad-grid {
   display: grid;
-  grid-template-columns: repeat(3, 60px);
-  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 400px;
 }
 
 .numpad-grid button {
-  font-size: 1.5rem;
-  padding: 10px;
-  border-radius: 8px;
+  font-size: 2rem;
+  padding: 1.5rem;
+  border-radius: 12px;
   background: var(--button-bg);
   color: var(--button-text);
   border: none;
   cursor: pointer;
+  width: 100%;
 }
 
 .numpad-grid button:hover {
