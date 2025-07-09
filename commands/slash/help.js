@@ -10,7 +10,9 @@ module.exports = {
   async execute(interaction) {
     const embed = new EmbedBuilder()
       .setColor(0x00AEFF)
-      .setDescription('Berikut adalah senarai command mesej');
+      .setTitle('📜 Senarai Command Mesej')
+      .setDescription('Berikut adalah senarai command mesej disusun mengikut kategori.')
+      .setTimestamp();
 
     const basePath = path.resolve(__dirname, '../message');
     const categories = fs.readdirSync(basePath).filter(folder =>
@@ -27,19 +29,19 @@ module.exports = {
       for (const file of commands) {
         const command = require(path.join(basePath, category, file));
         if (command.name) {
-          fields.push(`\`${command.name}\``);
+          fields.push(`\`${command.name}\``); // jadi: `ban` • `kick` • `warn`
         }
       }
 
       if (fields.length) {
         embed.addFields({
           name: `📂 ${category.toUpperCase()}`,
-          value: fields.join('\n'),
+          value: fields.join(' • '),
           inline: false,
         });
       }
     }
 
-    await interaction.reply({ embeds: [embed], flags : 64 });
+    await interaction.reply({ embeds: [embed], ephemeral: true }); // flags: 64 → deprecated
   }
 };
