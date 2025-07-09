@@ -9,7 +9,7 @@ module.exports = {
 
   async execute(interaction) {
     const embed = new EmbedBuilder()
-      .setTitle('Senarai Command Mesej')
+      .setTitle('')
       .setColor(0x00AEFF)
       .setDescription('Berikut adalah senarai command mesej')
       .setTimestamp();
@@ -29,7 +29,7 @@ module.exports = {
       for (const file of commands) {
         const command = require(path.join(basePath, category, file));
         if (command.name) {
-          fields.push(`• \`${command.name}\``);
+          fields.push(`\`${command.name}\``);
         }
       }
 
