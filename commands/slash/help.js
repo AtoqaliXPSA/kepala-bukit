@@ -29,19 +29,19 @@ module.exports = {
       for (const file of commands) {
         const command = require(path.join(basePath, category, file));
         if (command.name) {
-          fields.push(`\`${command.name}\``); // jadi: `ban` • `kick` • `warn`
+          fields.push(`\`${command.name}\``);
         }
       }
 
       if (fields.length) {
         embed.addFields({
           name: `📂 ${category.toUpperCase()}`,
-          value: fields.join(' • '),
+          value: fields.join(''),
           inline: false,
         });
       }
     }
 
-    await interaction.reply({ embeds: [embed], ephemeral: true }); // flags: 64 → deprecated
+    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral, });
   }
 };
