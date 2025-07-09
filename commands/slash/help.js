@@ -9,7 +9,7 @@ module.exports = {
 
   async execute(interaction) {
     const embed = new EmbedBuilder()
-      .setTitle('')
+      .setTitle('Commands List')
       .setColor(0x00AEFF)
       .setDescription('Berikut adalah senarai command mesej')
       .setTimestamp();
