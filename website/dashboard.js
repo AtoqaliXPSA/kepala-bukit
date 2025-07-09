@@ -16,22 +16,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 3. Butang Restart
-  const restartBtn = document.getElementById("restartBtn");
-  if (restartBtn) {
-    restartBtn.addEventListener("click", async () => {
-      const confirmed = confirm("Anda pasti nak restart bot?");
-      if (!confirmed) return;
+  // 3. Butang Logout
+ document.getElementById("restartBtn").onclick = async () => {
+    const confirmRestart = confirm("Anda pasti nak restart bot?");
+    if (!confirmRestart) return;
 
-      try {
-        const res = await fetch('/restart', { method: 'POST' });
-        const data = await res.json();
-        alert(data.message || 'Restart triggered.');
-      } catch (err) {
-        alert("❌ Gagal restart bot.");
-      }
-    });
-  }
+    const overlay = document.getElementById("restartOverlay");
+    overlay.style.display = "flex"; // Tunjuk overlay
+
+    try {
+      const res = await fetch('/restart', { method: 'POST' });
+      const data = await res.json();
+
+      setTimeout(() => {
+        overlay.style.display = "none"; // Hilangkan selepas beberapa saat (optional)
+        alert(data.message || "Restart triggered.");
+      }, 3000); // contoh 3 saat
+    } catch (err) {
+      overlay.style.display = "none";
+      alert("❌ Gagal restart bot.");
+    }
+  };
+
 
   // 4. Butang Logout
   const logoutBtn = document.getElementById("logoutBtn");
