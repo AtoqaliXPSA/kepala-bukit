@@ -39,12 +39,12 @@ module.exports = {
     ctx.fillText(chosen, 200, 200);
 
     // Send animation frames (simulate with image + typing)
-    const flippingMsg = await message.reply('🪙 Flipping the coin...');
+    const flippingMsg = await message.reply('Flipping the coin...');
     setTimeout(async () => {
       const attachment = new AttachmentBuilder(await canvas.encode('png'), {
         name: 'coinflip.png',
       });
-      await flippingMsg.edit({ content: `🎉 It's **${chosen}**!`, files: [attachment] });
+      await flippingMsg.edit({ content: `It's **${chosen}**!`, files: [attachment] });
     }, 1500);
   },
 };
