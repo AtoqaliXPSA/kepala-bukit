@@ -35,7 +35,7 @@ module.exports = {
 
       if (fields.length) {
         embed.addFields({
-          name: `***${category.name()}***`,
+          name: `***${category.charAt(0).toUpperCase()}***`,
           value: fields.join(' '),
           inline: false,
         });
