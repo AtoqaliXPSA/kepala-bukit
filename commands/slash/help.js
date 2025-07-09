@@ -9,9 +9,9 @@ module.exports = {
 
   async execute(interaction) {
     const embed = new EmbedBuilder()
-      .setTitle('📜 Senarai Command Mesej')
+      .setTitle('Senarai Command Mesej')
       .setColor(0x00AEFF)
-      .setDescription('Berikut adalah senarai command mesej yang diatur mengikut kategori:')
+      .setDescription('Berikut adalah senarai command mesej')
       .setTimestamp();
 
     const basePath = path.resolve(__dirname, '../message');
@@ -29,7 +29,7 @@ module.exports = {
       for (const file of commands) {
         const command = require(path.join(basePath, category, file));
         if (command.name) {
-          fields.push(`• \`${command.name}\` — ${command.description || 'Tiada deskripsi'}`);
+          fields.push(`• \`${command.name}\``);
         }
       }
 
