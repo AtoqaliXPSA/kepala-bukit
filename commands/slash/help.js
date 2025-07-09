@@ -11,8 +11,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor(0x00AEFF)
       .setTitle('📜 Senarai Command Mesej')
-      .setDescription('Berikut adalah senarai command mesej disusun mengikut kategori.')
-      .setTimestamp();
+      .setDescription('Berikut adalah senarai command mesej disusun mengikut kategori.');
 
     const basePath = path.resolve(__dirname, '../message');
     const categories = fs.readdirSync(basePath).filter(folder =>
