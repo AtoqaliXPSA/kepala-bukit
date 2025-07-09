@@ -5,7 +5,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('help')
-    .setDescription('Senarai command mesej mengikut kategori'),
+    .setDescription('List of all commands'),
 
   async execute(interaction) {
     const embed = new EmbedBuilder()
