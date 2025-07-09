@@ -39,9 +39,9 @@ module.exports = {
         { $inc: { coins: caught.value } },
         { upsert: true, new: true }
       );
-      resultText += `💰 Anda mendapat **${caught.value} coins**!`;
+      resultText += `Anda mendapat **${caught.value} coins**!`;
     } else {
-      resultText += `😢 Tiada hasil hari ini...`;
+      resultText += `Tiada hasil hari ini...`;
     }
 
     return message.reply(resultText);
