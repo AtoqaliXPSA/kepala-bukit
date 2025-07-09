@@ -10,7 +10,6 @@ module.exports = {
   async execute(interaction) {
     const embed = new EmbedBuilder()
       .setColor(0x00AEFF)
-      .setTitle('📜 Senarai Command Mesej')
       .setDescription('Berikut adalah senarai command mesej disusun mengikut kategori.')
       .setTimestamp();
 
@@ -35,7 +34,11 @@ module.exports = {
 
       if (fields.length) {
         embed.addFields({
-          name: `***${category.charAt(1).toUpperCase() + category.slice(2)}***`,
+          name: `***${
+            category.length >= 2
+              ? category.charAt(0) + category.charAt(1).toUpperCase() + category.slice(2)
+              : category
+          }***`
           value: fields.join(' '),
           inline: false,
         });
