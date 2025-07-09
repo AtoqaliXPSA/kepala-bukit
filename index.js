@@ -20,6 +20,7 @@ const User = require('./models/User');
 
   // Auto push ke Git
   const { exec } = require('child_process');
+  if (!fs.existsSync('.git/index.lock'))
   exec('sh push.sh', (err, stdout, stderr) => {
     if (err) {
       console.error('❌ Push gagal:', err);
