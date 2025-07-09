@@ -1,50 +1,60 @@
-// commands/message/fun/coinflip.js
-const { AttachmentBuilder } = require('discord.js');
-const Canvas = require('@napi-rs/canvas');
-const path = require('path');
+const economy = require('../../../utils/economy');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
   name: 'coinflip',
-  alias: ['cf', 'flip'],
-  description: 'Flip a coin and test your luck!',
+  description: 'Teka kepala atau ekor dan menang coins!',
+  alias: ['cf'],
 
-  async execute(message) {
-    const coinSides = ['Heads', 'Tails'];
-    const chosen = coinSides[Math.floor(Math.random() * coinSides.length)];
+  async execute(message, args) {
+    const userId = message.author.id;
+    const bet = parseInt(args[0]) || 1;
 
-    const canvas = Canvas.createCanvas(400, 400);
-    const ctx = canvas.getContext('2d');
+    if (bet < 1) return message.reply('❌ Minimum pertaruhan ialah 1 coin.');
 
-    // Background
-    ctx.fillStyle = '#111';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Semak balance
+    const userData = await economy.getUser(userId);
+    if (userData.balance < bet) {
+      return message.reply('❌ Anda tiada cukup coins untuk pertaruhan ini.');
+    }
 
-    // Glow Circle
-    ctx.beginPath();
-    ctx.arc(200, 200, 160, 0, Math.PI * 2, true);
-    ctx.fillStyle = '#00f0ff88';
-    ctx.fill();
+    // Simulasi flipping dengan teks animasi
+    const sides = ['HEADS', 'TAILS'];
+    const chosen = sides[Math.floor(Math.random() * sides.length)];
 
-    // Coin Circle
-    ctx.beginPath();
-    ctx.arc(200, 200, 130, 0, Math.PI * 2, true);
-    ctx.fillStyle = '#ffe066';
-    ctx.fill();
+    const embed = new EmbedBuilder()
+      .setTitle('🪙 Coinflip Bermula!')
+      .setDescription('Flipping coin...')
+      .setColor(0x00AEFF);
 
-    // Coin Text
-    ctx.fillStyle = '#000';
-    ctx.font = 'bold 48px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(chosen, 200, 200);
+    const sent = await message.reply({ embeds: [embed] });
 
-    // Send animation frames (simulate with image + typing)
-    const flippingMsg = await message.reply('Flipping the coin...');
-    setTimeout(async () => {
-      const attachment = new AttachmentBuilder(await canvas.encode('png'), {
-        name: 'coinflip.png',
-      });
-      await flippingMsg.edit({ content: `It's **${chosen}**!`, files: [attachment] });
-    }, 1500);
-  },
+    // Animasi teks - flipping
+    const animations = ['🪙', '🔄', '🔁', '🔃', '⏳'];
+    for (let i = 0; i < 4; i++) {
+      await new Promise(resolve => setTimeout(resolve, 600));
+      await sent.edit({ embeds: [embed.setDescription(`${animations[i % animations.length]} Coin flipping...`)] });
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Tentukan menang atau kalah
+    const win = Math.random() < 0.5;
+    const result = win ? '🏆 MENANG!' : '💀 KALAH!';
+    const color = win ? 0x00FF88 : 0xFF5555;
+
+    if (win) {
+      await economy.addBalance(userId, bet);
+    } else {
+      await economy.addBalance(userId, -bet);
+    }
+
+    const finalEmbed = new EmbedBuilder()
+      .setTitle('🪙 Coinflip Result')
+      .setDescription(`**Hasil:** ${chosen}\n**Keputusan:** ${result}\n**Pertaruhan:** 💰 ${bet} coins`)
+      .setColor(color)
+      .setFooter({ text: `Diminta oleh ${message.author.tag}`, iconURL: message.author.displayAvatarURL() });
+
+    await sent.edit({ embeds: [finalEmbed] });
+  }
 };
