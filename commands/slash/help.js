@@ -42,6 +42,6 @@ module.exports = {
       }
     }
 
-    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral, });
+    await interaction.reply({ embeds: [embed], flags: 64 });
   }
 };
