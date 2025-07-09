@@ -125,7 +125,7 @@ function keepAlive(client) {
     res.status(200).json({ message: 'Restarting bot...' });
 
     setTimeout(() => {
-      process.exit(1);
+      process.exit(0);
     }, 1000);
   });
 

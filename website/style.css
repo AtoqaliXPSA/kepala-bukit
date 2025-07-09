@@ -60,6 +60,52 @@ body {
   position: relative;
 }
 
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.numpad-box {
+  background: var(--bg);
+  border: 2px solid var(--glow);
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.pin-display {
+  font-size: 2rem;
+  letter-spacing: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.numpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 60px);
+  gap: 10px;
+}
+
+.numpad-grid button {
+  font-size: 1.5rem;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  cursor: pointer;
+}
+
+.numpad-grid button:hover {
+  transform: scale(1.05);
+}
+
 .bot-logo {
   width: 20px;
   height: 20px;
