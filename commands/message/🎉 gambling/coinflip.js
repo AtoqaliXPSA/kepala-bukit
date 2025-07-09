@@ -1,4 +1,4 @@
-const economy = require('../../../utils/economy');
+const User = require('../../../models/User');
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
@@ -44,9 +44,9 @@ module.exports = {
     const color = win ? 0x00FF88 : 0xFF5555;
 
     if (win) {
-      await economy.addBalance(userId, bet);
+      await User.addBalance(userId, bet);
     } else {
-      await economy.addBalance(userId, -bet);
+      await User.addBalance(userId, -bet);
     }
 
     const finalEmbed = new EmbedBuilder()
