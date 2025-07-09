@@ -29,7 +29,7 @@ module.exports = {
       for (const file of commands) {
         const command = require(path.join(basePath, category, file));
         if (command.name) {
-          fields.push(`\`${command.name}`);
+          fields.push(`\`${command.name}\``);
         }
       }
 
