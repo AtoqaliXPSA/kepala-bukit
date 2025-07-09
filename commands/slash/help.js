@@ -15,7 +15,7 @@ module.exports = {
       .setFooter({ text: `Diminta oleh ${interaction.user.tag}` })
       .setTimestamp();
 
-    const commandDir = path.join(__dirname, '../commands/message');
+    const commandDir = path.join(__dirname, '../../commands/message');
 
     function readCommands(dir) {
       const files = fs.readdirSync(dir);
