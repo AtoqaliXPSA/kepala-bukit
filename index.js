@@ -38,15 +38,18 @@ const User = require('./models/User');
   client.cooldowns = new Collection();
 
   // Load Slash Commands
-const slashPath = path.join(__dirname, 'commands/slash');
+const slashPath = path.join(__dirname, 'commands', 'slash');
+
 const slashFiles = fs.readdirSync(slashPath).filter(file => file.endsWith('.js'));
 
 for (const file of slashFiles) {
-  const command = require(path.join(slashPath, file));
-  if (command.data && command.execute) {
+  const filePath = path.join(slashPath, file);
+  const command = require(filePath);
+
+  if ('data' in command && 'execute' in command) {
     client.commands.set(command.data.name, command);
   } else {
-    console.warn(`⚠️ Command slash tidak lengkap: ${file}`);
+    console.warn(`⚠️ Fail slash command tidak lengkap: ${file}`);
   }
 }
 
