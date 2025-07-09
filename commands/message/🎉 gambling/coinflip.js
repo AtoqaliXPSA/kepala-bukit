@@ -16,8 +16,8 @@ module.exports = {
     }
 
     // 🎯 Semak input
-    const bet = Math.max(parseInt(args[0]) || 1, 1);
-    const choice = args[1]?.toLowerCase();
+    const choice = args[0]?.toLowerCase();
+    const bet = Math.max(parseInt(args[1]) || 1, 1);
 
     if (!['heads', 'tails'].includes(choice)) {
       return message.reply('Sila pilih `heads` atau `tails`.');
