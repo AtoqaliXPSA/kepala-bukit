@@ -329,7 +329,7 @@
         else if (pinInput.length < 4 && /^\d$/.test(val)) pinInput += val;
         updatePinDisplay();
         if (pinInput.length === 4) {
-          if (pinInput === '1234') {
+          if (pinInput === '1111') {
             fetch('/restart', { method: 'POST' })
               .then(res => res.json())
               .then(data => alert(data.message || 'Restart berjaya!'))
