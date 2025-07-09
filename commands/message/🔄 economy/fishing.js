@@ -11,7 +11,7 @@ module.exports = {
 
     // 🎣 Senarai ikan & peluang
     const fishOptions = [
-      { name: '🐟 Ikan Bilis', chance: 0.06, value: 30 },
+      { name: '🐟 Ikan Bilis', chance: 0.6, value: 30 },
       { name: '🐠 Ikan Donny', chance: 0.003, value: 130 },
       { name: '🦈 Ikan Jering', chance: 0.0009, value: 800 },
       { name: '🐋 Ikan Paus', chance: 0.00001, value: 1500 },
