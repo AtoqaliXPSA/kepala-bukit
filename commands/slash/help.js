@@ -38,7 +38,7 @@ module.exports = {
             category.length >= 2
               ? category.charAt(0) + category.charAt(1).toUpperCase() + category.slice(2)
               : category
-          }***`
+          }***`,
           value: fields.join(' '),
           inline: false,
         });
