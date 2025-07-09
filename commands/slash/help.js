@@ -10,8 +10,7 @@ module.exports = {
   async execute(interaction) {
     const embed = new EmbedBuilder()
       .setColor(0x00AEFF)
-      .setDescription('Berikut adalah senarai command mesej')
-      .setTimestamp();
+      .setDescription('Berikut adalah senarai command mesej');
 
     const basePath = path.resolve(__dirname, '../message');
     const categories = fs.readdirSync(basePath).filter(folder =>
