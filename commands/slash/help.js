@@ -1,50 +1,47 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('help')
-    .setDescription('Senarai command mesej bot ini.'),
+    .setDescription('Senarai command mesej mengikut kategori'),
 
   async execute(interaction) {
     const embed = new EmbedBuilder()
       .setTitle('📜 Senarai Command Mesej')
       .setColor(0x00AEFF)
-      .setDescription('Berikut adalah command mesej yang boleh digunakan:')
-      .setFooter({ text: `Diminta oleh ${interaction.user.tag}` })
+      .setDescription('Berikut adalah senarai command mesej yang diatur mengikut kategori:')
       .setTimestamp();
 
-    const commandDir = path.join(__dirname, '../../commands/message');
+    const basePath = path.resolve(__dirname, '../message');
+    const categories = fs.readdirSync(basePath).filter(folder =>
+      fs.statSync(path.join(basePath, folder)).isDirectory()
+    );
 
-    function readCommands(dir) {
-      const files = fs.readdirSync(dir);
-      for (const file of files) {
-        const fullPath = path.join(dir, file);
-        if (fs.statSync(fullPath).isDirectory()) {
-          readCommands(fullPath);
-        } else if (file.endsWith('.js')) {
-          try {
-            const cmd = require(fullPath);
-            if (cmd.name) {
-              embed.addFields({
-                name: `dj${cmd.name}`,
-                value: cmd.description || 'Tiada deskripsi.',
-                inline: false
-              });
-            }
-          } catch (err) {
-            console.error(`❌ Gagal baca command dari ${fullPath}`, err);
-          }
+    for (const category of categories) {
+      const commands = fs
+        .readdirSync(path.join(basePath, category))
+        .filter(file => file.endsWith('.js'));
+
+      const fields = [];
+
+      for (const file of commands) {
+        const command = require(path.join(basePath, category, file));
+        if (command.name) {
+          fields.push(`• \`${command.name}\` — ${command.description || 'Tiada deskripsi'}`);
         }
+      }
+
+      if (fields.length) {
+        embed.addFields({
+          name: `📂 ${category.toUpperCase()}`,
+          value: fields.join('\n'),
+          inline: false,
+        });
       }
     }
 
-    readCommands(commandDir);
-
-    await interaction.reply({
-      embeds: [embed],
-      flags : 64
-    });
+    await interaction.reply({ embeds: [embed], flags : 64 });
   }
 };

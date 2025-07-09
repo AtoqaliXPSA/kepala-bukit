@@ -5,6 +5,7 @@ module.exports = {
   name: 'beg',
   description: 'Minta sedekah dan dapatkan coins secara rawak.',
   cooldown: 30, // cooldown dalam saat
+  category: 'Economy',
 
   async execute(message) {
 
