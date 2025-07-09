@@ -5,12 +5,12 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('help')
-    .setDescription('List of all commands'),
+    .setDescription('List of all commands.'),
 
   async execute(interaction) {
     const embed = new EmbedBuilder()
       .setColor(0x00AEFF)
-      .setDescription('Berikut adalah senarai command mesej\nGunakan dj {command} untuk mengunakan bot.');
+      .setDescription('\`Berikut adalah senarai command mesej\nGunakan dj {command} untuk mengunakan bot.');
 
     const basePath = path.resolve(__dirname, '../message');
     const categories = fs.readdirSync(basePath).filter(folder =>
