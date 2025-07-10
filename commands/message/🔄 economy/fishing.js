@@ -44,10 +44,10 @@ module.exports = {
     }
 
     const reply =
-      `🎣 Anda memancing dan dapat **${caught.name}**!\n` +
+      `Anda memancing dan dapat **${caught.name}**!\n` +
       (caught.value
-        ? `💰 Duit bertambah **${caught.value.toLocaleString()} coins**!`
-        : '😢 Tiada hasil hari ini…');
+        ? `Hasil: **${caught.value.toLocaleString()} coins**!`
+        : 'Tiada hasil hari ini…');
 
     return message.reply(reply);
   }
