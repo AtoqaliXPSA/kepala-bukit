@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'clear',
+  name: 'clean',
   alias: ['purge'],
   description: 'Padam mesej dalam channel',
   async execute(message, args) {
