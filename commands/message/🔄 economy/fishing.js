@@ -1,3 +1,4 @@
+const { checkCooldown } = require('../../../utils/cooldownHelper');
 const User = require('../../../models/User');
 
 module.exports = {
@@ -9,41 +10,45 @@ module.exports = {
   async execute(message) {
     const userId = message.author.id;
 
-    // 🎣 Senarai ikan & peluang
+    // ⏳ Cool-down 5s
+    if (await checkCooldown(message, 'fishing', 5)) return;
+
+    // Pastikan dokumen wujud
+    await User.findOneAndUpdate(
+      { userId },
+      { $setOnInsert: { balance: 0 } },
+      { upsert: true }
+    );
+
+    // 🎣 Senarai ikan
     const fishOptions = [
-      { name: '🐟 Ikan Bilis', chance: 0.6, value: 30 },
-      { name: '🐠 Ikan Donny', chance: 0.003, value: 130 },
-      { name: '🦈 Ikan Jering', chance: 0.0009, value: 800 },
-      { name: '🐋 Ikan Paus', chance: 0.00001, value: 1500 },
+      { name: '🐟 Ikan Bilis',  chance: 0.55,   value: 30  },
+      { name: '🐠 Ikan Donny',  chance: 0.035,  value: 130 },
+      { name: '🦈 Ikan Jering', chance: 0.009,  value: 800 },
+      { name: '🐋 Ikan Paus',   chance: 0.001,  value: 1500 }
     ];
 
-    const totalChance = fishOptions.reduce((acc, f) => acc + f.chance, 0);
-    if (totalChance < 1) {
-      fishOptions.push({ name: '🥾 Kasut Lama', chance: 1 - totalChance, value: 0 });
-    }
+    // Fallback
+    const total = fishOptions.reduce((a, f) => a + f.chance, 0);
+    if (total < 1) fishOptions.push({ name: '🥾 Kasut Lama', chance: 1 - total, value: 0 });
 
+    // Roll
     const roll = Math.random();
-    let cumulative = 0;
-    let caught = fishOptions.find(fish => {
-      cumulative += fish.chance;
-      return roll <= cumulative;
-    });
+    let cum = 0;
+    let caught = fishOptions.find(f => (cum += f.chance) >= roll) ||
+                 { name: '🥾 Kasut Lama', value: 0 };
 
-    if (!caught) caught = { name: '🥾 Kasut Lama', value: 0 };
-
-    let resultText = `Anda memancing dan dapat ___**${caught.name}**___!\n`;
-
+    // Kemas kini balance
     if (caught.value > 0) {
-      await User.findOneAndUpdate(
-        { userId },
-        { $inc: { balance: caught.value } },
-        { upsert: true, new: true }
-      );
-      resultText += `Anda mendapat **${caught.value} coins** !`;
-    } else {
-      resultText += `Tiada hasil hari ini...`;
+      await User.updateOne({ userId }, { $inc: { balance: caught.value } });
     }
 
-    return message.reply(resultText);
+    const reply =
+      `🎣 Anda memancing dan dapat **${caught.name}**!\n` +
+      (caught.value
+        ? `💰 Duit bertambah **${caught.value.toLocaleString()} coins**!`
+        : '😢 Tiada hasil hari ini…');
+
+    return message.reply(reply);
   }
 };
