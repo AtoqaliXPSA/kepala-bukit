@@ -31,7 +31,7 @@ module.exports = {
 
     if (!caught) caught = { name: '🥾 Kasut Lama', value: 0 };
 
-    let resultText = `🎣 Anda memancing dan dapat ${caught.name}!\n`;
+    let resultText = `Anda memancing dan dapat ___**${caught.name}**___!\n`;
 
     if (caught.value > 0) {
       await User.findOneAndUpdate(
@@ -39,7 +39,7 @@ module.exports = {
         { $inc: { coins: caught.value } },
         { upsert: true, new: true }
       );
-      resultText += `Anda mendapat **${caught.value} coins**!`;
+      resultText += `Anda mendapat **${caught.value} coins** !`;
     } else {
       resultText += `Tiada hasil hari ini...`;
     }
