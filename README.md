@@ -6,12 +6,13 @@ Bot Discord dengan sistem ekonomi harian, pertaruhan Blackjack, dan sistem afk �
 - Node.js
 
 ## 🚀 Ciri-ciri
+- `/help` — untuk melihat commands
 - `/daily` — Claim duit harian
 - `/balance` — Semak baki duit
 - `/work` — Dapatkan duit dengan kerja
 - `/blackjack` — Main Blackjack dengan pertaruhan
-- `afk` — Letak status AFK
-- `avatar` — Lihat avatar user
+- `/afk` — Letak status AFK
+- `/avatar` — Lihat avatar user
 
 ## ⚙️ Setup Projek
 
