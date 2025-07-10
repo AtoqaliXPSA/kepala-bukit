@@ -36,7 +36,7 @@ module.exports = {
     if (caught.value > 0) {
       await User.findOneAndUpdate(
         { userId },
-        { $inc: { coins: caught.value } },
+        { $inc: { balance: caught.value } },
         { upsert: true, new: true }
       );
       resultText += `Anda mendapat **${caught.value} coins** !`;
