@@ -5,7 +5,7 @@ const path = require('path');
 const connectToDatabase = require('./utils/database');
 const { checkCooldown } = require('./handler/cooldownHelper');
 require('./utils/cron');
-const { testGeminiConnection } = require('./utils/gemini');
+const { ping } = require('./utils/gemini');
 const { bindAIChat } = require('./handler/aichatHandler');
 
 const User = require('./models/User');
