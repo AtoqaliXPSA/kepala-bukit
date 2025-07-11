@@ -1,4 +1,4 @@
-const { checkCooldown } = require('../../../utils/cooldownHelper');
+const { checkCooldown } = require('../../../handler/cooldownHelper');
 const User = require('../../../models/User');
 
 module.exports = {
