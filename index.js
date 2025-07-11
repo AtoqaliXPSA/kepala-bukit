@@ -102,6 +102,33 @@ for (const [name, command] of client.messageCommands) {
     }
   }
 
+ // ── cari semua command message sahaja ──
+  function scan(dir) {
+    fs.readdirSync(dir, { withFileTypes: true }).forEach((ent) => {
+      const full = path.join(dir, ent.name);
+      if (ent.isDirectory()) return scan(full);
+      if (ent.name.endsWith('.js')) {
+        const cmd = require(full);
+        if (cmd.name) cmds.push(cmd.name);
+      }
+    });
+  }
+  scan(path.join(__dirname, 'commands', 'message'));
+
+  // ── bina petak ASCII ──
+  const longest = Math.max(...cmds.map(c => c.length));
+  const line    = '—'.repeat(longest + 4);
+  const box     =
+        `${line}\n` +
+        cmds.map(c => `| ${c.padEnd(longest)} |`).join('\n') +
+        `\n${'‾'.repeat(longest + 4)}`;
+
+  // hantar plaintext (juga dipaparkan di console)
+  console.log(box);
+  res.type('text').send(box);
+
+module.exports = router;
+
   // When bot ready
   client.once(Events.ClientReady, async () => {
     console.log(`🤖 Logged in as ${client.user.tag}`);
