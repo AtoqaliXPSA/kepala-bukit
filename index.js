@@ -158,9 +158,6 @@ console.log(`Loaded ${client.messageCommands.size} message commands.`);
     const isCooldown = await checkCooldown(message, cmdName, command.cooldown || 0);
     if (isCooldown) return;
 
-    const startStatusServer = require('./statusServer');
-    startStatusServer(client);
-
     try {
       await command.execute(message, args, client);
     } catch (err) {
