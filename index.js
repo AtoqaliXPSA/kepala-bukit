@@ -168,25 +168,6 @@ console.log(`Loaded ${client.messageCommands.size} message commands.`);
 
 client.login(process.env.DISCORD_TOKEN);
 
-const axios = require('axios');
-
-const API_KEY = 'AIzaSyBVxgMedfThU63KjwvrVKsnfxy3pz6ZCcM';
-const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-
-axios.post(url, {
-  contents: [
-    {
-      role: 'user',
-      parts: [{ text: 'Hello Gemini!' }]
-    }
-  ]
-}).then(res => {
-  console.log('✅ API key OK!');
-  console.log(res.data);
-}).catch(err => {
-  console.error('❌ Error:', err.response?.data || err.message);
-});
-
 // === Global Error Handler (Luar event handler) ===
 process.on('unhandledRejection', (reason, promise) => {
   console.error('❌[Unhandled Rejection]', reason);
