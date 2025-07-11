@@ -64,7 +64,7 @@ async function loadMessageCommands() {
     const cmd = require(f);
     if (cmd.name) client.messageCommands.set(cmd.name, cmd);
   });
-  console.log(`Loaded ${client.messageCommands.size} msg commands.`);
+  console.log(`Loaded ${client.messageCommands.size} message commands.`);
 }
 
 async function loadEvents() {
@@ -112,7 +112,7 @@ client.on(Events.InteractionCreate, async i => {
   try { await cmd.execute(i); }
   catch (e) {
     console.error(e);
-    i.reply({ content: '❌ Error executing command.', ephemeral: true });
+    i.reply({ content: 'Error executing command.', flags: 64 });
   }
 });
 
