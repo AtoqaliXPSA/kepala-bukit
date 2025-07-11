@@ -6,212 +6,170 @@ const connectToDatabase = require('./utils/database');
 const { checkCooldown } = require('./helper/cooldownHelper');
 require('./utils/cron');
 const { ping } = require('./utils/gemini');
-
 const User = require('./models/User');
 
-  const client = new Client({
-    intents: [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.MessageContent,
-      GatewayIntentBits.GuildVoiceStates,
-    ],
-  });
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildVoiceStates,
+  ],
+});
 
-  // Auto push ke Git
-  const { exec } = require('child_process');
-  if (!fs.existsSync('.git/index.lock'))
+/* ---------- Auto push ke Git ---------- */
+const { exec } = require('child_process');
+if (!fs.existsSync('.git/index.lock')) {
   exec('sh push.sh', (err, stdout, stderr) => {
-    if (err) {
-      console.error('❌ Push gagal:', err);
-      return;
-    }
+    if (err) return console.error('❌ Push gagal:', err);
     console.log('✅ Git pushed!');
     console.log(stdout || stderr);
   });
+}
 
-  // Keep alive (untuk uptime robot hosting)
-  const keepAlive = require('./keepAlive')(client);
+/* ---------- Keep Alive ---------- */
+require('./keepAlive')(client);
 
-  // Setup koleksi commands
-  client.commands = new Collection();
-  client.messageCommands = new Collection();
-  client.cooldowns = new Collection();
+/* ---------- Koleksi Commands ---------- */
+client.commands = new Collection();
+client.messageCommands = new Collection();
+client.cooldowns = new Collection();
 
-  // Load Slash Commands
+/* ---------- Load Slash Commands ---------- */
 const slashPath = path.join(__dirname, 'commands', 'slash');
+fs.readdirSync(slashPath)
+  .filter(f => f.endsWith('.js'))
+  .forEach(file => {
+    const cmd = require(path.join(slashPath, file));
+    if (cmd.data && cmd.execute) client.commands.set(cmd.data.name, cmd);
+    else console.warn(`⚠️ Fail slash command tidak lengkap: ${file}`);
+  });
+console.log(`Loaded ${client.commands.size} slash commands.`);
+client.commands.forEach((_, n) => console.log(`- ${n}`));
 
-const slashFiles = fs.readdirSync(slashPath).filter(file => file.endsWith('.js'));
-
-for (const file of slashFiles) {
-  const filePath = path.join(slashPath, file);
-  const command = require(filePath);
-
-  if ('data' in command && 'execute' in command) {
-    client.commands.set(command.data.name, command);
-  } else {
-    console.warn(`⚠️ Fail slash command tidak lengkap: ${file}`);
-  }
-}
-
-console.log(`Loaded ${client.commands.size} slash commands.`)
-
-for (const [name, command] of client.commands) {
-  console.log(`- ${name}`);
-}
-
-  // Load Message Commands
-const messageCommandPath = path.join(__dirname, 'commands/message');
-
+/* ---------- Load Message Commands ---------- */
+const messageCmdPath = path.join(__dirname, 'commands/message');
 function loadMessageCommands(dir) {
-  const files = fs.readdirSync(dir);
-
-  for (const file of files) {
-    const fullPath = path.join(dir, file);
-    const stat = fs.statSync(fullPath);
-
-    if (stat.isDirectory()) {
-      loadMessageCommands(fullPath);
-    } else if (file.endsWith('.js')) {
-      const command = require(fullPath);
-      if (command.name) {
-        client.messageCommands.set(command.name, command);
-      }
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(ent => {
+    const full = path.join(dir, ent.name);
+    if (ent.isDirectory()) loadMessageCommands(full);
+    else if (ent.name.endsWith('.js')) {
+      const cmd = require(full);
+      if (cmd.name) client.messageCommands.set(cmd.name, cmd);
     }
-  }
+  });
 }
-
-loadMessageCommands(messageCommandPath);
-
-// selepas memuat message command:
+loadMessageCommands(messageCmdPath);
 console.log(`Loaded ${client.messageCommands.size} message commands.`);
+client.messageCommands.forEach((_, n) => console.log(`- ${n}`));
 
-for (const [name, command] of client.messageCommands) {
-  console.log(`- ${name}`);
-}
-
-  // Load Events
-  const eventsPath = path.join(__dirname, 'events');
-  const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
-  for (const file of eventFiles) {
+/* ---------- Load Events ---------- */
+fs.readdirSync(path.join(__dirname, 'events'))
+  .filter(f => f.endsWith('.js'))
+  .forEach(file => {
     const event = require(`./events/${file}`);
-    if (event.once) {
-      client.once(event.name, (...args) => event.execute(...args, client));
-    } else {
-      client.on(event.name, (...args) => event.execute(...args, client));
+    if (event.once) client.once(event.name, (...args) => event.execute(...args, client));
+    else client.on(event.name, (...args) => event.execute(...args, client));
+  });
+
+/* ---------- Senarai Message Command (ASCII Box) ---------- */
+const cmds = [];                                // <-- fix: declare terlebih dahulu
+function scan(dir) {
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(ent => {
+    const full = path.join(dir, ent.name);
+    if (ent.isDirectory()) return scan(full);
+    if (ent.name.endsWith('.js')) {
+      const cmd = require(full);
+      if (cmd.name) cmds.push(cmd.name);
     }
-  }
+  });
+}
+scan(messageCmdPath);
 
- // ── cari semua command message sahaja ──
-  function scan(dir) {
-    fs.readdirSync(dir, { withFileTypes: true }).forEach((ent) => {
-      const full = path.join(dir, ent.name);
-      if (ent.isDirectory()) return scan(full);
-      if (ent.name.endsWith('.js')) {
-        const cmd = require(full);
-        if (cmd.name) cmds.push(cmd.name);
-      }
-    });
-  }
-  scan(path.join(__dirname, 'commands', 'message'));
-
-  // ── bina petak ASCII ──
+if (cmds.length) {
   const longest = Math.max(...cmds.map(c => c.length));
   const line    = '—'.repeat(longest + 4);
   const box     =
         `${line}\n` +
         cmds.map(c => `| ${c.padEnd(longest)} |`).join('\n') +
         `\n${'‾'.repeat(longest + 4)}`;
+  console.log(box);                            // Log ke console sahaja
+}
 
-  // hantar plaintext (juga dipaparkan di console)
-  console.log(box);
-  res.type('text').send(box);
+/* ---------- Bot Ready ---------- */
+client.once(Events.ClientReady, async () => {
+  console.log(`🤖 Logged in as ${client.user.tag}`);
+  await connectToDatabase();
+  await ping();
 
-module.exports = router;
+  // Sync slash commands (optional)
+  await client.application.commands.set(
+    [...client.commands.values()].map(c => c.data)
+  );
 
-  // When bot ready
-  client.once(Events.ClientReady, async () => {
-    console.log(`🤖 Logged in as ${client.user.tag}`);
-    await connectToDatabase();
-
-    await ping();
-
-    // ✅ Optional: Sync slash commands (auto update)
-    await client.application.commands.set(
-      [...client.commands.values()].map(cmd => cmd.data)
-    );
-
-    client.user.setPresence({
-      activities: [{ name: 'over your server 👀', type: 3 }],
-      status: 'online',
-    });
+  client.user.setPresence({
+    activities: [{ name: 'over your server 👀', type: 3 }],
+    status: 'online',
   });
+});
 
-  // Slash Command Interaction
-  client.on('interactionCreate', async interaction => {
-    if (interaction.isCommand()) {
-      const command = client.commands.get(interaction.commandName);
-      if (!command) return;
+/* ---------- Interaction Handler ---------- */
+client.on('interactionCreate', async i => {
+  if (!i.isCommand()) return;
+  const cmd = client.commands.get(i.commandName);
+  if (!cmd) return;
+  try {
+    await cmd.execute(i);
+  } catch (err) {
+    console.error(err);
+    await i.reply({ content: '❌ Ralat semasa laksana slash command.', ephemeral: true });
+  }
+});
 
-      try {
-        await command.execute(interaction);
-      } catch (err) {
-        console.error(err);
-        await interaction.reply({ content: '❌ Terdapat ralat semasa laksana slash command.', ephemeral: true });
-      }
-    }
-  });
+/* ---------- Message Command + XP ---------- */
+client.on(Events.MessageCreate, async msg => {
+  if (msg.author.bot || !msg.guild) return;
 
-  // Message Command Handler + XP
-  client.on(Events.MessageCreate, async message => {
-    if (message.author.bot || !message.guild) return;
+  // XP system
+  const user = await User.findOneAndUpdate(
+    { userId: msg.author.id },
+    { $inc: { xp: 1 } },
+    { upsert: true, new: true },
+  );
+  const xpNeed = Math.floor(50 * user.level + 100);
+  if (user.xp >= xpNeed) {
+    user.level += 1;
+    user.xp = 0;
+    await user.save();
+    msg.channel.send(`🎉 Tahniah ${msg.author}, naik ke Level ${user.level}!`);
+  }
 
-    // Auto XP system
-    const user = await User.findOneAndUpdate(
-      { userId: message.author.id },
-      { $inc: { xp: 1 } },
-      { upsert: true, new: true }
-    );
+  // Message commands
+  const prefix = process.env.PREFIX || '!';
+  if (!msg.content.startsWith(prefix)) return;
+  const args = msg.content.slice(prefix.length).trim().split(/ +/);
+  const cmdName = args.shift().toLowerCase();
+  const command = client.messageCommands.get(cmdName)
+    || [...client.messageCommands.values()].find(c => c.alias?.includes(cmdName));
+  if (!command) return;
 
-    const xpNeeded = Math.floor(50 * user.level + 100);
-    if (user.xp >= xpNeeded) {
-      user.level += 1;
-      user.xp = 0;
-      await user.save();
-      message.channel.send(`🎉 Tahniah ${message.author}, anda telah naik ke Level ${user.level}!`);
-    }
+  if (await checkCooldown(msg, cmdName, command.cooldown || 0)) return;
 
-    // Message Commands
-    const prefix = process.env.PREFIX || '!';
-    if (!message.content.startsWith(prefix)) return;
-    const args = message.content.slice(prefix.length).trim().split(/ +/);
-    const cmdName = args.shift().toLowerCase();
-
-    const command = client.messageCommands.get(cmdName) ||
-      [...client.messageCommands.values()].find(cmd => cmd.alias?.includes(cmdName));
-
-    if (!command) return;
-
-    const isCooldown = await checkCooldown(message, cmdName, command.cooldown || 0);
-    if (isCooldown) return;
-
-    try {
-      await command.execute(message, args, client);
-    } catch (err) {
-      console.error(`Error in message command '${cmdName}':`, err);
-      message.reply('***Berlaku ralat semasa laksana arahan.***');
-    }
-  });
+  try { await command.execute(msg, args, client); }
+  catch (err) {
+    console.error(`Error in message command '${cmdName}':`, err);
+    msg.reply('❌ Ralat semasa laksana arahan.');
+  }
+});
 
 client.login(process.env.DISCORD_TOKEN);
 
-// === Global Error Handler (Luar event handler) ===
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌[Unhandled Rejection]', reason);
+/* ---------- Global Error Handler ---------- */
+process.on('unhandledRejection', reason => {
+  console.error('[Unhandled Rejection]', reason);
   fs.appendFileSync('error.log', `[UNHANDLED] ${new Date().toISOString()}\n${reason.stack || reason}\n\n`);
 });
-
-process.on('uncaughtException', (err) => {
-  console.error('❌[Uncaught Exception]', err);
+process.on('uncaughtException', err => {
+  console.error('[Uncaught Exception]', err);
   fs.appendFileSync('error.log', `[UNCAUGHT] ${new Date().toISOString()}\n${err.stack}\n\n`);
 });
