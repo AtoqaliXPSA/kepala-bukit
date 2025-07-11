@@ -3,10 +3,10 @@ const { Client, Collection, GatewayIntentBits, Events } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const connectToDatabase = require('./utils/database');
-const { checkCooldown } = require('./utils/cooldownHelper');
-const Jimp = require('jimp');
+const { checkCooldown } = require('./handler/cooldownHelper');
 require('./utils/cron');
 const { testGeminiConnection } = require('./utils/gemini');
+const { bindAIChat } = require('./handler/aichatHandler');
 
 const User = require('./models/User');
 
@@ -95,8 +95,8 @@ loadMessageCommands(messageCommandPath);
     console.log(`🤖 Logged in as ${client.user.tag}`);
     await connectToDatabase();
 
-    // 🔌 Log terus jika sambungan Gemini berjaya atau gagal
-    await testGeminiConnection();
+    await ping();
+    bindAIChat(client);
 
     // ✅ Optional: Sync slash commands (auto update)
     await client.application.commands.set(
