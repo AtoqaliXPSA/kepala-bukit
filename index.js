@@ -94,6 +94,9 @@ loadMessageCommands(messageCommandPath);
     console.log(`🤖 Logged in as ${client.user.tag}`);
     await connectToDatabase();
 
+    // 🔌 Log terus jika sambungan Gemini berjaya atau gagal
+    await testGeminiConnection();
+
     // ✅ Optional: Sync slash commands (auto update)
     await client.application.commands.set(
       [...client.commands.values()].map(cmd => cmd.data)

@@ -1,31 +1,19 @@
-// utils/gemini.js
-const axios = require('axios');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 require('dotenv').config();
 
-const GEMINI_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API);
 
-async function askGemini(prompt) {
+async function testGeminiConnection() {
   try {
-    const { data } = await axios.post(
-      `${GEMINI_URL}?key=${process.env.GEMINI_API_KEY}`,
-      {
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.7 }
-      }
-    );
+    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const result = await model.generateContent("Test sambungan");
+    const response = await result.response.text();
 
-    console.log('✅ Gemini API: sambungan berjaya');
-
-    return (
-      data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
-      '⚠️ Tiada jawapan.'
-    );
+    console.log('✅ Gemini API disambungkan!');
+    return response;
   } catch (err) {
-    console.error('❌ Gemini API: gagal berhubung');
-    // Jika perlu, err.response?.status atau err.code boleh dipamerkan di sini
-    return '❌ Ralat semasa hubungi Gemini API.';
+    console.error('❌ Gagal sambung ke Gemini API:', err.message);
   }
 }
 
-module.exports = { askGemini };
+module.exports = { testGeminiConnection };
