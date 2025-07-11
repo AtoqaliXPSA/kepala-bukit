@@ -1,53 +1,50 @@
-// commands/message/ai/ask.js
-const axios = require("axios");
-require("dotenv").config();
+// commands/message/ask.js
+const axios = require('axios');
 
-const GEMINI_API_KEY = process.env.GEMINI_API;
-const GEMINI_URL =
-  "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
+const GEMINI_KEY  = process.env.GEMINI_API;  // pastikan dalam .env
+const GEMINI_URL  =
+  'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent';
 
 module.exports = {
-  name: "ask",
-  alias: ["gpt", "ai"],
-  description: "Tanya soalan kepada Gemini AI",
-  cooldown: 8, // saat
+  name: 'ask',
+  alias: ['gpt', 'ai'],
+  description: 'Tanya soalan kepada Gemini AI',
+  cooldown: 5,                        // 5-saat cooldown
 
   async execute(message, args) {
-    const prompt = args.join(" ").trim();
-    if (!prompt)
-      return message.reply("❌ Sila masukkan soalan. Contoh: `!ask Apa itu quark?`");
+    const question = args.join(' ').trim();
+    if (!question) return message.reply('❌ Tulis soalan selepas `!ask`.');
 
-    // 👉 Papar typing supaya user nampak bot “berfikir”
-    message.channel.sendTyping();
-
+    // ――― Panggil Gemini ―――
     try {
       const { data } = await axios.post(
-        `${GEMINI_URL}?key=${GEMINI_API_KEY}`,
+        `${GEMINI_URL}?key=${GEMINI_KEY}`,
         {
           contents: [
             {
-              role: "user",
-              parts: [{ text: prompt }],
+              role: 'system',
+              parts: [{ text: 'You are a helpful Discord bot. Keep answers concise.' }]
             },
+            {
+              role: 'user',
+              parts: [{ text: question }]
+            }
           ],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 512,
-          },
-        },
+          generationConfig: { temperature: 0.7, maxOutputTokens: 512 }
+        }
       );
 
-      const reply =
+      const text =
         data?.candidates?.[0]?.content?.parts?.[0]?.text ??
-        "Maaf, saya tidak dapat menjawab sekarang.";
+        'Maaf, tiada jawapan ditemui.';
 
-      // Bahagi jika >2000 aksara
-      for (let i = 0; i < reply.length; i += 2000) {
-        await message.reply(reply.slice(i, i + 2000));
+      // potong supaya < 2000 aksara
+      for (let i = 0; i < text.length; i += 1990) {
+        await message.reply(text.slice(i, i + 1990));
       }
     } catch (err) {
-      console.error("❌ Gemini error:", err.response?.data || err.message);
-      message.reply("⚠️ Terdapat ralat ketika berhubung dengan AI.");
+      console.error('Gemini error:', err.response?.data || err.message);
+      message.reply('❌ Gagal hubungi Gemini API. Sila semak kunci API anda.');
     }
-  },
+  }
 };

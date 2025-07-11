@@ -3,10 +3,9 @@ const { Client, Collection, GatewayIntentBits, Events } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const connectToDatabase = require('./utils/database');
-const { checkCooldown } = require('./handler/cooldownHelper');
+const { checkCooldown } = require('./helper/cooldownHelper');
 require('./utils/cron');
 const { ping } = require('./utils/gemini');
-const { bindAIChat } = require('./handler/aichatHandler');
 
 const User = require('./models/User');
 
@@ -78,6 +77,9 @@ function loadMessageCommands(dir) {
 
 loadMessageCommands(messageCommandPath);
 
+// selepas memuat message command:
+console.log(`Loaded ${client.messageCommands.size} message commands.`);
+
   // Load Events
   const eventsPath = path.join(__dirname, 'events');
   const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
@@ -96,7 +98,6 @@ loadMessageCommands(messageCommandPath);
     await connectToDatabase();
 
     await ping();
-    bindAIChat(client);
 
     // ✅ Optional: Sync slash commands (auto update)
     await client.application.commands.set(
