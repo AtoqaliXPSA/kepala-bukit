@@ -22,7 +22,7 @@ module.exports = {
         {
           contents: [
             {
-              role: 'system',
+              role: 'model',
               parts: [{ text: 'You are a helpful Discord bot. Keep answers concise.' }]
             },
             {
