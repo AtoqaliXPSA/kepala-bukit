@@ -80,7 +80,7 @@ function loadMessageCommands(dir) {
 loadMessageCommands(messageCommandPath);
 
 // selepas memuat message command:
-console.log(`Loaded ${client.messageCommands.name} message commands.`);
+console.log(`Loaded ${client.messageCommands.size} message commands.`);
 
   // Load Events
   const eventsPath = path.join(__dirname, 'events');
