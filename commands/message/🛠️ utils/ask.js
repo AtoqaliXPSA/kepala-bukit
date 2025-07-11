@@ -1,7 +1,7 @@
 // commands/message/ask.js
 const axios = require('axios');
 
-const GEMINI_KEY  = process.env.GEMINI_API;  // pastikan dalam .env
+const GEMINI_KEY  = process.env.GEMINI_API_KEY;  // pastikan dalam .env
 const GEMINI_URL  =
   'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent';
 
