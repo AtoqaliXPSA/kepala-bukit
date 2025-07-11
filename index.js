@@ -45,7 +45,6 @@ fs.readdirSync(slashPath)
     else console.warn(`⚠️ Fail slash command tidak lengkap: ${file}`);
   });
 console.log(`Loaded ${client.commands.size} slash commands.`);
-client.commands.forEach((_, n) => console.log(`- ${n}`));
 
 /* ---------- Load Message Commands ---------- */
 const messageCmdPath = path.join(__dirname, 'commands/message');
@@ -61,7 +60,6 @@ function loadMessageCommands(dir) {
 }
 loadMessageCommands(messageCmdPath);
 console.log(`Loaded ${client.messageCommands.size} message commands.`);
-client.messageCommands.forEach((_, n) => console.log(`- ${n}`));
 
 /* ---------- Load Events ---------- */
 fs.readdirSync(path.join(__dirname, 'events'))
