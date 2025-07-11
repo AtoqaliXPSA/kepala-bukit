@@ -6,6 +6,7 @@ const connectToDatabase = require('./utils/database');
 const { checkCooldown } = require('./utils/cooldownHelper');
 const Jimp = require('jimp');
 require('./utils/cron');
+const { testGeminiConnection } = require('./utils/gemini');
 
 const User = require('./models/User');
 
