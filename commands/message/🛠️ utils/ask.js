@@ -23,7 +23,7 @@ module.exports = {
           contents: [
             {
               role: 'model',
-              parts: [{ text: 'You are a helpful Discord bot. Keep answers concise.' }]
+              parts: [{ text: 'Baik! Saya pembantu Discord yang mesra dan menjawab dalam Bahasa Melayu sahaja.' }]
             },
             {
               role: 'user',
@@ -37,6 +37,27 @@ module.exports = {
       const text =
         data?.candidates?.[0]?.content?.parts?.[0]?.text ??
         'Maaf, tiada jawapan ditemui.';
+
+      // Tambah sejarah perbualan (jika ada)
+      for (const msg of history) {
+        contents.push({
+          role: msg.role === "bot" ? "model" : "user",
+          parts: [{ text: msg.text }]
+        });
+      }
+
+      // Prompt terkini user
+      contents.push({
+        role: "user",
+        parts: [{
+          text: "Sila jawab semua mesej ini dalam Bahasa Melayu."
+        }]
+      });
+
+      contents.push({
+        role: "user",
+        parts: [{ text: userPrompt }]
+      });
 
       // potong supaya < 2000 aksara
       for (let i = 0; i < text.length; i += 1990) {
