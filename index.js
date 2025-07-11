@@ -56,6 +56,10 @@ for (const file of slashFiles) {
 
 console.log(`Loaded ${client.commands.size} slash commands.`)
 
+for (const [name, command] of client.commands) {
+  console.log(`- ${name}`);
+}
+
   // Load Message Commands
 const messageCommandPath = path.join(__dirname, 'commands/message');
 
@@ -81,6 +85,10 @@ loadMessageCommands(messageCommandPath);
 
 // selepas memuat message command:
 console.log(`Loaded ${client.messageCommands.size} message commands.`);
+
+for (const [name, command] of client.messageCommands) {
+  console.log(`- ${name}`);
+}
 
   // Load Events
   const eventsPath = path.join(__dirname, 'events');
