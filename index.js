@@ -54,6 +54,8 @@ for (const file of slashFiles) {
   }
 }
 
+console.log(`Loaded ${client.commands.size}slash commands.`)
+
   // Load Message Commands
 const messageCommandPath = path.join(__dirname, 'commands/message');
 
