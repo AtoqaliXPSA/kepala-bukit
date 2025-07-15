@@ -13,7 +13,7 @@ module.exports = {
 
     // ❌ Validasi input
     if (!target || isNaN(amount) || amount <= 0) {
-      return message.reply('Sila tag pengguna dan masukkan jumlah yang sah. Contoh: `!pay @user 100`');
+      return message.reply('`Please tag @User to give coins.`');
     }
 
     if (target.bot) return message.reply('🤖 Anda tidak boleh hantar duit kepada bot!');
