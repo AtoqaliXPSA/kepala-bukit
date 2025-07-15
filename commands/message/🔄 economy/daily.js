@@ -42,7 +42,7 @@ module.exports = {
 
     const embedSuccess = new EmbedBuilder()
       .setColor('Green')
-      .setTitle('Daily money for claim!')
+      .setTitle('Daily money is claim!')
       .setDescription(`${username}, you get **${REWARD}** from daily money.`)
       .setTimestamp();
 
