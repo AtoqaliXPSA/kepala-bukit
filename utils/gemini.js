@@ -16,7 +16,7 @@ async function ping() {
       contents: [{ role: 'user', parts: [{ text: 'ping' }] }],
       generationConfig: { maxOutputTokens: 1 }
     });
-    console.log(`✅ Gemini API Connected (${MODEL_ID})`);
+    console.log(`🟢 Gemini API Connected (${MODEL_ID})`);
   } catch (e) {
     console.error('❌ Error Connet Gemini:', e.message);
   }
