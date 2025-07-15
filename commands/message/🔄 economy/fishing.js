@@ -22,21 +22,21 @@ module.exports = {
 
     // 🎣 Senarai ikan
     const fishOptions = [
-      { name: '🐟 Ikan Bilis',  chance: 0.55,   value: 30  },
-      { name: '🐠 Ikan Donny',  chance: 0.035,  value: 130 },
-      { name: '🦈 Ikan Jering', chance: 0.009,  value: 800 },
-      { name: '🐋 Ikan Paus',   chance: 0.001,  value: 1500 }
+      { name: '🐟 sardines',  chance: 0.55,   value: 30  },
+      { name: '🐠 Donny',  chance: 0.035,  value: 130 },
+      { name: '🦈 Shark', chance: 0.009,  value: 800 },
+      { name: '🐋 Whale',   chance: 0.001,  value: 1500 }
     ];
 
     // Fallback
     const total = fishOptions.reduce((a, f) => a + f.chance, 0);
-    if (total < 1) fishOptions.push({ name: '🥾 Kasut Lama', chance: 1 - total, value: 0 });
+    if (total < 1) fishOptions.push({ name: '🥾 Torn shoes', chance: 1 - total, value: 0 });
 
     // Roll
     const roll = Math.random();
     let cum = 0;
     let caught = fishOptions.find(f => (cum += f.chance) >= roll) ||
-                 { name: '🥾 Kasut Lama', value: 0 };
+                 { name: '🥾 Torn shoes', value: 0 };
 
     // Kemas kini balance
     if (caught.value > 0) {
@@ -44,10 +44,10 @@ module.exports = {
     }
 
     const reply =
-      `Anda memancing dan dapat **${caught.name}**!\n` +
+      `Fishing and get **${caught.name}**!\n` +
       (caught.value
-        ? `Hasil: **${caught.value.toLocaleString()} coins**!`
-        : 'Tiada hasil hari ini…');
+        ? `Get : **${caught.value.toLocaleString()} coins**!`
+        : 'No catch today…');
 
     return message.reply(reply);
   }

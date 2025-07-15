@@ -7,7 +7,7 @@ module.exports = {
     const start = Date.now();
 
     // Hantar mesej awal TANPA reply user
-    const sentMessage = await message.channel.send('🏓 | Mengira ping...');
+    const sentMessage = await message.channel.send('🏓 | Counting ping...');
 
     // Kira ping selepas mesej dihantar
     const latency = Date.now() - start;

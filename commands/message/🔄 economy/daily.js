@@ -29,8 +29,8 @@ module.exports = {
 
       const embedCooldown = new EmbedBuilder()
         .setColor('Red')
-        .setTitle('Sudah claim!')
-        .setDescription(`Cuba lagi dalam **${hours} jam ${minutes} minit**.`);
+        .setTitle('Already claim!')
+        .setDescription(`Try again in **${hours} hours ${minutes} minit**.`);
 
       return message.reply({ embeds: [embedCooldown] });
     }
@@ -42,8 +42,8 @@ module.exports = {
 
     const embedSuccess = new EmbedBuilder()
       .setColor('Green')
-      .setTitle('Duit Harian Diterima!')
-      .setDescription(`${username}, anda telah menerima **${REWARD}** duit harian.`)
+      .setTitle('Daily money for claim!')
+      .setDescription(`${username}, you get **${REWARD}** from daily money.`)
       .setTimestamp();
 
     await message.reply({ embeds: [embedSuccess] });

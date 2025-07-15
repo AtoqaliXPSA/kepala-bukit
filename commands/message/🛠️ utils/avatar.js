@@ -15,7 +15,7 @@ module.exports = {
       .setImage(avatarUrl)
       .setURL(avatarUrl)
       .setColor('#00f6ff')
-      .setFooter({ text: `Diminta oleh ${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) })
+      .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) })
       .setTimestamp();
 
     await message.reply({ embeds: [embed] });

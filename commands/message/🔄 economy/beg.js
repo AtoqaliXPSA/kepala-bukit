@@ -47,6 +47,6 @@ module.exports = {
     await user.save();
 
     // Hantar mesej (bukan reply)
-    await message.channel.send(`${reason}\nAnda menerima **$${amount} coins**!`);
+    await message.channel.send(`${reason}\nYou Get **$${amount} coins**!`);
   }
 };

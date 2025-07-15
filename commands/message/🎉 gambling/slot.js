@@ -24,7 +24,7 @@ module.exports = {
       await new User({ userId: message.author.id, balance: 500 }).save();
 
     if (user.balance < bet) {
-      return message.reply(`Anda cuma ada ___***$${user.balance}***___ , tak cukup untuk taruhan **$${bet}**`);
+      return message.reply(`You have ___***$${user.balance}***___ , to bet **$${bet}**`);
     }
 
     user.balance -= bet;

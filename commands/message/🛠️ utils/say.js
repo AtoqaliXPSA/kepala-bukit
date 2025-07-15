@@ -6,13 +6,13 @@ module.exports = {
   async execute(message, args) {
     const msg = args.join(' ');
     if (!msg) {
-      return message.reply('❌ Sila berikan mesej untuk dihantar. Contoh: `!say hello!`');
+      return message.reply('`Please type message to repeat.`');
     }
 
     try {
       await message.delete(); // padam mesej pengguna
     } catch (err) {
-      console.warn('⚠️ Tidak dapat padam mesej:', err.message);
+      console.warn('Cannot delete message:', err.message);
     }
 
     await message.channel.send(msg); // hantar mesej sebagai bot

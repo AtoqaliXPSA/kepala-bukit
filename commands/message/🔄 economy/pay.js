@@ -16,8 +16,8 @@ module.exports = {
       return message.reply('`Please tag @User to give coins.`');
     }
 
-    if (target.bot) return message.reply('🤖 Anda tidak boleh hantar duit kepada bot!');
-    if (target.id === senderId) return message.reply('❌ Anda tidak boleh bayar kepada diri sendiri.');
+    if (target.bot) return message.reply('🤖 You cannot sent money to bot !');
+    if (target.id === senderId) return message.reply('Cannot sent money to yourself.');
 
     // ✅ Ambil data user
     const sender = await User.findOne({ userId: senderId }) || await new User({ userId: senderId, balance: 500 }).save();
@@ -26,7 +26,7 @@ module.exports = {
 
     // ❌ Cek balance
     if (sender.balance < amount) {
-      return message.reply(`Anda cuma ada ***$${sender.balance} coins***.`);
+      return message.reply(`You have only ***$${sender.balance} coins***.`);
     }
 
     // 💸 Kirakan cukai
@@ -45,7 +45,7 @@ module.exports = {
 
     // ✅ Notifikasi
     return message.reply(
-      `Anda telah hantar ** $${amountAfterTax} coins** kepada <@${target.id}>.\n` +
+      `You sent money ** $${amountAfterTax} coins** to <@${target.id}>.\n` +
       `Tax: **${taxAmount} coins**.`
     );
   }

@@ -20,15 +20,15 @@ module.exports = {
     const bet = Math.max(parseInt(args[1]) || 1, 1);
 
     if (!['heads', 'tails'].includes(choice)) {
-      return message.reply('Sila pilih `heads` atau `tails`.');
+      return message.reply('Please choose `heads` or `tails`.');
     }
 
     if (bet > user.balance) {
-      return message.reply(`Duit tak cukup! Baki anda: ${user.balance}`);
+      return message.reply(`Enough Money! Balance: ${user.balance}`);
     }
 
     // 🌀 Animasi & flip
-    const flipMsg = await message.reply('🪙 Coin sedang berpusing...');
+    const flipMsg = await message.reply('🪙 Coin is rolling...');
     const result = Math.random() < 0.5 ? 'heads' : 'tails';
     const isWin = result === choice;
 
@@ -36,11 +36,11 @@ module.exports = {
       if (isWin) {
         user.balance += bet;
         await user.save();
-        flipMsg.edit(`Anda menang! (anda pilih: ***${choice}***)`);
+        flipMsg.edit(`You win! (you choose: ***${choice}***)`);
       } else {
         user.balance -= bet;
         await user.save();
-        flipMsg.edit(`Anda kalah. (anda pilih: ***${choice}***)`);
+        flipMsg.edit(`You lose. (you choose: ***${choice}***)`);
       }
     }, 2000);
   }

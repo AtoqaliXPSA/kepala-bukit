@@ -9,6 +9,6 @@ module.exports = {
     const gov = await User.findOne({ userId: 'GOV_WALLET' }) ||
       await new User({ userId: 'GOV_WALLET', balance: 0 }).save();
 
-    return message.reply(`**Dompet Kerajaan** kini mempunyai ** $${gov.balance} coins**.`);
+    return message.reply(`**Account Goverment** Now have **$${gov.balance} coins**.`);
   }
 };

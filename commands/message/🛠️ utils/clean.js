@@ -20,7 +20,7 @@ module.exports = {
       setTimeout(() => reply.delete().catch(() => {}), 3000); // auto delete notifikasi
     } catch (err) {
       console.error(err);
-      message.reply('Ralat semasa cuba padam mesej.');
+      message.reply('Error to delete message.');
     }
   }
 };
