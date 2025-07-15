@@ -55,7 +55,7 @@ async function loadSlashCommands() {
     if (cmd.data && cmd.execute) client.commands.set(cmd.data.name, cmd);
     else console.warn('⚠️ Slash command invalid:', file);
   });
-  console.log(`Loaded ${client.commands.size} slash commands.`);
+  console.log(`🟢 Loaded ${client.commands.size} slash commands.`);
 }
 
 async function loadMessageCommands() {
@@ -64,7 +64,7 @@ async function loadMessageCommands() {
     const cmd = require(f);
     if (cmd.name) client.messageCommands.set(cmd.name, cmd);
   });
-  console.log(`Loaded ${client.messageCommands.size} message commands.`);
+  console.log(`🟢 Loaded ${client.messageCommands.size} message commands.`);
 }
 
 async function loadEvents() {
