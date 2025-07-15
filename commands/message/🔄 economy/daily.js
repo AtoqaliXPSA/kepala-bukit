@@ -7,7 +7,6 @@ const REWARD = 500;
 module.exports = {
   name: 'daily',
   alias: ['d'],
-  cooldown: 5, // optional: cooldown untuk elak spam, 5s contohnya
 
   async execute(message, args, client) {
     const userId = message.author.id;

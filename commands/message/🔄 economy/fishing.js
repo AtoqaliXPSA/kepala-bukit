@@ -10,45 +10,51 @@ module.exports = {
   async execute(message) {
     const userId = message.author.id;
 
-    // ⏳ Cool-down 5s
+    /* ── Cool-down ── */
     if (await checkCooldown(message, 'fishing', 5)) return;
 
-    // Pastikan dokumen wujud
     await User.findOneAndUpdate(
       { userId },
       { $setOnInsert: { balance: 0 } },
       { upsert: true }
     );
 
-    // 🎣 Senarai ikan
+    /* ── Senarai ikan ── */
     const fishOptions = [
-      { name: '🐟 sardines',  chance: 0.55,   value: 30  },
-      { name: '🐠 Donny',  chance: 0.035,  value: 130 },
-      { name: '🦈 Shark', chance: 0.009,  value: 800 },
-      { name: '🐋 Whale',   chance: 0.001,  value: 1500 }
+      { name: '🐟 Sardine', chance: 0.55,  minKg: 0.1, maxKg: 0.4,  price: 60  },  // ≈6 coin /100 g
+      { name: '🐠 Donny',   chance: 0.035, minKg: 0.4, maxKg: 1.2,  price: 110 },
+      { name: '🦈 Shark',   chance: 0.009, minKg: 10,  maxKg: 60,   price: 30  },
+      { name: '🐋 Whale',   chance: 0.001, minKg: 100, maxKg: 250,  price: 15  }
     ];
 
-    // Fallback
-    const total = fishOptions.reduce((a, f) => a + f.chance, 0);
-    if (total < 1) fishOptions.push({ name: '🥾 Torn shoes', chance: 1 - total, value: 0 });
-
-    // Roll
-    const roll = Math.random();
-    let cum = 0;
-    let caught = fishOptions.find(f => (cum += f.chance) >= roll) ||
-                 { name: '🥾 Torn shoes', value: 0 };
-
-    // Kemas kini balance
-    if (caught.value > 0) {
-      await User.updateOne({ userId }, { $inc: { balance: caught.value } });
+    /* ── Fallback “sampah” ── */
+    const totalChance = fishOptions.reduce((s, f) => s + f.chance, 0);
+    if (totalChance < 1) {
+      fishOptions.push({ name: '🥾 Torn shoes', chance: 1 - totalChance, minKg: 0, maxKg: 0, price: 0 });
     }
 
-    const reply =
-      `Fishing and get **${caught.name}**!\n` +
-      (caught.value
-        ? `Get : **${caught.value.toLocaleString()} coins**!`
-        : 'No catch today…');
+    /* ── Roll ── */
+    const roll = Math.random();
+    let acc  = 0;
+    let caught = fishOptions.find(f => (acc += f.chance) >= roll);
 
-    return message.reply(reply);
+    /* ── Berat & nilai ── */
+    let weightKg = +(Math.random() * (caught.maxKg - caught.minKg) + caught.minKg).toFixed(2);
+    if (caught.price === 0) weightKg = 0;
+
+    const reward = Math.round(weightKg * caught.price);
+
+    if (reward) {
+      await User.updateOne({ userId }, { $inc: { balance: reward } });
+    }
+
+    /* ── Reply ── */
+    const reply =
+      `You get **${caught.name}** ${weightKg ? `heavy is **${weightKg}KG**` : ''}!\n` +
+      (reward
+        ? `Reward: **${reward.toLocaleString()} coins**`
+        : 'Catch nothing today...');
+
+    message.reply(reply);
   }
 };
