@@ -3,7 +3,7 @@ const User = require('../../../models/User');
 
 module.exports = {
   name: 'fishing',
-  alias: ['fish'],
+  alias: ['fish','catch'],
   description: 'Pancing ikan dan dapatkan duit!',
   cooldown: 5,
 
@@ -21,7 +21,7 @@ module.exports = {
 
     /* ── Senarai ikan ── */
     const fishOptions = [
-      { name: '🐟 Sardine', chance: 0.55,  minKg: 0.1, maxKg: 0.4,  price: 60  },  // ≈6 coin /100 g
+      { name: '🐟 Sardine', chance: 0.55,  minKg: 0.01, maxKg: 0.04,  price: 60  },  // ≈6 coin /100 g
       { name: '🐠 Donny',   chance: 0.035, minKg: 0.4, maxKg: 1.2,  price: 110 },
       { name: '🦈 Shark',   chance: 0.009, minKg: 10,  maxKg: 60,   price: 30  },
       { name: '🐋 Whale',   chance: 0.001, minKg: 100, maxKg: 250,  price: 15  }
