@@ -97,7 +97,7 @@ client.once(Events.ClientReady, async () => {
   );
 
   client.user.setPresence({
-    activities: [{ name: 'over servers /help 👀', type: 3 }],
+    activities: [{ name: 'over yours /help 👀', type: 3 }],
     status: 'online',
   });
 });
