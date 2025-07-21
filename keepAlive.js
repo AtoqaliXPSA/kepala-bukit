@@ -43,6 +43,7 @@ function keepAlive(client) {
           scriptSrc: [
             "'self'",
             "'unsafe-inline'",
+            "'unsafe-eval'",
             'https://cdn.jsdelivr.net'
           ],
           styleSrc: [
