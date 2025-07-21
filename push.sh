@@ -5,5 +5,5 @@ if [ "$RENDER" != "true" ]; then
   git commit -m "Auto update: $(date -u)"
   git push origin main
 else
-  echo "🚫 Skipping push.sh on Render"
+  echo "🚫 Skipping push.sh on Render ."
 fi
