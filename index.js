@@ -8,7 +8,6 @@ const { exec } = require('child_process');
 const connectToDB = require('./utils/database');
 const { checkCooldown } = require('./helper/cooldownHelper');
 require('./utils/cron');
-const { ping } = require('./utils/gemini');
 const keepAlive = require('./keepAlive');
 const User = require('./models/User');
 
@@ -92,7 +91,6 @@ function printAsciiCommands() {
 client.once(Events.ClientReady, async () => {
   console.log(`🤖 Logged in as ${client.user.tag}`);
   await connectToDB();
-  await ping();
 
   await client.application.commands.set(
     client.commands.map(cmd => cmd.data)
