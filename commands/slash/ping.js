@@ -4,7 +4,7 @@ const replyHelper = require('../../helper/replyHelper');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('ping')
-    .setDescription('Uji kepantasan respon bot!'),
+    .setDescription('Test speed Response bot'),
 
   async execute(interaction) {
     const start = Date.now();

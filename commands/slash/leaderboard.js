@@ -4,7 +4,7 @@ const User = require('../../models/User');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('leaderboard')
-    .setDescription('Lihat pengguna terkaya.'),
+    .setDescription('See rich users'),
 
   async execute(interaction) {
     try {
