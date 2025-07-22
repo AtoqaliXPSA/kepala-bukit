@@ -14,6 +14,6 @@ module.exports = {
       .map((item, i) => `\`${item.name} — ${item.price} coins\n   ${item.description}\``)
       .join('\n');
 
-    message.reply(`\`KBSHOP:\n${list}\n\nUse: djbuy <Name items>\``);
+    message.reply(`**KBSHOP**\n${list}\n\n\`Use: djbuy <Name items>\``);
   }
 };
