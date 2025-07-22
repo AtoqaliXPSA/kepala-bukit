@@ -11,7 +11,7 @@ module.exports = {
     const user = await User.findOne({ userId });
 
     if (!user || !user.inventory || user.inventory.length === 0) {
-      return message.reply(`**${message.author.displayName}** , Inventory is < EMPTY >.`);
+      return message.reply(`**${message.author.displayName}** , Bag is < EMPTY >.`);
     }
 
     const list = user.inventory
