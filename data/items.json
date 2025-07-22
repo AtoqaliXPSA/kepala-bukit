@@ -1,0 +1,6 @@
+[
+  { "name": "🎣 Fishing Rod", "price": 500, "description": "Alat memancing untuk dapatkan ikan." },
+  { "name": "🥪 Sandwich", "price": 50, "description": "Makanan untuk pulihkan stamina." },
+  { "name": "💎 Diamond", "price": 2000, "description": "Barang rare yang mahal." },
+  { "name": "🚀 Jetpack", "price": 5000, "description": "Alat untuk terbang tinggi." }
+]
