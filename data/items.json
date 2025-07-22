@@ -1,6 +1,6 @@
 [
-  { "name": "🎣 Fishing Rod", "price": 500, "description": "Alat memancing untuk dapatkan ikan." },
-  { "name": "🥪 Sandwich", "price": 50, "description": "Makanan untuk pulihkan stamina." },
-  { "name": "💎 Diamond", "price": 2000, "description": "Barang rare yang mahal." },
-  { "name": "🚀 Jetpack", "price": 5000, "description": "Alat untuk terbang tinggi." }
+  { "name": "🎣 Gold Rod", "price": 350, "description": "Gold Rod use for get rare fish ." },
+  { "name": "🥪 Luck Coins", "price": 15000, "description": "Luck for blackjack" },
+  { "name": "💎 Diamond", "price": 20000000, "description": "Mythic items." },
+  { "name": "🚀 Jetpack", "price": 500000000, "description": "Lagandery items." }
 ]
