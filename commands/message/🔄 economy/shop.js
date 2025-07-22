@@ -11,9 +11,9 @@ module.exports = {
     const shopItems = JSON.parse(fs.readFileSync(itemsPath, 'utf-8'));
 
     const list = shopItems
-      .map((item, i) => `\`${item.name} — ${item.price} coins\n   *${item.description}*\``)
+      .map((item, i) => `\`${item.name} — ${item.price} coins\n   ${item.description}\``)
       .join('\n');
 
-    message.reply(`**KBSHOP:**\n${list}\n\nUse: \`djbuy <Name items>\``);
+    message.reply(`\`KBSHOP:\n${list}\n\nUse: djbuy <Name items>\``);
   }
 };
