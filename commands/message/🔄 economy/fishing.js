@@ -67,20 +67,17 @@ module.exports = {
       reward = Math.round(reward * 1.3); // +30% coins
     }
 
-    // Tambah coins
-    if (reward > 0) {
-      await User.updateOne({ userId }, { $inc: { balance: reward } });
+    /* ── Update DB ── */
+    const updateData = {};
+    if (reward > 0) updateData.$inc = { balance: reward };
+    if (hasRod) updateData.$pull = { inventory: user.inventory[rodIndex] };
+
+    if (Object.keys(updateData).length > 0) {
+      await User.updateOne({ userId }, updateData);
     }
 
-    /* ── Jika ada rod, buang selepas pancing ── */
-    let rodMessage = '';
-    if (hasRod) {
-      user.inventory.splice(rodIndex, 1); // buang rod
-      await user.save();
-      rodMessage = '\n**Your Fishing Rod broke after the trip.**';
-    }
-
-    // Reply
+    /* ── Reply ── */
+    const rodMessage = hasRod ? '\n**Your Fishing Rod broke after this trip.**' : '';
     const reply =
       `**${message.author.username}** goes fishing...\n` +
       `You caught **${caught.name}** ${weightKg ? `(Weight: **${weightKg}KG**)` : ''}\n` +
