@@ -82,8 +82,7 @@ module.exports = {
       `You caught **${caught.name}** ${weightKg ? `(Weight: **${weightKg}KG**)` : ''}\n` +
       (reward
         ? `Reward: **${reward.toLocaleString()} coins** ${hasRod ? '*(+rod bonus)*' : ''}`
-        : 'Nothing valuable today...') +
-      rodMessage;
+        : 'Nothing valuable today...');
 
     message.reply(reply);
   }
