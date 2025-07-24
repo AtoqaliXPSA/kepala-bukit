@@ -21,6 +21,6 @@ module.exports = {
       )
       .join('\n');
 
-    return message.reply(`**In you beg have ${message.author.username}:**\n${list}`);
+    return message.reply(`**${message.author.username} , In you beg have **\n${list}`);
   }
 };
