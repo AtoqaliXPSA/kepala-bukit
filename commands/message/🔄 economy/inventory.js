@@ -14,21 +14,23 @@ module.exports = {
       return message.reply(`**${message.author.username}**, Nothing in your beg.`);
     }
 
-    // Gabungkan item sama dengan count
+    // Gabungkan item sama dengan count dan total value
     const grouped = {};
     for (const item of user.inventory) {
       const key = `${item.name}|${item.durability}|${item.value}`;
       if (!grouped[key]) {
-        grouped[key] = { ...item, qty: 1 };
+        grouped[key] = { ...item, qty: 1, totalValue: item.value };
       } else {
         grouped[key].qty++;
+        grouped[key].totalValue += item.value;
       }
     }
 
     // Senarai yang sudah compress
     const list = Object.values(grouped)
-      .map((item, i) => 
-        `**${i + 1}.** ${item.name} x${item.qty} (Durability: ${item.durability}, Value: ${item.value})`
+      .map((item, i) =>
+        `**${i + 1}.** ${item.name} x${item.qty} ` +
+        `(Durability: ${item.durability}, Total Value: ${item.totalValue})`
       )
       .join('\n');
 
