@@ -14,9 +14,9 @@ module.exports = {
       user = await User.create({ userId, balance: 0, inventory: [] });
     }
 
-    // Cari Fishing Rod dalam inventory
+    // Cari Abugoldsia Rod dalam inventory
     let rodIndex = user.inventory.findIndex(item => 
-      (item.name || item).toLowerCase() === 'Fishing_Rod'
+      (item.id || item).toLowerCase() === 'Fishing_Rod'
     );
 
     const hasRod = rodIndex !== -1;
