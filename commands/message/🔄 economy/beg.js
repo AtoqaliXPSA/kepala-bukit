@@ -1,56 +1,48 @@
-const { checkCooldown } = require('../../../helper/cooldownHelper');
 const User = require('../../../models/User');
 
 module.exports = {
   name: 'beg',
-  description: 'Minta sedekah dan dapatkan coins secara rawak.',
-  cooldown: 30, // cooldown dalam saat
+  description: 'Beg for coins with a chance of failure or success.',
+  cooldown: 30,
   category: 'Economy',
 
   async execute(message) {
     const userId = message.author.id;
 
-    // Periksa cooldown
-    if (await checkCooldown(message, this.name, this.cooldown)) return;
-
-    // Cari atau buat user dalam DB
+    // Find or create user
     let user = await User.findOneAndUpdate(
       { userId },
       { $setOnInsert: { balance: 0 } },
       { upsert: true, new: true }
     );
 
-    // Senarai respon rawak
-    const beggers = [
-      'Oi miskin nah duit.',
-      'Kesian kau mintak sedekah nah.',
-      'Alahai pengemis nahlah.',
-      'Eh terkejut saya , kesiannye.',
-      'Menariknya aksi awak buat.',
-    ];
-
+    // Failure messages (English insults)
     const failMessages = [
-      'Kerja la jangan mengemis je.',
-      'Orang tengok pun kesian, tapi tak bagi apa pun.',
-      'Kesian... tapi saya pun pokai bang.',
-      'Takde rezeki hari ni, cuba esok ye.',
+      "You're so broke, even charity said no.",
+      "No one wants to give you a penny. Try harder!",
+      "People laughed at your begging face. No coins for you.",
+      "You look too desperate... They just walked away.",
+      "Not even a single soul cared about you. Sad."
     ];
 
-    // 10% peluang gagal
+    // Success messages (English kind words)
+    const successMessages = [ 
+      "You got lucky! A generous soul helped you."
+    ];
+
+    // 10% fail chance
     if (Math.random() < 0.1) {
       const failMsg = failMessages[Math.floor(Math.random() * failMessages.length)];
-      return message.channel.send(`${failMsg}\n**No money for you!**`);
+      return message.channel.send(`**${failMsg}**`);
     }
 
-    // 1 - 500 coins
+    // Success
     const amount = Math.floor(Math.random() * 500) + 1;
-    const reason = beggers[Math.floor(Math.random() * beggers.length)];
+    const successMsg = successMessages[Math.floor(Math.random() * successMessages.length)];
 
-    // Tambah balance
     user.balance += amount;
     await user.save();
 
-    // Hantar mesej
-    await message.channel.send(`${reason}\n**You got $${amount} coins!**`);
+    await message.channel.send(`**${successMsg}** You received **$${amount} coins!**`);
   }
 };
