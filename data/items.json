@@ -4,7 +4,7 @@
     "name": "Luck Coin",
     "alias": ["luckcoin" , "coins"],
     "price": 500,
-    "untradeable": false,
+    "untradable": false,
     "unpurchasable": false,
     "description": "A shiny coin that brings luck.",
     "durability": 1
@@ -14,7 +14,7 @@
     "name": "Abugoldsia Rod",
     "alias": ["rod" , "fishingrod"],
     "price": 300,
-    "untradeable": false,
+    "untradable": false,
     "unpurchasable": false,
     "description": "Use it to catch better fish.",
     "durability": 1
@@ -24,7 +24,7 @@
     "name": "Diamond",
     "alias": ["diamond" , "diamonds"],
     "price": 7000,
-    "untradeable": true,
+    "untradable": true,
     "unpurchasable": false,
     "description": "Rare Items.",
     "durability": null
