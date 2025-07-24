@@ -22,8 +22,8 @@ module.exports = {
       .setColor('#00f0ff')
       .setDescription(
         shopItems
-          .map((item, index) => 
-            `${item.name}** - **${item.price} coins**\n${item.description}`
+          .map((item) => 
+            `**${item.name}** - **${item.price} coins**\n${item.description}`
           )
           .join('\n\n')
       )
