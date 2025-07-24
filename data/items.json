@@ -10,8 +10,8 @@
     "durability": 1
   },
   {
-    "id": "fishing_rod",
-    "name": "Fishing Rod",
+    "id": "Fishing_rod",
+    "name": "Abugoldsia Rod",
     "alias": ["rod" , "fishingrod"],
     "price": 300,
     "untradeable": false,
