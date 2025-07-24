@@ -30,6 +30,6 @@ module.exports = {
     });
     await user.save();
 
-    message.reply(`**<SUCCESSFUL>** you have already bought **${item.name}**.`);
+    message.reply(`__**<SUCCESSFUL>**__ you have already bought **${item.name}**.`);
   }
 };
