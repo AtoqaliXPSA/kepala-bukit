@@ -16,7 +16,7 @@ module.exports = {
 
     // Cari Fishing Rod dalam inventory
     let rodIndex = user.inventory.findIndex(item => 
-      (item.name || item).toLowerCase() === 'Abugoldsia rod'
+      (item.name || item).toLowerCase() === 'Fishing_Rod'
     );
 
     const hasRod = rodIndex !== -1;
