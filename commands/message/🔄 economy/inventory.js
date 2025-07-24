@@ -11,13 +11,16 @@ module.exports = {
     const user = await User.findOne({ userId });
 
     if (!user || !user.inventory || user.inventory.length === 0) {
-      return message.reply(`**${message.author.displayName}** , Bag is < EMPTY >.`);
+      return message.reply(`**${message.author.username}**, You beg **<EMPTY>**.`);
     }
 
+    // Formatkan setiap item dengan nama & durability/value
     const list = user.inventory
-      .map((item, i) => `**${i + 1}.** ${item}`)
+      .map((item, i) => 
+        `**${i + 1}.** ${item.name} (Durability: ${item.durability}, Value: ${item.value})`
+      )
       .join('\n');
 
-    message.reply(`**In your bag:**\n${list}`);
+    return message.reply(`**In you beg have ${message.author.username}:**\n${list}`);
   }
 };
