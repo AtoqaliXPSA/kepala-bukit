@@ -21,14 +21,17 @@ module.exports = {
     const quantity = !isNaN(quantityArg) && quantityArg > 0 ? quantityArg : 1;
 
     // Bulk Limit 
-
     if (quantity > 10) {
       return message.reply('You cannot buy more than 10 items at once.');
     }
 
     // Dapatkan nama item
     const itemName = (quantity > 1 ? args.slice(0, -1) : args).join(' ').toLowerCase();
-    const item = shopItems.find(i => i.name.toLowerCase() === itemName);
+    
+    // Cari alias
+    const item = shopItems.find(
+      i => i.name.toLowerCase() === itemName || (i.alias && i.alias.includes(itemName))
+    );
 
     if (!item) {
       return message.reply(`Item **"${itemName}"** not found in shop.`);

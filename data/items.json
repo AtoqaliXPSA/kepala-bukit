@@ -2,6 +2,7 @@
   {
     "id": "luck_coin",
     "name": "Luck Coin",
+    "alias": ["luckcoin" , "coins"]
     "price": 500,
     "untradeable": false,
     "unpurchasable": false,
@@ -11,6 +12,7 @@
   {
     "id": "fishing_rod",
     "name": "Fishing Rod",
+    "alias": ["rod" , "fishingrod"]
     "price": 300,
     "untradeable": false,
     "unpurchasable": false,
@@ -20,6 +22,7 @@
   {
     "id": "diamond_rare",
     "name": "Diamond",
+    "alias": ["diamond" , "diamonds"]
     "price": 7000,
     "untradeable": true,
     "unpurchasable": true,

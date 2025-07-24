@@ -23,7 +23,9 @@ module.exports = {
     const shopItems = JSON.parse(fs.readFileSync(itemsPath, 'utf8'));
 
     // Cari item dalam shop
-    const item = shopItems.find(i => i.name.toLowerCase() === itemName.toLowerCase());
+    const item = shopItems.find(
+      i => i.name.toLowerCase() === itemName || (i.alias && i.alias.includes(itemName))
+    );
     if (!item) {
       return message.reply(`Item **${itemName}** is not recognized.`);
     }
