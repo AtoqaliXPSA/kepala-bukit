@@ -2,8 +2,8 @@ const User = require('../../../models/User');
 
 module.exports = {
   name: 'inventory',
-  alias: ['pocket', 'bag'],
-  description: 'Check User inventory/beg',
+  alias: ['bag', 'pocket'],
+  description: 'Lihat inventori anda.',
   cooldown: 5,
 
   async execute(message) {
@@ -11,29 +11,20 @@ module.exports = {
     const user = await User.findOne({ userId });
 
     if (!user || !user.inventory || user.inventory.length === 0) {
-      return message.reply(`**${message.author.username}**, Nothing in your beg.`);
+      return message.reply(`**${message.author.username}**, your bag is **<EMPTY>**.`);
     }
 
-    // Gabungkan item sama dengan count dan total value
-    const grouped = {};
+    // Kira jumlah item ikut nama
+    const inventoryCount = {};
     for (const item of user.inventory) {
-      const key = `${item.name}|${item.durability}|${item.value}`;
-      if (!grouped[key]) {
-        grouped[key] = { ...item, qty: 1, totalValue: item.value };
-      } else {
-        grouped[key].qty++;
-        grouped[key].totalValue += item.value;
-      }
+      const key = `${item.name} (Durability: ${item.durability}, Value: ${item.value})`;
+      inventoryCount[key] = (inventoryCount[key] || 0) + 1;
     }
 
-    // Senarai yang sudah compress
-    const list = Object.values(grouped)
-      .map((item, i) =>
-        `**${i + 1}.** ${item.name} x${item.qty} ` +
-        `(Durability: ${item.durability}, Total Value: ${item.totalValue})`
-      )
+    const list = Object.entries(inventoryCount)
+      .map(([item, count]) => `**${item}** x${count}`)
       .join('\n');
 
-    message.reply(`**${message.author.username}, In you beg have **\n${list}`);
+    message.reply(`**${message.author.username}, in your bag:**\n${list}`);
   }
 };

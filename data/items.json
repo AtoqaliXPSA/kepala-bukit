@@ -1,6 +1,23 @@
 [
-  { "name": "Gold Rod", "price": 350, "description": "Gold Rod use for get rare fish .", "durability": 1 },
-  { "name": "Luck Coins", "price": 15000, "description": "Luck for blackjack", "durability": 1 },
-  { "name": "Diamond", "price": 20000000, "description": "Mythic items.", "durability": null },
-  { "name": "Jetpack", "price": 500000000, "description": "Legendary items.", "durability": null }
+  {
+    "id": "luck_coin",
+    "name": "Luck Coin",
+    "price": 500,
+    "description": "A shiny coin that brings luck.",
+    "durability": 1
+  },
+  {
+    "id": "fishing_rod",
+    "name": "Fishing Rod",
+    "price": 300,
+    "description": "Use it to catch better fish.",
+    "durability": 1
+  },
+  {
+    "id": "diamond_rare",
+    "name": "Diamond",
+    "price": 7000,
+    "description": "Rare Items.",
+    "durability": null
+  }
 ]

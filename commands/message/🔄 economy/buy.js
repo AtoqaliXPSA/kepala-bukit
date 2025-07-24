@@ -2,34 +2,44 @@ const fs = require('fs');
 const path = require('path');
 const User = require('../../../models/User');
 
+// Load items.json
+const itemsPath = path.join(__dirname, '../../../data/items.json');
+const shopItems = JSON.parse(fs.readFileSync(itemsPath, 'utf8'));
+
 module.exports = {
   name: 'buy',
-  description: 'Buy from shop.',
+  description: 'Beli item dari shop.',
+  cooldown: 5,
 
   async execute(message, args) {
+    if (!args[0]) return message.reply('Please specify an item to buy.');
+
+    const itemName = args.join(' ').toLowerCase();
+    const item = shopItems.find(i => i.name.toLowerCase() === itemName);
+
+    if (!item) return message.reply(`Item "${itemName}" not found in shop.`);
+
     const userId = message.author.id;
-    const itemName = args.join(' ');
-    if (!itemName) return message.reply('List items name to buy something.');
-
-    const itemsPath = path.join(__dirname, '../../../data/items.json');
-    const shopItems = JSON.parse(fs.readFileSync(itemsPath, 'utf-8'));
-    const item = shopItems.find(i => i.name.toLowerCase() === itemName.toLowerCase());
-    if (!item) return message.reply('Item not found in store.');
-
     let user = await User.findOne({ userId });
+
     if (!user) user = await User.create({ userId, balance: 0, inventory: [] });
 
     if (user.balance < item.price) {
-      return message.reply(`You need **${item.price} coins**.`);
+      return message.reply(`You don't have enough coins. You need **${item.price} coins**.`);
     }
 
+    // Deduct coins and add item
     user.balance -= item.price;
+
+    // Add to inventory (as object)
     user.inventory.push({
       name: item.name,
-      durability: item.durability ?? null
+      durability: item.durability,
+      value: item.price
     });
+
     await user.save();
 
-    message.reply(`*<SUCCESSFUL>* you have already bought **${item.name}**.`);
+    message.reply(`You purchased **${item.name}** for **${item.price} coins**!`);
   }
 };
