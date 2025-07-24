@@ -3,7 +3,7 @@ const User = require('../../../models/User');
 module.exports = {
   name: 'inventory',
   alias: ['pocket', 'bag'],
-  description: 'Lihat inventori anda.',
+  description: 'Check User inventory/beg',
   cooldown: 5,
 
   async execute(message) {
@@ -11,16 +11,27 @@ module.exports = {
     const user = await User.findOne({ userId });
 
     if (!user || !user.inventory || user.inventory.length === 0) {
-      return message.reply(`**${message.author.username}**, You beg **<EMPTY>**.`);
+      return message.reply(`**${message.author.username}**, Nothing in your beg.`);
     }
 
-    // Formatkan setiap item dengan nama & durability/value
-    const list = user.inventory
+    // Gabungkan item sama dengan count
+    const grouped = {};
+    for (const item of user.inventory) {
+      const key = `${item.name}|${item.durability}|${item.value}`;
+      if (!grouped[key]) {
+        grouped[key] = { ...item, qty: 1 };
+      } else {
+        grouped[key].qty++;
+      }
+    }
+
+    // Senarai yang sudah compress
+    const list = Object.values(grouped)
       .map((item, i) => 
-        `**${i + 1}.** ${item.name} (Durability: ${item.durability}, Value: ${item.value})`
+        `**${i + 1}.** ${item.name} x${item.qty} (Durability: ${item.durability}, Value: ${item.value})`
       )
       .join('\n');
 
-    return message.reply(`**${message.author.username} , In you beg have **\n${list}`);
+    message.reply(`**${message.author.username}, In you beg have **\n${list}`);
   }
 };
