@@ -77,7 +77,6 @@ module.exports = {
     }
 
     /* ── Reply ── */
-    const rodMessage = hasRod ? '\n**Your Fishing Rod broke after this trip.**' : '';
     const reply =
       `**${message.author.username}** goes fishing...\n` +
       `You caught **${caught.name}** ${weightKg ? `(Weight: **${weightKg}KG**)` : ''}\n` +
