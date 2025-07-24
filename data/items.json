@@ -22,7 +22,7 @@
     "name": "Diamond",
     "price": 7000,
     "untradeable": true,
-    "unpurchasable" true,
+    "unpurchasable": true,
     "description": "Rare Items.",
     "durability": null
   }
