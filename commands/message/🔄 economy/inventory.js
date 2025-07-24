@@ -1,4 +1,5 @@
 const User = require('../../../models/User');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports = {
   name: 'inventory',
@@ -11,7 +12,7 @@ module.exports = {
     const user = await User.findOne({ userId });
 
     if (!user || !user.inventory || user.inventory.length === 0) {
-      return message.reply(`**${message.author.username}** , your bag is **<EMPTY>**.`);
+      return message.reply(`**${message.author.username}**, your bag is **<EMPTY>**.`);
     }
 
     // Group item ikut nama
@@ -25,18 +26,49 @@ module.exports = {
     // Pagination setup
     const itemsPerPage = 10;
     const totalPages = Math.max(1, Math.ceil(groupedItems.length / itemsPerPage));
-    const page = Math.min(
+    let page = Math.min(
       Math.max(parseInt(args[0]) || 1, 1),
       totalPages
     );
 
-    const start = (page - 1) * itemsPerPage;
-    const paginatedItems = groupedItems.slice(start, start + itemsPerPage);
+    const generateEmbed = (page) => {
+      const start = (page - 1) * itemsPerPage;
+      const paginatedItems = groupedItems.slice(start, start + itemsPerPage);
+      const list = paginatedItems.map((item, i) => `**${start + i + 1}.** ${item}`).join('\n');
 
-    const list = paginatedItems.map((item, i) => `**${start + i + 1}.** ${item}`).join('\n');
+      return new EmbedBuilder()
+        .setTitle(`${message.author.username}'s Inventory`)
+        .setColor('#00ffcc')
+        .setDescription(list || '*No items on this page*')
+        .setFooter({ text: `Page ${page}/${totalPages} | Total Items: ${user.inventory.length}` })
+        .setTimestamp();
+    };
 
-    return message.reply(
-      `**${message.author.username} , Beg have :**\n${list}\n\n**Page:** ${page}/${totalPages}`
-    );
+    // Hantar mesej embed pertama
+    const embed = generateEmbed(page);
+    const prevButton = new ButtonBuilder().setCustomId('prev').setLabel('⬅ Prev').setStyle(ButtonStyle.Primary);
+    const nextButton = new ButtonBuilder().setCustomId('next').setLabel('Next ➡').setStyle(ButtonStyle.Primary);
+    const row = new ActionRowBuilder().addComponents(prevButton, nextButton);
+
+    const reply = await message.reply({ embeds: [embed], components: totalPages > 1 ? [row] : [] });
+
+    if (totalPages > 1) {
+      const collector = reply.createMessageComponentCollector({ time: 60000 });
+
+      collector.on('collect', async (interaction) => {
+        if (interaction.user.id !== message.author.id) {
+          return interaction.reply({ content: 'This inventory is not yours!', ephemeral: true });
+        }
+
+        if (interaction.customId === 'prev') page = page > 1 ? page - 1 : totalPages;
+        else if (interaction.customId === 'next') page = page < totalPages ? page + 1 : 1;
+
+        await interaction.update({ embeds: [generateEmbed(page)], components: [row] });
+      });
+
+      collector.on('end', () => {
+        reply.edit({ components: [] }); // Disable buttons lepas 1 minit
+      });
+    }
   }
 };
