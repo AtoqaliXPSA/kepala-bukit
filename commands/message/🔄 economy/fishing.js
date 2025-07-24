@@ -1,4 +1,10 @@
 const User = require('../../../models/User');
+const fs = require('fs');
+const path = require('path');
+
+// Load items.json
+const itemsPath = path.join(__dirname, '../../../data/items.json');
+const shopItems = JSON.parse(fs.readFileSync(itemsPath, 'utf8'));
 
 module.exports = {
   name: 'fishing',
@@ -9,16 +15,20 @@ module.exports = {
   async execute(message) {
     const userId = message.author.id;
 
+    // Pastikan user wujud
     let user = await User.findOne({ userId });
     if (!user) {
       user = await User.create({ userId, balance: 0, inventory: [] });
     }
 
-    // Cari Fishing Rod dalam inventory
-    let rodIndex = user.inventory.findIndex(item => 
-      item.id && item.id.toLowerCase() === 'fishing_rod'
+    /* ── Cari Fishing Rod ── */
+    const rodItem = shopItems.find(
+      i => i.id.toLowerCase() === 'fishing_rod' || i.alias?.includes('rod')
     );
-
+    let rodIndex = user.inventory.findIndex(inv => {
+      const invName = (inv.name || inv).toLowerCase();
+      return invName === rodItem.name.toLowerCase() || rodItem.alias?.includes(invName);
+    });
     const hasRod = rodIndex !== -1;
 
     /* ── Senarai ikan ── */
@@ -29,54 +39,55 @@ module.exports = {
       { name: '🐋 Whale',   chance: 0.001, minKg: 100,  maxKg: 250,  price: 15  }
     ];
 
-    /* ── Boost jika ada rod ── */
+    // Bonus kalau ada rod
     if (hasRod) {
       fishOptions.forEach(fish => {
-        if (['donny', 'shark', 'whale'].includes(fish.name.toLowerCase().split(' ')[1])) {
-          fish.chance *= 1.5; // 50% boost rare
-        }
-        fish.price = Math.round(fish.price * 1.3); // Semua ikan +30% harga
+        if (fish.name === '🦈 Shark') fish.chance *= 1.5;
+        if (fish.name === '🐋 Whale') fish.chance *= 2;
       });
-
-      // Kurangkan durability rod
-      if (user.inventory[rodIndex].durability !== undefined) {
-        user.inventory[rodIndex].durability -= 1;
-        if (user.inventory[rodIndex].durability <= 0) {
-          message.channel.send('Your **Fishing Rod** has broken!');
-          user.inventory.splice(rodIndex, 1); // Buang rod
-        }
-      }
     }
 
-    /* ── Fallback “sampah” ── */
+    // Fallback sampah
     const totalChance = fishOptions.reduce((s, f) => s + f.chance, 0);
     if (totalChance < 1) {
       fishOptions.push({ name: '🥾 Torn shoes', chance: 1 - totalChance, minKg: 0, maxKg: 0, price: 0 });
     }
 
-    /* ── Roll ── */
+    // Roll
     const roll = Math.random();
     let acc = 0;
     let caught = fishOptions.find(f => (acc += f.chance) >= roll);
 
-    /* ── Berat & nilai ── */
+    // Berat & reward
     let weightKg = +(Math.random() * (caught.maxKg - caught.minKg) + caught.minKg).toFixed(2);
     if (caught.price === 0) weightKg = 0;
 
-    const reward = Math.round(weightKg * caught.price);
-
-    if (reward) {
-      await User.updateOne({ userId }, { $inc: { balance: reward }, $set: { inventory: user.inventory } });
-    } else {
-      await User.updateOne({ userId }, { $set: { inventory: user.inventory } });
+    let reward = Math.round(weightKg * caught.price);
+    if (hasRod && reward > 0) {
+      reward = Math.round(reward * 1.3); // +30% coins
     }
 
-    /* ── Reply ── */
+    // Tambah coins
+    if (reward > 0) {
+      await User.updateOne({ userId }, { $inc: { balance: reward } });
+    }
+
+    /* ── Jika ada rod, buang selepas pancing ── */
+    let rodMessage = '';
+    if (hasRod) {
+      user.inventory.splice(rodIndex, 1); // buang rod
+      await user.save();
+      rodMessage = '\n**Your Fishing Rod broke after the trip.**';
+    }
+
+    // Reply
     const reply =
-      `You caught **${caught.name}**${weightKg ? `, weighing **${weightKg}KG**` : ''}!\n` +
+      `**${message.author.username}** goes fishing...\n` +
+      `You caught **${caught.name}** ${weightKg ? `(Weight: **${weightKg}KG**)` : ''}\n` +
       (reward
-        ? `Reward: **${reward.toLocaleString()} coins**${hasRod ? ' (Bonus from Fishing Rod!)' : ''}`
-        : 'Catch nothing today...');
+        ? `Reward: **${reward.toLocaleString()} coins** ${hasRod ? '(+rod bonus)' : ''}`
+        : 'Nothing valuable today...') +
+      rodMessage;
 
     message.reply(reply);
   }
