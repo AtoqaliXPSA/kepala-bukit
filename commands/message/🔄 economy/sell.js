@@ -11,21 +11,24 @@ module.exports = {
     const userId = message.author.id;
 
     if (!args.length) {
-      return message.reply('Please specify the item name and optionally a quantity.\nExample: `djsell Luck Coin 3`');
+      return message.reply('Please specify the item name and optionally a quantity.\nExample: `!sell Luck Coin 3`');
     }
 
+    // Tentukan quantity (default 1)
     const quantityArg = parseInt(args[args.length - 1]);
     const isQuantity = !isNaN(quantityArg);
     const quantity = isQuantity ? Math.max(1, quantityArg) : 1;
-    const itemName = isQuantity ? args.slice(0, -1).join(' ') : args.join(' ');
+    const itemName = (isQuantity ? args.slice(0, -1) : args).join(' ').toLowerCase();
 
+    // Load shop items
     const itemsPath = path.join(__dirname, '../../../data/items.json');
     const shopItems = JSON.parse(fs.readFileSync(itemsPath, 'utf8'));
 
-    // Cari item dalam shop
-    const item = shopItems.find(
-      i => i.name.toLowerCase() === itemName || (i.alias && i.alias.includes(itemName))
+    // Cari item berdasarkan name atau alias
+    const item = shopItems.find(i =>
+      i.name.toLowerCase() === itemName || (i.alias && i.alias.map(a => a.toLowerCase()).includes(itemName))
     );
+
     if (!item) {
       return message.reply(`Item **${itemName}** is not recognized.`);
     }
@@ -41,28 +44,28 @@ module.exports = {
       return message.reply('You have no items in your inventory to sell.');
     }
 
-    // Kira berapa item user ada
-    const userItems = user.inventory.filter(invItem => invItem === item.name);
+    // Cari berapa banyak item user ada
+    const userItems = user.inventory.filter(invItem => invItem.name === item.name);
     const userItemCount = userItems.length;
 
     if (userItemCount < quantity) {
       return message.reply(`You only have **${userItemCount}x ${item.name}** but you tried to sell **${quantity}x**.`);
     }
 
-    // Harga jual (60% harga beli)
+    // Harga jual (60% dari harga beli)
     const sellPrice = Math.floor(item.price * 0.6) * quantity;
 
-    // Buang item dari inventory
+    // Buang item dari inventory ikut kuantiti
     let removed = 0;
     user.inventory = user.inventory.filter(invItem => {
-      if (invItem === item.name && removed < quantity) {
+      if (invItem.name === item.name && removed < quantity) {
         removed++;
-        return false;
+        return false; // buang item ini
       }
       return true;
     });
 
-    // Tambah coins
+    // Tambah coins kepada user
     user.balance += sellPrice;
     await user.save();
 
