@@ -14,9 +14,9 @@ module.exports = {
       user = await User.create({ userId, balance: 0, inventory: [] });
     }
 
-    // Cari Abugoldsia Rod dalam inventory
+    // Cari Fishing Rod dalam inventory
     let rodIndex = user.inventory.findIndex(item => 
-      (item.id || item).toLowerCase() === 'Fishing_Rod'
+      (item.name || item).toLowerCase() === 'fishing rod'
     );
 
     const hasRod = rodIndex !== -1;
@@ -41,6 +41,10 @@ module.exports = {
       // Kurangkan durability rod
       if (user.inventory[rodIndex].durability !== undefined) {
         user.inventory[rodIndex].durability -= 1;
+        if (user.inventory[rodIndex].durability <= 0) {
+          message.channel.send('Your **Fishing Rod** has broken!');
+          user.inventory.splice(rodIndex, 1); // Buang rod
+        }
       }
     }
 
