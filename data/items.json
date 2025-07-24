@@ -3,6 +3,8 @@
     "id": "luck_coin",
     "name": "Luck Coin",
     "price": 500,
+    "untradeable": false,
+    "unpurchasable": false,
     "description": "A shiny coin that brings luck.",
     "durability": 1
   },
@@ -10,6 +12,8 @@
     "id": "fishing_rod",
     "name": "Fishing Rod",
     "price": 300,
+    "untradeable": false,
+    "unpurchasable": false,
     "description": "Use it to catch better fish.",
     "durability": 1
   },
@@ -17,6 +21,8 @@
     "id": "diamond_rare",
     "name": "Diamond",
     "price": 7000,
+    "untradeable": true,
+    "unpurchasable" true,
     "description": "Rare Items.",
     "durability": null
   }
