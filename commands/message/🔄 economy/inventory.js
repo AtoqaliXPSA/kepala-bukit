@@ -11,7 +11,7 @@ module.exports = {
     const user = await User.findOne({ userId });
 
     if (!user || !user.inventory || user.inventory.length === 0) {
-      return message.reply(`**${message.author.username}**, your bag is **<EMPTY>**.`);
+      return message.reply(`**${message.author.username}** , your bag is **<EMPTY>**.`);
     }
 
     // Kira jumlah item ikut nama
@@ -25,6 +25,6 @@ module.exports = {
       .map(([item, count]) => `**${item}** x${count}`)
       .join('\n');
 
-    message.reply(`**${message.author.username}, in your bag:**\n${list}`);
+    message.reply(`**${message.author.username} , in your bag:**\n${list}`);
   }
 };
