@@ -9,7 +9,7 @@ const shopItems = JSON.parse(fs.readFileSync(itemsPath, 'utf8'));
 module.exports = {
   name: 'buy',
   description: 'Beli item dari shop dengan sokongan bulk buy.',
-  cooldown: 5,
+  cooldown: 15,
 
   async execute(message, args) {
     if (!args.length) {
@@ -19,6 +19,12 @@ module.exports = {
     // Semak quantity
     const quantityArg = parseInt(args[args.length - 1]);
     const quantity = !isNaN(quantityArg) && quantityArg > 0 ? quantityArg : 1;
+
+    // Bulk Limit 
+
+    if (quantity > 10) {
+      return message.reply('You cannot buy more than 10 items at once.');
+    }
 
     // Dapatkan nama item
     const itemName = (quantity > 1 ? args.slice(0, -1) : args).join(' ').toLowerCase();
