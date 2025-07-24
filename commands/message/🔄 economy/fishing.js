@@ -16,7 +16,7 @@ module.exports = {
 
     // Cari Fishing Rod dalam inventory
     let rodIndex = user.inventory.findIndex(item => 
-      (item.name || item).toLowerCase() === 'fishing rod'
+      (item.name || item).toLowerCase() === 'Abugoldsia rod'
     );
 
     const hasRod = rodIndex !== -1;
@@ -41,10 +41,6 @@ module.exports = {
       // Kurangkan durability rod
       if (user.inventory[rodIndex].durability !== undefined) {
         user.inventory[rodIndex].durability -= 1;
-        if (user.inventory[rodIndex].durability <= 0) {
-          message.channel.send('Your **Fishing Rod** has broken!');
-          user.inventory.splice(rodIndex, 1); // Buang rod
-        }
       }
     }
 
