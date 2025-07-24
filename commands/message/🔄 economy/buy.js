@@ -30,6 +30,6 @@ module.exports = {
     });
     await user.save();
 
-    message.reply(`< SUCCESSFUL > Done buy **${item.name}** (Durability: ${item.durability ?? '∞'}).`);
+    message.reply(`**<SUCCESSFUL>** you have already bought **${item.name}**.`);
   }
 };
