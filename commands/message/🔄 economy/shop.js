@@ -23,7 +23,7 @@ module.exports = {
       .setDescription(
         shopItems
           .map((item, index) => 
-            `**${index + 1}. ${item.name}** - **${item.price} coins**\n${item.description}`
+            `${item.name}** - **${item.price} coins**\n${item.description}`
           )
           .join('\n\n')
       )
