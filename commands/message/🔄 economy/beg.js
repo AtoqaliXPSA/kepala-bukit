@@ -8,14 +8,17 @@ module.exports = {
   category: 'Economy',
 
   async execute(message) {
-
     const userId = message.author.id;
 
+    // Periksa cooldown
+    if (await checkCooldown(message, this.name, this.cooldown)) return;
+
     // Cari atau buat user dalam DB
-    let user = await User.findOne({ userId });
-    if (!user) {
-      user = await User.create({ userId, balance: 0, stamina: 5 });
-    }
+    let user = await User.findOneAndUpdate(
+      { userId },
+      { $setOnInsert: { balance: 0 } },
+      { upsert: true, new: true }
+    );
 
     // Senarai respon rawak
     const beggers = [
@@ -26,27 +29,28 @@ module.exports = {
       'Menariknya aksi awak buat.',
     ];
 
-    const fails = [
+    const failMessages = [
       'Kerja la jangan mengemis je.',
-        'Orang tengok pun kesian, tapi tak bagi apa pun.',
-        'Kesian... tapi saya pun pokai bang.',
-        'Takde rezeki hari ni, cuba esok ye.',
+      'Orang tengok pun kesian, tapi tak bagi apa pun.',
+      'Kesian... tapi saya pun pokai bang.',
+      'Takde rezeki hari ni, cuba esok ye.',
     ];
 
-    const isFail = Math.random() < 0.1;
-
-    if (isFail) {
-      const fails = fails[Math.floor(Math.random() * fails.length)];
-      return message.channel.send(`${fails}\nNo money for you!`)
+    // 10% peluang gagal
+    if (Math.random() < 0.1) {
+      const failMsg = failMessages[Math.floor(Math.random() * failMessages.length)];
+      return message.channel.send(`${failMsg}\n**No money for you!**`);
     }
 
-    const amount = Math.floor(Math.random() * 500) + 1; // 1 - 100 coins
+    // 1 - 500 coins
+    const amount = Math.floor(Math.random() * 500) + 1;
     const reason = beggers[Math.floor(Math.random() * beggers.length)];
 
+    // Tambah balance
     user.balance += amount;
     await user.save();
 
-    // Hantar mesej (bukan reply)
-    await message.channel.send(`${reason}\nYou Get **$${amount} coins**!`);
+    // Hantar mesej
+    await message.channel.send(`${reason}\n**You got $${amount} coins!**`);
   }
 };
