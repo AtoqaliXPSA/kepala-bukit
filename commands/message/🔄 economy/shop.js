@@ -18,16 +18,16 @@ module.exports = {
 
     // Guna embed supaya lebih kemas
     const embed = new EmbedBuilder()
-      .setTitle('🛒 **Shop Items**')
+      .setTitle(' **KB STORE**')
       .setColor('#00f0ff')
       .setDescription(
         shopItems
           .map((item, index) => 
-            `**${index + 1}. ${item.name}** - **${item.price} coins**\n${item.description}`
+            `**${index + 1}.${item.name}**  **${item.price} coins**\n${item.description}`
           )
           .join('\n\n')
       )
-      .setFooter({ text: '\`Use djbuy <item name> to purchase an item.' });
+      .setFooter({ text: 'Use djbuy <item name> to purchase an item.' });
 
     return message.channel.send({ embeds: [embed] });
   }
