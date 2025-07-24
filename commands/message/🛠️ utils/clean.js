@@ -1,6 +1,6 @@
 module.exports = {
   name: 'clean',
-  alias: ['purge'],
+  alias: ['purge', 'clear'],
   description: 'Padam mesej dalam channel',
   async execute(message, args) {
     // Semak jika user ada permission
@@ -10,13 +10,13 @@ module.exports = {
 
     const amount = parseInt(args[0]);
 
-    if (isNaN(amount) || amount < 1 || amount > 100) {
+    if (isNaN(amount) || amount < 1 || amount > 150) {
       return message.reply('`Insert amount to delete message.`');
     }
 
     try {
       await message.channel.bulkDelete(amount + 1, true); // +1 termasuk command
-      const reply = await message.channel.send(`✅ ${amount} message is deleted.`);
+      const reply = await message.channel.send(`**${amount} message is deleted.**`);
       setTimeout(() => reply.delete().catch(() => {}), 3000); // auto delete notifikasi
     } catch (err) {
       console.error(err);
