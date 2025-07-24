@@ -77,6 +77,7 @@ module.exports = {
     if (hasRod) {
       user.inventory.splice(rodIndex, 1); // buang rod
       await user.save();
+      rodMessage = '\n**Your Fishing Rod broke after the trip.**';
     }
 
     // Reply
@@ -84,7 +85,7 @@ module.exports = {
       `**${message.author.username}** goes fishing...\n` +
       `You caught **${caught.name}** ${weightKg ? `(Weight: **${weightKg}KG**)` : ''}\n` +
       (reward
-        ? `Reward: **${reward.toLocaleString()} coins** ${hasRod ? '*(+rod bonus)*' : ''}`
+        ? `Reward: **${reward.toLocaleString()} coins** ${hasRod ? '(+rod bonus)' : ''}`
         : 'Nothing valuable today...') +
       rodMessage;
 
