@@ -42,7 +42,7 @@ module.exports = {
       if (user.inventory[rodIndex].durability !== undefined) {
         user.inventory[rodIndex].durability -= 1;
         if (user.inventory[rodIndex].durability <= 0) {
-          message.channel.send('⚠️ Your **Fishing Rod** has broken!');
+          message.channel.send('Your **Fishing Rod** has broken!');
           user.inventory.splice(rodIndex, 1); // Buang rod
         }
       }
