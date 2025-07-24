@@ -14,10 +14,12 @@ module.exports = {
       user = await User.create({ userId, balance: 0, inventory: [] });
     }
 
-    // Check if user has Fishing Rod
-    const hasRod = user.inventory?.some(item => 
+    // Cari Fishing Rod dalam inventory
+    let rodIndex = user.inventory.findIndex(item => 
       (item.name || item).toLowerCase() === 'fishing rod'
     );
+
+    const hasRod = rodIndex !== -1;
 
     /* ── Senarai ikan ── */
     const fishOptions = [
@@ -27,15 +29,23 @@ module.exports = {
       { name: '🐋 Whale',   chance: 0.001, minKg: 100,  maxKg: 250,  price: 15  }
     ];
 
-    /* ── Jika ada rod, boost chance ikan rare & harga ── */
+    /* ── Boost jika ada rod ── */
     if (hasRod) {
       fishOptions.forEach(fish => {
-        // boost 50% untuk ikan mahal sahaja
         if (['donny', 'shark', 'whale'].includes(fish.name.toLowerCase().split(' ')[1])) {
-          fish.chance *= 1.5; 
+          fish.chance *= 1.5; // 50% boost rare
         }
-        fish.price = Math.round(fish.price * 1.3); // Semua ikan harga naik 30%
+        fish.price = Math.round(fish.price * 1.3); // Semua ikan +30% harga
       });
+
+      // Kurangkan durability rod
+      if (user.inventory[rodIndex].durability !== undefined) {
+        user.inventory[rodIndex].durability -= 1;
+        if (user.inventory[rodIndex].durability <= 0) {
+          message.channel.send('⚠️ Your **Fishing Rod** has broken!');
+          user.inventory.splice(rodIndex, 1); // Buang rod
+        }
+      }
     }
 
     /* ── Fallback “sampah” ── */
@@ -56,7 +66,9 @@ module.exports = {
     const reward = Math.round(weightKg * caught.price);
 
     if (reward) {
-      await User.updateOne({ userId }, { $inc: { balance: reward } });
+      await User.updateOne({ userId }, { $inc: { balance: reward }, $set: { inventory: user.inventory } });
+    } else {
+      await User.updateOne({ userId }, { $set: { inventory: user.inventory } });
     }
 
     /* ── Reply ── */
