@@ -25,7 +25,7 @@
     "alias": ["diamond" , "diamonds"],
     "price": 7000,
     "untradeable": true,
-    "unpurchasable": true,
+    "unpurchasable": false,
     "description": "Rare Items.",
     "durability": null
   }
