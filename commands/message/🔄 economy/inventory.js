@@ -40,14 +40,14 @@ module.exports = {
         .setTitle(`${message.author.username}'s Inventory`)
         .setColor('#00ffcc')
         .setDescription(list || '*No items on this page*')
-        .setFooter({ text: `Page ${page}/${totalPages} | Total Items: ${user.inventory.length}` })
+        .setFooter({ text: `Page ${page}/${totalPages}` })
         .setTimestamp();
     };
 
     // Hantar mesej embed pertama
     const embed = generateEmbed(page);
-    const prevButton = new ButtonBuilder().setCustomId('prev').setLabel('⬅ Prev').setStyle(ButtonStyle.Primary);
-    const nextButton = new ButtonBuilder().setCustomId('next').setLabel('Next ➡').setStyle(ButtonStyle.Primary);
+    const prevButton = new ButtonBuilder().setCustomId('prev').setLabel('Prev').setStyle(ButtonStyle.Primary);
+    const nextButton = new ButtonBuilder().setCustomId('next').setLabel('Next').setStyle(ButtonStyle.Primary);
     const row = new ActionRowBuilder().addComponents(prevButton, nextButton);
 
     const reply = await message.reply({ embeds: [embed], components: totalPages > 1 ? [row] : [] });
