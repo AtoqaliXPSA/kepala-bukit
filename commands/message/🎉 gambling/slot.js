@@ -90,7 +90,6 @@ ${result}\`\`\``;
     // **Jika ada Luck Coin, buang dari inventory**
     if (hasLuckCoin && luckCoinIndex !== -1) {
       user.inventory.splice(luckCoinIndex, 1);
-      resultText += `\n🍀 Your Luck Coin has been used and removed.`;
     }
 
     await user.save();
