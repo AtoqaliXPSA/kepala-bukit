@@ -1,105 +1,83 @@
 const fs = require('fs');
 const path = require('path');
-const chalk = require('chalk'); // Untuk warna console
+const { Collection } = require('discord.js');
+const chalk = require('chalk'); // Untuk console warna
 
 /**
- * Helper: Pad text untuk console table
- */
-function pad(text, length = 20) {
-  return text.length >= length ? text : text + ' '.repeat(length - text.length);
-}
-
-/**
- * Baca semua command dari folder `commands`
- * @param {string} dirPath - Path folder commands
- * @param {Collection} collection - Discord.js Collection untuk simpan command
- * @returns {Array} Senarai command yang berjaya dimuat
- */
-function readCommands(dirPath, collection) {
-  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
-  const loaded = [];
-
-  for (const entry of entries) {
-    const fullPath = path.join(dirPath, entry.name);
-
-    if (entry.isDirectory()) {
-      loaded.push(...readCommands(fullPath, collection));
-    } else if (entry.isFile() && entry.name.endsWith('.js')) {
-      try {
-        const command = require(fullPath);
-        if (!command.name) {
-          console.warn(chalk.yellow(`[SKIP]`), `${fullPath} tiada "name" property.`);
-          continue;
-        }
-        collection.set(command.name, command);
-        loaded.push({ name: command.name, path: fullPath });
-      } catch (err) {
-        console.error(chalk.red(`[ERROR]`), `Gagal load ${fullPath}:`, err.message);
-      }
-    }
-  }
-  return loaded;
-}
-
-/**
- * Auto-load semua commands (message & slash)
- * @param {Client} client - Discord Client
- * @returns {Array} Array data untuk Slash Command deploy
+ * Load semua command dari folder 'commands'
+ * @param {Client} client 
+ * @returns {Array} Array slash commands untuk deploy
  */
 function loadCommands(client) {
-  const commandsDir = path.join(__dirname, '../commands');
+  client.messageCommands = new Collection();
+  client.slashCommands   = new Collection();
 
-  if (!fs.existsSync(commandsDir)) {
-    console.error(chalk.red(`[ERROR]`), `Folder "commands" tidak wujud: ${commandsDir}`);
-    return [];
-  }
-
-  console.log(chalk.blue.bold(`\n[COMMAND HANDLER] Loading commands dari ${commandsDir}\n`));
+  const commandsPath = path.join(__dirname, '../commands');
+  const allFiles = getAllJSFiles(commandsPath);
 
   const slashArray = [];
-  const resultTable = [];
+  const tableData  = [];
 
-  const folders = fs.readdirSync(commandsDir, { withFileTypes: true })
-    .filter(entry => entry.isDirectory());
+  for (const file of allFiles) {
+    try {
+      const command = require(file);
 
-  for (const folder of folders) {
-    const folderPath = path.join(commandsDir, folder.name);
-    console.log(chalk.cyan(`[SCAN] Folder: ${folder.name}`));
+      // Validasi: pastikan ada "name"
+      if (!command.name) {
+        console.warn(chalk.yellow(`[SKIP] Command tiada nama: ${file}`));
+        continue;
+      }
 
-    const tempCollection = new Map();
-    const loaded = readCommands(folderPath, tempCollection);
+      // Kalau command ada Slash data
+      if (command.data && typeof command.data.toJSON === 'function') {
+        client.slashCommands.set(command.data.name, command);
+        slashArray.push(command.data.toJSON());
+      } else {
+        // Kalau message command
+        client.messageCommands.set(command.name, command);
+      }
 
-    loaded.forEach(cmd => {
-      resultTable.push({ type: folder.name, name: cmd.name, path: cmd.path });
-    });
-
-    // Simpan ikut jenis folder
-    if (folder.name.toLowerCase().includes('slash')) {
-      tempCollection.forEach(cmd => {
-        client.slashCommands.set(cmd.name, cmd);
-        if (cmd.data) slashArray.push(cmd.data.toJSON ? cmd.data.toJSON() : cmd.data);
+      // Untuk table
+      tableData.push({
+        Name: command.name,
+        Alias: command.alias ? command.alias.join(', ') : '-'
       });
-    } else {
-      tempCollection.forEach(cmd => client.messageCommands.set(cmd.name, cmd));
+
+    } catch (err) {
+      console.error(chalk.red(`[ERROR] Fail load ${file}: ${err.message}`));
     }
   }
 
-  // Papar hasil dalam bentuk table
-  console.log(chalk.green.bold(`\n[RESULT] Command List:`));
-  console.log(chalk.white('='.repeat(60)));
-  console.log(`${chalk.bold('Type'.padEnd(12))} | ${chalk.bold('Command'.padEnd(20))} | Path`);
-  console.log(chalk.white('-'.repeat(60)));
-  resultTable.forEach(row => {
-    console.log(
-      `${pad(row.type, 12)} | ${pad(row.name, 20)} | ${row.path}`
-    );
-  });
-  console.log(chalk.white('='.repeat(60)));
-  console.log(
-    chalk.green(`[INFO] ${client.messageCommands.size} message commands, ${client.slashCommands.size} slash commands loaded.`)
-  );
+  // Log table command valid
+  console.log(chalk.cyan(`\n[COMMANDS LOADED]`));
+  console.table(tableData);
+
+  // Detect jika tiada slash command
+  if (slashArray.length === 0) {
+    console.log(chalk.yellow('[WARNING] Tiada slash commands dijumpai!'));
+  }
 
   return slashArray;
+}
+
+/**
+ * Dapatkan semua file .js secara rekursif
+ * @param {string} dir 
+ * @returns {string[]}
+ */
+function getAllJSFiles(dir) {
+  let results = [];
+  const list = fs.readdirSync(dir, { withFileTypes: true });
+
+  for (const file of list) {
+    const fullPath = path.join(dir, file.name);
+    if (file.isDirectory()) {
+      results = results.concat(getAllJSFiles(fullPath));
+    } else if (file.name.endsWith('.js')) {
+      results.push(fullPath);
+    }
+  }
+  return results;
 }
 
 module.exports = { loadCommands };
