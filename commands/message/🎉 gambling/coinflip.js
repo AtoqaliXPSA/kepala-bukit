@@ -36,11 +36,11 @@ module.exports = {
       if (isWin) {
         user.balance += bet;
         await user.save();
-        flipMsg.edit(`You win! (you choose: ***${choice}***)`);
+        flipMsg.edit(`You win! (you choose: ***${choice}*** - You Win: **${isWin}**)`);
       } else {
         user.balance -= bet;
         await user.save();
-        flipMsg.edit(`You lose. (you choose: ***${choice}***)`);
+        flipMsg.edit(`You lose. (you choose: ***${choice}***) - You Win: **${bet}**)`);
       }
     }, 2000);
   }
