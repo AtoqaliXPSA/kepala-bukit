@@ -8,7 +8,7 @@ module.exports = {
 
   async execute(message, args) {
     if (args.length < 2) {
-      return message.reply('Please choose and insert the bet.');
+      return message.reply('Please choose and insert amount to bet.');
     }
 
     const choice = args[0].toLowerCase();
