@@ -1,59 +1,78 @@
 const fs = require('fs');
 const path = require('path');
-const { Collection } = require('discord.js');
 
 /**
- * Auto-load message & slash commands.
- * @param {Client} client - Discord client
+ * Baca semua command dari folder `commands`
+ * @param {string} dirPath - Path folder commands
+ * @param {Collection} collection - Discord.js Collection untuk simpan command
  */
-function loadCommands(client) {
-  client.commands = new Collection();
-  client.slashCommands = new Collection();
-  const slashArray = [];
+function readCommands(dirPath, collection) {
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
 
-  const commandBasePath = path.join(__dirname, '../commands'); 
+  for (const entry of entries) {
+    const fullPath = path.join(dirPath, entry.name);
 
-  function readCommands(dir) {
-    const files = fs.readdirSync(dir, { withFileTypes: true });
-
-    for (const file of files) {
-      const fullPath = path.join(dir, file.name);
-
-      if (file.isDirectory()) {
-        readCommands(fullPath); // Rekursif untuk sub-folder
-      } else if (file.isFile() && file.name.endsWith('.js')) {
+    if (entry.isDirectory()) {
+      // Rekursif untuk folder dalam folder
+      readCommands(fullPath, collection);
+    } else if (entry.isFile() && entry.name.endsWith('.js')) {
+      try {
         const command = require(fullPath);
-
-        // Message Commands
-        if (!command.slash && command.name) {
-          client.commands.set(command.name, command);
-          console.log(`[MESSAGE CMD] Loaded: ${command.name} (${fullPath})`);
-
-          // Alias
-          if (Array.isArray(command.alias)) {
-            for (const alias of command.alias) {
-              client.commands.set(alias, command);
-              console.log(`[MESSAGE CMD]   Alias loaded: ${alias} -> ${command.name}`);
-            }
-          }
+        if (!command.name) {
+          console.warn(`[SKIP] ${fullPath} tiada "name" property.`);
+          continue;
         }
-
-        // Slash Commands
-        if (command.slash) {
-          if (!command.data || !command.data.name) {
-            console.warn(`[SLASH CMD] Skipped invalid slash command: ${fullPath}`);
-            continue;
-          }
-          client.slashCommands.set(command.data.name, command);
-          slashArray.push(command.data.toJSON());
-          console.log(`[SLASH CMD] Loaded: ${command.data.name} (${fullPath})`);
-        }
+        collection.set(command.name, command);
+        console.log(`[LOAD] Command: ${command.name} (${fullPath})`);
+      } catch (err) {
+        console.error(`[ERROR] Gagal load command ${fullPath}:`, err);
       }
     }
   }
+}
 
-  readCommands(commandsPath);
-  return slashArray; // Return array untuk deploy
+/**
+ * Auto-load semua commands (message & slash)
+ * @param {Client} client - Discord Client
+ * @returns {Array} Array data untuk Slash Command deploy
+ */
+function loadCommands(client) {
+  const commandsDir = path.join(__dirname, '../commands');
+
+  if (!fs.existsSync(commandsDir)) {
+    console.error(`[ERROR] Folder "commands" tidak wujud: ${commandsDir}`);
+    return [];
+  }
+
+  console.log(`[COMMAND HANDLER] Loading commands dari ${commandsDir}`);
+
+  const slashArray = [];
+
+  // Loop semua folder dalam commands/
+  const folders = fs.readdirSync(commandsDir, { withFileTypes: true })
+    .filter(entry => entry.isDirectory());
+
+  for (const folder of folders) {
+    const folderPath = path.join(commandsDir, folder.name);
+    console.log(`\n[SCAN] Folder: ${folder.name}`);
+
+    const tempCollection = new Map(); // Sementara
+
+    readCommands(folderPath, tempCollection);
+
+    // Simpan ke collection ikut jenis folder
+    if (folder.name.toLowerCase().includes('slash')) {
+      tempCollection.forEach(cmd => {
+        client.slashCommands.set(cmd.name, cmd);
+        if (cmd.data) slashArray.push(cmd.data.toJSON ? cmd.data.toJSON() : cmd.data);
+      });
+    } else {
+      tempCollection.forEach(cmd => client.messageCommands.set(cmd.name, cmd));
+    }
+  }
+
+  console.log(`\n[RESULT] ${client.messageCommands.size} message commands, ${client.slashCommands.size} slash commands loaded.`);
+  return slashArray;
 }
 
 module.exports = { loadCommands };
