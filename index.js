@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { Client, GatewayIntentBits, Events } = require('discord.js');
 const connectToDB = require('./utils/database');
-const keepAlive = require('./utils/keepAlive');
+const keepAlive = require('./keepAlive');
 const { loadCommands } = require('./handler/commandHandler');
 const setupMessageHandler = require('./events/messageHandler');
 const setupSlashHandler = require('./events/slashHandler');
