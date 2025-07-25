@@ -38,7 +38,7 @@ module.exports = {
     if (user.inventory && user.inventory.length > 0) {
       luckCoinIndex = user.inventory.findIndex(item =>
         (item.id && item.id.toLowerCase() === 'luck_coin') ||
-        (item.name && item.name.toLowerCase() === 'luck coins')
+        (item.name && item.name.toLowerCase() === 'luck coin')
       );
       hasLuckCoin = luckCoinIndex !== -1;
     }
