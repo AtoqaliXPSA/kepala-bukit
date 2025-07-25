@@ -58,7 +58,7 @@ async function loadSlashCommands() {
 }
 
 async function loadMessageCommands() {
-  const files = await loadFiles(path.join(__dirname, 'commands/message'));
+  const files = await loadFiles(path.join(__dirname, 'commands/message' , 'commands/admins'));
   files.forEach(f => {
     const cmd = require(f);
     if (cmd.name) client.messageCommands.set(cmd.name, cmd);
