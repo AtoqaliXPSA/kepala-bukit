@@ -32,13 +32,15 @@ module.exports = {
     user.balance -= bet;
     await user.save();
 
-    // **Boost jika ada Luck Coin**
+    // **Check Luck Coin**
     let hasLuckCoin = false;
+    let luckCoinIndex = -1;
     if (user.inventory && user.inventory.length > 0) {
-      hasLuckCoin = user.inventory.some(item =>
+      luckCoinIndex = user.inventory.findIndex(item =>
         (item.id && item.id.toLowerCase() === 'luck_coin') ||
         (item.name && item.name.toLowerCase() === 'luck coins')
       );
+      hasLuckCoin = luckCoinIndex !== -1;
     }
 
     // 🎰 Logic Slot
@@ -84,6 +86,13 @@ ${result}\`\`\``;
     }
 
     user.balance += winnings;
+
+    // **Jika ada Luck Coin, buang dari inventory**
+    if (hasLuckCoin && luckCoinIndex !== -1) {
+      user.inventory.splice(luckCoinIndex, 1);
+      resultText += `\n🍀 Your Luck Coin has been used and removed.`;
+    }
+
     await user.save();
 
     const finalContent = slotBox(slot[0], slot[1], slot[2], bet, resultText);
