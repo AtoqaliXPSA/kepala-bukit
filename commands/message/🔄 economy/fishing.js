@@ -23,7 +23,7 @@ module.exports = {
 
     /* ── Cari Fishing Rod ── */
     const rodItem = shopItems.find(
-      i => i.id.toLowerCase() === 'gold rod' || i.alias?.includes('rod')
+      i => i.name.toLowerCase() === 'gold rod' || i.alias?.includes('rod')
     );
     let rodIndex = user.inventory.findIndex(inv => {
       const invName = (inv.name || inv).toLowerCase();
