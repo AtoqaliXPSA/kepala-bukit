@@ -11,7 +11,7 @@ function loadCommands(client) {
   client.slashCommands = new Collection();
   const slashArray = [];
 
-  const commandsPath = path.join(__dirname, 'commands');
+  const commandBasePath = path.join(__dirname, '../commands'); 
 
   function readCommands(dir) {
     const files = fs.readdirSync(dir, { withFileTypes: true });
