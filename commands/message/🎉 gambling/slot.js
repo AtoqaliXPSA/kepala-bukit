@@ -20,8 +20,10 @@ module.exports = {
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
-    const user = await User.findOne({ userId: message.author.id }) ||
-      await new User({ userId: message.author.id, balance: 500 }).save();
+    let user = await User.findOne({ userId: message.author.id });
+    if (!user) {
+      user = await new User({ userId: message.author.id, balance: 500, inventory: [] }).save();
+    }
 
     if (user.balance < bet) {
       return message.reply(`You have ___***$${user.balance}***___ , to bet **$${bet}**`);
@@ -30,13 +32,24 @@ module.exports = {
     user.balance -= bet;
     await user.save();
 
-    // 🎰 Logic baru: Randomkan simbol asas
+    // **Boost jika ada Luck Coin**
+    let hasLuckCoin = false;
+    if (user.inventory && user.inventory.length > 0) {
+      hasLuckCoin = user.inventory.some(item =>
+        (item.id && item.id.toLowerCase() === 'luck_coin') ||
+        (item.name && item.name.toLowerCase() === 'luck coins')
+      );
+    }
+
+    // 🎰 Logic Slot
     const mainSymbol = slotItems[Math.floor(Math.random() * slotItems.length)];
 
     let slot = [mainSymbol, mainSymbol, mainSymbol]; // default: full match
 
-    // 🎯 5% chance sahaja dapat full match
-    const fullMatchChance = 0.05;
+    // 🎯 Peluang full match
+    let fullMatchChance = 0.05; // 5% default
+    if (hasLuckCoin) fullMatchChance = 0.15; // boost ke 15%
+
     if (Math.random() > fullMatchChance) {
       // Guna slot rawak (tiada match)
       slot = [
@@ -55,6 +68,7 @@ module.exports = {
 ${result}\`\`\``;
     };
 
+    // Animasi slot
     const msg = await message.channel.send(slotBox({ symbol: '❓' }, { symbol: '❓' }, { symbol: '❓' }, bet));
     await delay(500); await msg.edit(slotBox(slot[0], { symbol: '❓' }, { symbol: '❓' }, bet));
     await delay(500); await msg.edit(slotBox(slot[0], slot[1], { symbol: '❓' }, bet));
@@ -66,7 +80,7 @@ ${result}\`\`\``;
     if (slot[0].symbol === slot[1].symbol && slot[1].symbol === slot[2].symbol) {
       const payout = slot[0].payout;
       winnings = bet * payout;
-      resultText = `🎉 You Win $${winnings} with ${slot[0].symbol} x3!`;
+      resultText = `🎉 You Win $${winnings} with ${slot[0].symbol} x3!${hasLuckCoin ? ' 🍀 (Luck Coin Boost!)' : ''}`;
     }
 
     user.balance += winnings;
