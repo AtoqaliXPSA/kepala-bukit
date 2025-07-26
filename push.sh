@@ -18,7 +18,7 @@ read commitMsg
 
 # Default message if empty
 if [[ -z "$commitMsg" ]]; then
-    commitMsg="update"
+    commitMsg="Auto update $(date -u)"
 fi
 
 # Commit and push
