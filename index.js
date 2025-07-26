@@ -5,6 +5,7 @@ const { loadEvents } = require('./handler/eventHandler');
 const connectToDB = require('./utils/database');
 const keepAlive = require('./keepAlive');
 require('./handler/errorHandler');
+const clearCache = require('./utils/clearCache');
 
 // ── Create Discord Client ──
 const client = new Client({
@@ -30,6 +31,10 @@ const client = new Client({
 
     console.log('Starting web keep-alive...');
     keepAlive(client);
+
+    console.log('Clearing cache...');
+    clearCache('commands');
+    clearCache('events');
 
     await client.login(process.env.DISCORD_TOKEN);
 
