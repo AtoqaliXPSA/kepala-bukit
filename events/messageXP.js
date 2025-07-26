@@ -1,25 +1,25 @@
 const User = require('../models/User');
 
 module.exports = {
-  name: 'messageCreate',
+  name: 'messageXP',
   async execute(message) {
-    if (message.author.bot || !message.guild) return;
+    if (!message.guild || message.author.bot) return;
 
-    // Cari user
     let user = await User.findOne({ userId: message.author.id });
     if (!user) {
       user = await User.create({ userId: message.author.id, xp: 0, level: 1 });
     }
 
-    // Tambah XP
     user.xp += 1;
-    const nextLevelXP = 50 + (user.level * 10);
-    if (user.xp >= nextLevelXP) {
+    const requiredXP = Math.floor(50 * user.level + 100);
+
+    if (user.xp >= requiredXP) {
       user.level++;
       user.xp = 0;
-      await message.channel.send(`🎉 ${message.author} naik ke Level **${user.level}**!`);
+      await user.save();
+      message.channel.send(`🎉 ${message.author} , up to level **${user.level}**!`);
+    } else {
+      await user.save();
     }
-
-    await user.save();
   }
 };
