@@ -88,14 +88,7 @@ function keepAlive(client) {
     max: 5,
     message: '🚫 Terlalu banyak percubaan login. Cuba semula selepas 10 minit.'
   });
-
-  // Register limiter
-  const registerLimiter = rateLimit({
-    windowMs: 10 * 60 * 1000,
-    max: 5,
-    message: '⚠️ Terlalu banyak cubaan register. Cuba lagi selepas 10 minit.',
-  });
-
+  
   // === Auth routes ===
 
   app.post('/login', loginLimiter, (req, res) => {
@@ -128,28 +121,6 @@ function keepAlive(client) {
     setTimeout(() => {
       process.exit(0);
     }, 1000);
-  });
-
-  app.post('/register', registerLimiter, async (req, res) => {
-    const { username, password } = req.body;
-    const dbPath = path.join(__dirname, 'data', 'userDB.json');
-
-    if (!username || !password) {
-      return res.status(400).json({ success: false, message: '❌ Username dan password diperlukan.' });
-    }
-
-    const users = fs.existsSync(dbPath) ? JSON.parse(fs.readFileSync(dbPath)) : [];
-    const exists = users.find(u => u.username === username);
-
-    if (exists) {
-      return res.status(409).json({ success: false, message: '⚠️ Username sudah wujud.' });
-    }
-
-    const hash = await bcrypt.hash(password, 10);
-    users.push({ username, password: hash });
-    fs.writeFileSync(dbPath, JSON.stringify(users, null, 2));
-
-    return res.json({ success: true, message: '✅ Akaun berjaya didaftarkan!' });
   });
 
   // Block suspicious User-Agents
@@ -196,25 +167,6 @@ function keepAlive(client) {
       memory_usage_mb: +(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2),
       load_average: os.loadavg().map(n => +n.toFixed(2))
     });
-  });
-
-  // Test Command
-  app.get('/test-command', async (req, res) => {
-    const cmd = req.query.cmd;
-    if (!cmd) return res.status(400).json({ result: '❌ Tiada command' });
-
-    try {
-      const testChannel = client.channels.cache.get(process.env.TEST_CHANNEL_ID);
-      if (!testChannel || !testChannel.isTextBased()) {
-        return res.status(404).json({ result: '❌ Channel tidak dijumpai' });
-      }
-
-      await testChannel.send(`✅ Testing command: \`/${cmd}\``);
-      res.json({ result: `✅ Command \`/${cmd}\` dihantar ke #${testChannel.name}` });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ result: '❌ Error semasa hantar command' });
-    }
   });
 
   // Static files
