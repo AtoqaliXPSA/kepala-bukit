@@ -1,13 +1,12 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, Events } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
+const { loadCommands } = require('./handler/commandHandler');
+const { loadEvents } = require('./handler/eventHandler');
 const connectToDB = require('./utils/database');
 const keepAlive = require('./keepAlive');
-const { loadCommands } = require('./handler/commandHandler');
-const setupMessageHandler = require('./events/messageHandler');
-const setupSlashHandler = require('./events/slashHandler');
-const gitAutoPush = require('./utils/gitAutoPush');
-require('./utils/errorLogger');
+require('./handler/errorHandler');
 
+// ── Create Discord Client ──
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -17,21 +16,38 @@ const client = new Client({
   ],
 });
 
-client.messageCommands = new Map();
-client.slashCommands = new Map();
-client.cooldowns = new Map();
-
+// ── Init Bot ──
 (async () => {
   try {
-    gitAutoPush();
-    await connectToDB();
-    loadCommands(client);
-    setupMessageHandler(client);
-    setupSlashHandler(client);
+    console.log('Connecting to MongoDB...');
+    await connectToDB(); // MongoDB Connect
+
+    console.log('Loading commands...');
+    const slashArray = loadCommands(client);
+
+    console.log('Loading events...');
+    loadEvents(client);
+
+    console.log('Starting web keep-alive...');
     keepAlive(client);
+
     await client.login(process.env.DISCORD_TOKEN);
-    console.log(`🤖 Bot logged in as ${client.user.tag}`);
+
+    // Deploy slash commands jika ada
+    if (slashArray.length > 0) {
+      const { REST, Routes } = require('discord.js');
+      const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+      try {
+        await rest.put(Routes.applicationCommands(client.user.id), { body: slashArray });
+        console.log(`✅ ${slashArray.length} slash commands deployed.`);
+      } catch (err) {
+        console.error('[SLASH DEPLOY ERROR]', err);
+      }
+    } else {
+      console.log('⚠️ Tiada slash commands untuk deploy.');
+    }
+
   } catch (err) {
-    console.error('Bot init failed:', err);
+    console.error('❌ Bot init failed:', err);
   }
 })();
