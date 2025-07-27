@@ -29,7 +29,7 @@ const client = new Client({
     console.log('Loading events...');
     loadEvents(client);
 
-    console.log('Starting web keep-alive...');
+    console.log('Connect to website...');
     keepAlive(client);
 
     console.log('Clearing cache...');

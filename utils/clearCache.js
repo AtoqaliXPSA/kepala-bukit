@@ -3,5 +3,5 @@ module.exports = function clearCache(targetDir = '') {
     if (targetDir && !key.includes(targetDir)) continue;
     delete require.cache[key];
   }
-  console.log(`[CACHE] Cleared cache for ${targetDir || 'ALL'}`);
+  console.log(`[CLEAR] Cache for ${targetDir || 'ALL'}`);
 };

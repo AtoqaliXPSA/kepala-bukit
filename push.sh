@@ -1,11 +1,11 @@
 #!/bin/bash
 
-echo "⚠️  You are about to push changes to GitHub!"
+echo "You are about to push changes to GitHub!"
 echo "Do you want to continue? (y/n)"
 read answer
 
 if [[ "$answer" != "y" && "$answer" != "Y" ]]; then
-    echo "❌ Push aborted."
+    echo "Push aborted."
     exit 1
 fi
 
@@ -25,4 +25,4 @@ fi
 git commit -m "$commitMsg"
 git push origin main
 
-echo "✅ Push completed!"
+echo "[DONE] Push completed!!!"
