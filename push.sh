@@ -5,7 +5,7 @@ echo "Do you want to continue? (y/n)"
 read answer
 
 if [[ "$answer" != "y" && "$answer" != "Y" ]]; then
-    echo "Push aborted."
+    echo "[CANCEL] Push aborted."
     exit 1
 fi
 

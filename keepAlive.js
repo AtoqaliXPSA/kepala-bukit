@@ -168,7 +168,7 @@ function keepAlive(client) {
       console.warn('[ERROR] Bot not ready! Restarting...');
       process.exit(1);
     }
-  }, 30 * 60 * 1000); //
+  }, 15 * 60 * 1000); //
 }
 
 module.exports = keepAlive;
