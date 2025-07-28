@@ -165,10 +165,10 @@ function keepAlive(client) {
   // ── Watchdog ──
   setInterval(() => {
     if (!client?.isReady() || client.ws?.status !== 0) {
-      console.warn('[ERROR] Bot not ready! Restarting...');
+      console.warn('[RESTART] Bot not ready!');
       process.exit(1);
     }
-  }, 15 * 60 * 1000); //
+  }, 10 * 60 * 1000); //
 }
 
 module.exports = keepAlive;
