@@ -29,7 +29,7 @@ function loadEvents(client) {
     eventsList.push(`${event.name}${event.once ? ' (once)' : ''}`);
   }
 
-  console.log(chalk.cyan(`\n[EVENTS LOADED] (${eventsList.length})`));
+  console.log(chalk.cyan(`\n[EVENTS LOADED]`));
   console.log(eventsList.join('\n'));
 }
 

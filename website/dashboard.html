@@ -219,7 +219,6 @@
     </div>
     <div class="topbar-right">
       <button id="statusBtn">Dashboard</button>
-      <button id="serverStatusBtn">Route</button>
       <button id="logoutBtn">Logout</button>
       <div class="theme-toggle">
         <button id="themeBtn">🖥️</button>
@@ -285,12 +284,6 @@
     });
 
     applyTheme(localStorage.getItem("theme") || "system");
-
-    // === SERVER STATUS ===
-          document.getElementById("serverStatusBtn").onclick = () => {
-            window.open("/status", "_blank");
-          };
-
     // === USER ===
     const user = sessionStorage.getItem("user");
     if (!user) window.location.href = "/login.html";
