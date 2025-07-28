@@ -15,7 +15,6 @@ const userSchema = new mongoose.Schema({
     ],
     default: []
   },
-  lastRegen: { type: Number, default: Date.now },
   lastDaily: { type: Date, default: null }
 });
 
