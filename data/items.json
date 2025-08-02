@@ -6,6 +6,7 @@
     "price": 500,
     "untradable": false,
     "unpurchasable": false,
+    "daily": true,
     "description": "A shiny coin that brings luck at slots.",
     "durability": 1
   },
@@ -16,6 +17,7 @@
     "price": 300,
     "untradable": false,
     "unpurchasable": false,
+    "daily": true,
     "description": "Use it to catch better fish.",
     "durability": 1
   },
@@ -26,6 +28,7 @@
     "price": 7000,
     "untradable": true,
     "unpurchasable": false,
+    "daily": false,
     "description": "Rare Items.",
     "durability": null
   }
