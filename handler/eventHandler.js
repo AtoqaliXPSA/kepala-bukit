@@ -28,9 +28,10 @@ function loadEvents(client) {
 
     eventsList.push(`${event.name}${event.once ? ' (once)' : ''}`);
   }
-
-  console.log(chalk.cyan(`\n[EVENTS LOADED]`));
+  console.log('=======================================');
+  console.log(chalk.cyan(`[EVENTS LOADED]`));
   console.log(eventsList.join('\n'));
+  console.log('=======================================');
 }
 
 module.exports = { loadEvents };

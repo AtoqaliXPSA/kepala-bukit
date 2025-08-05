@@ -38,8 +38,11 @@ function loadCommands(client) {
   }
 
   // ── Log table dengan hanya nama ──
-  console.log(chalk.red('\n[COMMANDS LOADED]'));
+  console.log('=======================================');
+  console.log(chalk.red('[COMMANDS LOADED]'));
+  
   console.log(tableData.map(cmd => `- ${chalk.blue(cmd.Name)}`).join('\n'));
+  console.log('=======================================');
 
   if (slashArray.length === 0) {
     console.log(chalk.yellow('[WARNING] Tiada slash commands dijumpai!'));

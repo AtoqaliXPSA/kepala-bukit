@@ -4,11 +4,10 @@ const { loadCommands } = require('./handler/commandHandler');
 const { loadEvents } = require('./handler/eventHandler');
 const connectToDB = require('./utils/database');
 const keepAlive = require('./keepAlive');
-const {coolDown} = require('./helper/cooldownHelper');
-require('./handler/errorHandler');
 const clearCache = require('./utils/clearCache');
+require('./handler/errorHandler');
 
-// ── Create Discord Client ──
+// ────────────────[ SETUP CLIENT ]────────────────
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -22,45 +21,55 @@ client.commands = new Collection();
 client.messageCommands = new Collection();
 client.slashCommands = new Collection();
 
-
-// ── Init Bot ──
+// ────────────────[ INIT BOT ]────────────────
 (async () => {
   try {
-    console.log('Connecting to MongoDB...');
-    await connectToDB(); // MongoDB Connect
+    console.log('-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/');
+    console.log('🚀 Starting bot...');
+    console.log('-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/');
 
-    console.log('Loading commands...');
+    console.log('[INFO] Connecting to MongoDB...');
+    await connectToDB();
+
+    console.log('[INFO] Load commands...');
     const slashArray = loadCommands(client);
+    console.log(`[DONE] ${slashArray.length} command loaded.`);
 
-    console.log('Loading events...');
+    console.log('[INFO] Load events...');
     loadEvents(client);
+    console.log('[DONE] Events succes loaded.');
 
-    console.log('Connect to website...');
+    console.log('[INFO] start to online website keepAlive...');
     keepAlive(client);
+    console.log('[DONE] Website keepAlive is online.');
 
-    console.log('Clearing cache...');
+    console.log('[INFO] Clearning cache...');
     clearCache('commands');
     clearCache('events');
+    console.log('[DONE] Cache has been clear.');
 
-
-
+    console.log('[INFO] Login to Discord Bot...');
     await client.login(process.env.DISCORD_TOKEN);
 
-    // Deploy slash commands jika ada
+    // ───────────────[ SLASH COMMAND DEPLOY ]───────────────
     if (slashArray.length > 0) {
+      console.log(`[INFO] Deploying ${slashArray.length} slash command...`);
       const { REST, Routes } = require('discord.js');
       const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
       try {
         await rest.put(Routes.applicationCommands(client.user.id), { body: slashArray });
-        console.log(`✅ ${slashArray.length} slash commands deployed.`);
+        console.log(`[DONE] ${slashArray.length} slash commands deployed.`);
       } catch (err) {
         console.error('[SLASH DEPLOY ERROR]', err);
       }
     } else {
-      console.log('⚠️ Tiada slash commands untuk deploy.');
+      console.log('[WARNING] Nothing slash to deploy.');
     }
+    console.log('-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/');
+    console.log('[BOT IS READY]');
+    console.log('-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/\n');
 
   } catch (err) {
-    console.error('❌ Bot init failed:', err);
+    console.error('[ERROR] Bot init gagal:', err);
   }
 })();

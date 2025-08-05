@@ -150,7 +150,7 @@ function keepAlive(client) {
   app.use(express.static(path.join(__dirname, 'website')));
 
   // ── Start Server ──
-  app.listen(PORT, () => console.log(`🟢 Website running on port ${PORT}`));
+  app.listen(PORT, () => console.log(`Website running on port ${PORT}`));
 
   // ── KeepAlive Ping ──
   setInterval(async () => {
