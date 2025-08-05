@@ -1,9 +1,10 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const { loadCommands } = require('./handler/commandHandler');
 const { loadEvents } = require('./handler/eventHandler');
 const connectToDB = require('./utils/database');
 const keepAlive = require('./keepAlive');
+const {coolDown} = require('./helper/cooldownHelper');
 require('./handler/errorHandler');
 const clearCache = require('./utils/clearCache');
 
@@ -16,6 +17,11 @@ const client = new Client({
     GatewayIntentBits.GuildVoiceStates
   ],
 });
+
+client.commands = new Collection();
+client.messageCommands = new Collection();
+client.slashCommands = new Collection();
+
 
 // ── Init Bot ──
 (async () => {
@@ -35,6 +41,8 @@ const client = new Client({
     console.log('Clearing cache...');
     clearCache('commands');
     clearCache('events');
+
+
 
     await client.login(process.env.DISCORD_TOKEN);
 

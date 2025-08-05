@@ -3,20 +3,20 @@ const User = require('../../../models/User');
 module.exports = {
   name: 'beg',
   description: 'Beg for coins with a chance of failure or success.',
-  cooldown: 30,
+  cooldown: 15,
   category: 'Economy',
 
   async execute(message) {
     const userId = message.author.id;
 
-    // Find or create user
+    // Cari user atau cipta
     let user = await User.findOneAndUpdate(
       { userId },
       { $setOnInsert: { balance: 0 } },
       { upsert: true, new: true }
     );
 
-    // Failure messages (English insults)
+    // Mesej gagal & berjaya
     const failMessages = [
       "You're so broke, even charity said no.",
       "No one wants to give you a penny. Try harder!",
@@ -25,24 +25,22 @@ module.exports = {
       "Not even a single soul cared about you. Sad."
     ];
 
-    // Success messages (English kind words)
-    const successMessages = [ 
-      "You got lucky! A generous soul helped you."
+    const successMessages = [
+      "You got lucky! A generous soul helped you.",
     ];
 
-    // 10% fail chance
+    // 10% gagal
     if (Math.random() < 0.1) {
-      const failMsg = failMessages[Math.floor(Math.random() * failMessages.length)];
-      return message.channel.send(`**${failMsg}**`);
+      const fail = failMessages[Math.floor(Math.random() * failMessages.length)];
+      return message.reply(`❌ **${fail}**`);
     }
 
-    // Success
+    // Berjaya
     const amount = Math.floor(Math.random() * 500) + 1;
-    const successMsg = successMessages[Math.floor(Math.random() * successMessages.length)];
+    const success = successMessages[Math.floor(Math.random() * successMessages.length)];
 
-    user.balance += amount;
-    await user.save();
+    await User.updateOne({ userId }, { $inc: { balance: amount } });
 
-    await message.channel.send(`**${successMsg}** You received **$${amount} coins!**`);
+    return message.reply(`**${success}** You received **$${amount.toLocaleString()} coins!**`);
   }
 };
