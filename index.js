@@ -6,6 +6,7 @@ const connectToDB = require('./utils/database');
 const keepAlive = require('./keepAlive');
 const clearCache = require('./utils/clearCache');
 require('./handler/errorHandler');
+require('./utils/cron')
 
 // ────────────────[ SETUP CLIENT ]────────────────
 const client = new Client({
