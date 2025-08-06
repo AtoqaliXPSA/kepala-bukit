@@ -3,7 +3,7 @@ const User = require('../../../models/User');
 module.exports = {
   name: 'beg',
   description: 'Beg for coins with a chance of failure or success.',
-  cooldown: 15,
+  cooldown: 35,
   category: 'Economy',
 
   async execute(message) {
@@ -41,6 +41,6 @@ module.exports = {
 
     await User.updateOne({ userId }, { $inc: { balance: amount } });
 
-    return message.reply(`**${success}** You received **$${amount.toLocaleString()} coins!**`);
+    return message.reply(`**${success}** You received **$${amount.toLocaleString()} coins**<:Djcoins_6:1402689800267632690>`);
   }
 };

@@ -33,10 +33,11 @@ module.exports = {
 
     /* ── Senarai ikan ── */
     const fishOptions = [
-      { name: '🐟 Sardine', chance: 1.55,  minKg: 0.01, maxKg: 0.4,  price: 60  },
-      { name: '🐠 Donny',   chance: 0.35, minKg: 0.4,  maxKg: 1.2,  price: 110 },
-      { name: '🦈 Shark',   chance: 0.009, minKg: 10,   maxKg: 60,   price: 30  },
-      { name: '🐋 Whale',   chance: 0.001, minKg: 100,  maxKg: 250,  price: 15  }
+      { name: '<:Sardine_1:1402684736907907156>', chance: 1.55, minKg: 0.01, maxKg: 0.4, price: 60  },
+      { name: '<:Donny_2:1402686462717071390>', chance: 0.35, minKg: 0.4, maxKg: 1.2, price: 110 },
+      { name: '<:Squid_3:1402686946517586082>', chance: 0.0015, minKg: 5, maxKg: 25, price: 10 },
+      { name: '<:Shark_4:1402687639840096276>', chance: 0.009, minKg: 10, maxKg: 60, price: 30 },
+      { name: '<:Whale_5:1402688010234892328>', chance: 0.001, minKg: 100, maxKg: 250, price: 15 }
     ];
 
     // Bonus kalau ada rod
@@ -81,7 +82,7 @@ module.exports = {
       `**${message.author.username}** goes fishing...\n` +
       `You caught **${caught.name}** ${weightKg ? `(Weight: **${weightKg}KG**)` : ''}\n` +
       (reward
-        ? `Reward: **${reward.toLocaleString()} coins** ${hasRod ? '*(+rod bonus)*' : ''}`
+        ? `Reward: **${reward.toLocaleString()} coins**<:Djcoins_6:1402689800267632690> ${hasRod ? '*(+rod bonus)*' : ''}`
         : 'Nothing valuable today...');
 
     message.reply(reply);
