@@ -33,8 +33,8 @@ module.exports = {
 
     /* ── Senarai ikan ── */
     const fishOptions = [
-      { name: '🐟 Sardine', chance: 0.55,  minKg: 0.01, maxKg: 0.4,  price: 60  },
-      { name: '🐠 Donny',   chance: 0.035, minKg: 0.4,  maxKg: 1.2,  price: 110 },
+      { name: '🐟 Sardine', chance: 1.55,  minKg: 0.01, maxKg: 0.4,  price: 60  },
+      { name: '🐠 Donny',   chance: 0.35, minKg: 0.4,  maxKg: 1.2,  price: 110 },
       { name: '🦈 Shark',   chance: 0.009, minKg: 10,   maxKg: 60,   price: 30  },
       { name: '🐋 Whale',   chance: 0.001, minKg: 100,  maxKg: 250,  price: 15  }
     ];
