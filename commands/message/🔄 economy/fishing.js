@@ -43,8 +43,8 @@ module.exports = {
     // Bonus kalau ada rod
     if (hasRod) {
       fishOptions.forEach(fish => {
-        if (fish.name === '🦈 Shark') fish.chance *= 1.5;
-        if (fish.name === '🐋 Whale') fish.chance *= 2;
+        if (fish.name === '<:Shark_4:1402687639840096276>') fish.chance *= 1.5;
+        if (fish.name === '<:Whale_5:1402688010234892328>') fish.chance *= 2;
       });
     }
 

@@ -55,7 +55,7 @@ module.exports = {
     // Semak balance
     if (user.balance < totalPrice) {
       return message.reply(
-        `You don't have enough coins . You need **${totalPrice} coins** (price : **${item.price}** x **${quantity}**).`
+        `You don't have enough coins . You need **${totalPrice} coins**<:Djcoins_6:1402689800267632690> (price : **${item.price}** x **${quantity}**).`
       );
     }
 
@@ -74,7 +74,7 @@ module.exports = {
     await user.save();
 
     message.reply(
-      `You purchased **${quantity}x ${item.name}** for **${totalPrice} coins**!`
+      `You purchased **${quantity}x ${item.name}** for **${totalPrice} coins**<:Djcoins_6:1402689800267632690>`
     );
   }
 };

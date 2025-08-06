@@ -26,7 +26,7 @@ module.exports = {
 
     // ❌ Cek balance
     if (sender.balance < amount) {
-      return message.reply(`You have only ***$${sender.balance} coins***.`);
+      return message.reply(`You have only ***$${sender.balance} coins***<:Djcoins_6:1402689800267632690>.`);
     }
 
     // 💸 Kirakan cukai
@@ -45,8 +45,8 @@ module.exports = {
 
     // ✅ Notifikasi
     return message.reply(
-      `You sent money ** $${amountAfterTax} coins** to <@${target.id}>.\n` +
-      `Tax: **${taxAmount} coins**.`
+      `You sent money ** $${amountAfterTax} coins**<:Djcoins_6:1402689800267632690> to <@${target.id}>.\n` +
+      `Tax: **%3**.`
     );
   }
 };

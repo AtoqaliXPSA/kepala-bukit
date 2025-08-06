@@ -48,7 +48,7 @@ module.exports = {
     } else {
       user.balance -= bet;
       await user.save();
-      outcome += `You lost **${bet} coins**.`;
+      outcome += `You lost **${bet} coins**<:Djcoins_6:1402689800267632690>.`;
     }
 
     animMsg.edit(outcome);
