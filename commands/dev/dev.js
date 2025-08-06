@@ -8,7 +8,7 @@ module.exports = {
   name: 'dev',
   alias: ['developer', 'debug'],
   description: 'Developer tools untuk debug bot',
-  cooldown: 3,
+  cooldown: 15,
 
   async execute(message, args, client) {
     if (message.author.id !== process.env.DEV_ID) {

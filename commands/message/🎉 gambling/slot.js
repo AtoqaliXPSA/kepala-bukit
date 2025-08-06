@@ -4,7 +4,7 @@ module.exports = {
   name: 'slot',
   alias: ['s'],
   description: 'Bermain slot',
-  cooldown: 5,
+  cooldown: 6,
 
   async execute(message, args) {
     const bet = parseInt(args[0]) || 1;

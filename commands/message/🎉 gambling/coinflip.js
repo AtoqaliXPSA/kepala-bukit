@@ -4,7 +4,7 @@ module.exports = {
   name: 'coinflip',
   alias: ['cf', 'flip'],
   description: 'Bet coinsflip.',
-  cooldown: 5,
+  cooldown: 6,
 
   async execute(message, args) {
     if (args.length < 2) {
