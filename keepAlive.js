@@ -50,7 +50,7 @@ function keepAlive(client) {
   app.use(rateLimit({
     windowMs: 10 * 60 * 1000,
     max: 30,
-    message: { error: '🚫 Too many requests. Try again later.' }
+    message: { error: 'Too many requests. Try again later.' }
   }));
 
   // ── Session MongoDB ──
@@ -75,7 +75,7 @@ function keepAlive(client) {
   const loginLimiter = rateLimit({
     windowMs: 10 * 60 * 1000,
     max: 5,
-    message: '🚫 Terlalu banyak percubaan login. Cuba semula selepas 10 minit.'
+    message: 'Terlalu banyak percubaan login. Cuba semula selepas 10 minit.'
   });
 
   app.post('/login', loginLimiter, (req, res) => {
@@ -83,23 +83,23 @@ function keepAlive(client) {
     const users = JSON.parse(fs.readFileSync('data/userDB.json', 'utf8') || '[]');
     const user = users.find(u => u.username === username);
 
-    if (!user) return res.status(401).json({ success: false, message: '❌ Username tidak wujud' });
+    if (!user) return res.status(401).json({ success: false, message: 'Username tidak wujud' });
 
     bcrypt.compare(password, user.password, (err, result) => {
       if (result) {
         req.session.user = username;
-        return res.json({ success: true, message: '✅ Login berjaya' });
+        return res.json({ success: true, message: 'Login berjaya' });
       }
-      return res.status(401).json({ success: false, message: '❌ Password salah' });
+      return res.status(401).json({ success: false, message: 'Password salah' });
     });
   });
 
   // ── Restart Bot ──
   app.post('/restart', (req, res) => {
     if (!req.session || req.session.user !== 'admin1') {
-      return res.status(403).json({ message: '❌ Unauthorized' });
+      return res.status(403).json({ message: 'Unauthorized' });
     }
-    console.log('🔁 Restart requested');
+    console.log('[ADMIN] Restart requested');
     res.status(200).json({ message: 'Restarting bot...' });
     setTimeout(() => process.exit(0), 1000);
   });

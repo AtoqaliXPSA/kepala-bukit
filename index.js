@@ -6,7 +6,11 @@ const connectToDB = require('./utils/database');
 const keepAlive = require('./keepAlive');
 const clearCache = require('./utils/clearCache');
 require('./handler/errorHandler');
-require('./utils/cron')
+require('./utils/cron');
+require('./utils/monitor');
+
+
+
 
 // ────────────────[ SETUP CLIENT ]────────────────
 const client = new Client({
@@ -16,11 +20,31 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildVoiceStates
   ],
+  sweepers: {
+    messages: {
+      interval: 300, // Setiap 5 minit
+      lifetime: 600  // Mesej lebih 10 minit akan dibuang dari cache
+    },
+    users: {
+      interval: 600,
+      filter: () => user => !user.bot // buang user bukan bot lepas 10 min
+    },
+    presences: {
+      interval: 600,
+      filter: () => presence => false, // buang semua presence (optional)
+    },
+    guildMembers: {
+      interval: 600,
+      filter: () => () => true
+    }
+  }
 });
 
-client.commands = new Collection();
-client.messageCommands = new Collection();
-client.slashCommands = new Collection();
+client.collections = {
+  commands: new Collection(),
+  message: new Collection(),
+  slash: new Collection()
+};
 
 // ────────────────[ INIT BOT ]────────────────
 (async () => {
