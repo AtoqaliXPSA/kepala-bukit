@@ -79,10 +79,10 @@ module.exports = {
 
     /* ── Reply ── */
     const reply =
-      `**${message.author.username}** goes fishing...\n` +
+      `**${message.author.username}** casting reel...\n` +
       `You caught **${caught.name}** ${weightKg ? `(Weight: **${weightKg}KG**)` : ''}\n` +
       (reward
-        ? `Reward: **${reward.toLocaleString()} coins**<:Djcoins_6:1402689800267632690> ${hasRod ? '*(+rod bonus)*' : ''}`
+        ? `Reward: **${reward.toLocaleString()} coins**<:Djcoins_6:1402689800267632690> ${hasRod ? '*+rod*' : ''}`
         : 'Nothing valuable today...');
 
     message.reply(reply);
