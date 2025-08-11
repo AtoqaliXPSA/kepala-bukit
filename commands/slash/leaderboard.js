@@ -27,7 +27,7 @@ module.exports = {
           userTag = `Pengguna Tidak Dikenali (${user.userId})`;
         }
 
-        return `**#${index + 1}** - ${userTag} | 💰 ${user.balance.toLocaleString()} coins`;
+        return `**#${index + 1}** - ${userTag} | ${user.balance.toLocaleString()} <:Djcoins_6:1402689800267632690>`;
       }));
 
       const embed = new EmbedBuilder()
